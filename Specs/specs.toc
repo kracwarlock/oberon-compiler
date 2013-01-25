@@ -1,0 +1,30 @@
+\contentsline {section}{\numberline {1}Project Description}{2}
+\contentsline {subsection}{\numberline {1.1}Language}{2}
+\contentsline {subsection}{\numberline {1.2}Implementation}{2}
+\contentsline {subsubsection}{\numberline {1.2.1}Lexical Analysis or Scanning}{2}
+\contentsline {subsubsection}{\numberline {1.2.2}Syntax Analysis or Parsing}{2}
+\contentsline {subsubsection}{\numberline {1.2.3}Semantic Analysis}{2}
+\contentsline {subsubsection}{\numberline {1.2.4}Intermediate Code Generation}{2}
+\contentsline {subsubsection}{\numberline {1.2.5}Code Generation}{2}
+\contentsline {section}{\numberline {2}Basic Things to be Implemented}{3}
+\contentsline {subsection}{\numberline {2.1}Identifiers}{3}
+\contentsline {subsection}{\numberline {2.2} Keywords }{3}
+\contentsline {subsection}{\numberline {2.3}Variables}{3}
+\contentsline {subsection}{\numberline {2.4}Comments}{3}
+\contentsline {subsection}{\numberline {2.5}Data Types}{3}
+\contentsline {subsubsection}{\numberline {2.5.1}Basic Data Types}{3}
+\contentsline {subsubsection}{\numberline {2.5.2}Array Data Type}{4}
+\contentsline {subsubsection}{\numberline {2.5.3}Records Data Type}{4}
+\contentsline {subsubsection}{\numberline {2.5.4}Pointers}{4}
+\contentsline {subsection}{\numberline {2.6} Operators}{4}
+\contentsline {subsection}{\numberline {2.7} Loops}{5}
+\contentsline {subsubsection}{\numberline {2.7.1}repeat-until}{5}
+\contentsline {subsubsection}{\numberline {2.7.2}for}{5}
+\contentsline {subsubsection}{\numberline {2.7.3}while}{5}
+\contentsline {subsection}{\numberline {2.8}Control Structures}{5}
+\contentsline {subsubsection}{\numberline {2.8.1}if-else}{5}
+\contentsline {subsubsection}{\numberline {2.8.2}case (for char and integer data type only)}{5}
+\contentsline {subsection}{\numberline {2.9}Basic string operations}{6}
+\contentsline {subsection}{\numberline {2.10}Procedures with formal parameters}{6}
+\contentsline {section}{\numberline {3}Features to be implemented if time permits}{6}
+\contentsline {section}{\numberline {4}References}{6}
