@@ -85,26 +85,12 @@
 #endif
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE
+
 {
 
-/* Line 1676 of yacc.c  */
-#line 9 "assignment_9.y"
-
-  int ival;
-  float fval;
-  char *sval;
-       
-
-
-/* Line 1676 of yacc.c  */
-#line 82 "y.tab.h"
-} YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 #endif
-
-extern YYSTYPE yylval;
 
 
