@@ -5,6 +5,8 @@
 	# include <string.h>
 	/* definitions of manifest constants	
 	*/
+	extern int yylineno = 0;
+	void yyerror(const char *s);
 %}
 
 /* regular definitions */
@@ -18,7 +20,6 @@ INTEGER		{digit}+
 REAL		{INTEGER}"."{digit}*
 LONGREAL	{INTEGER}"."{digit}*
 STRING		"""{char}*"""
-SET
 IDENT		letter{letter|digit}
 
 %%
@@ -45,6 +46,9 @@ IDENT		letter{letter|digit}
 
 ":="		{return ASSIGN;}
 
+[ \t]		{;}
+[\r\n]		{yylineno++;}
+
 "REPEAT"	{return REPEAT;}
 "UNTIL"		{return UNTIL;}
 "FOR"		{return FOR;}
@@ -69,7 +73,7 @@ IDENT		letter{letter|digit}
 "TRUE"		{return TRUE;}
 "FALSE"		{return FALSE;}
 
-{BOOLEAN}
+{BOOLEAN}	{return BOOLEAN;}
 {CHAR}		{return CHAR;}
 {INTEGER}	{return INT;}
 {REAL}		{return REAL;}
@@ -77,24 +81,27 @@ IDENT		letter{letter|digit}
 {STRING}	{return STRING;}
 {IDENT}		{return IDENT;}
 
-"(*"		{}
-[\t]		{}
-[\r\n]		{}
+"(*"		{doComments();}
 
-ARRAY
-begin***
-CONST
-EXIT
-IMPORT
-LOOP                                                                                                                                              
-MODULE
-NIL
-OR
-POINTER
-PROCEDURE
-RETURN
-TYPE
-VAR
-WITH
+ARRAY		{return ARRAY;}
+BEGIN		{return BEG;}
+CONST		{return CONST;}
+EXIT		{return EXIT;}
+IMPORT		{return IMPORT;}
+LOOP		{return LOOP;}
+MODULE		{return MODULE;}
+NIL		{return NIL;}
+OR		{return OR;}
+POINTER		{return POINTER;}
+PROCEDURE	{return PROCEDURE;}
+RETURN		{return RETURN;}
+TYPE		{return TYPE;}
+VAR		{return VAR;}
+WITH		{return WITH;}
 
 %%
+
+void yyerror(const char *s)
+{
+	
+}
