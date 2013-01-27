@@ -3,46 +3,45 @@
 	# include <stdio.h>
 	# include <stdlib.h>
 	# include <string.h>
-	/* definitions of manifest constants
-		TRUE, FALSE
+	/* definitions of manifest constants	
 	*/
 %}
 
 /* regular definitions */
 digit		[0-9]
 letter		[A-Za-z]
-boolean
 hexdigit	[0-9A-F]
-char		[.\n]|digit{hexdigit}"X"
-integer		{digit}+
-real		{integer}"."{digit}*
-longreal	{integer}"."{digit}*
-string		"""{char}*"""
-set
-ident		letter{letter|digit}
+
+BOOLEAN		"TRUE"|"FALSE"
+CHAR		[.\n]|digit{hexdigit}"X"
+INTEGER		{digit}+
+REAL		{INTEGER}"."{digit}*
+LONGREAL	{INTEGER}"."{digit}*
+STRING		"""{char}*"""
+SET
+IDENT		letter{letter|digit}
 
 %%
 
-"="			{return EQ_COMP;}
-"#"			{return UNEQ;}
-"<"			{return LT;}
+"="		{return EQ_COMP;}
+"#"		{return UNEQ;}
+"<"		{return LT;}
 "<="		{return LE;}
-">"			{return GT;}
+">"		{return GT;}
 ">="		{return GE;}
 "IN"		{return IN;}
 "IS"		{return IS;}
-relation	{}
 
-"+"			{return PLUS_SYM;}
-"-"			{return MINUS_SYM;}
-"*"			{return MULTIPLY_SYM;}
-"/"			{return DIVIDE_SYM;}
+"+"		{return PLUS_SYM;}
+"-"		{return MINUS_SYM;}
+"*"		{return MULTIPLY_SYM;}
+"/"		{return DIVIDE_SYM;}
 "DIV"		{return DIV;}
 "MOD"		{return MOD;}
 
 "OR"		{return OR_SYM;}
-"&"			{return AND_SYM;}
-"∼"			{return TILDA;}
+"&"		{return AND_SYM;}
+"∼"		{return TILDA;}
 
 ":="		{return ASSIGN;}
 
@@ -57,6 +56,7 @@ relation	{}
 "IF"		{return IF_COND;}
 "THEN"		{return THEN;}
 "ELSIF"		{return ELSEIF;}
+"ELSE"		{return ELSE;}
 "CASE"		{return CASE_COND;}
 "OF"		{return OF;}
 
@@ -66,32 +66,35 @@ relation	{}
 "STRREV"	{return STRREV;}
 "STRCMP"	{return STRCMP;}
 
-{char}		{return CHAR;}
-{integer}	{return INT;}
-{real}		{return REAL;}
-{longreal}	{return LONGREAL;}
-{string}	{return STRING;}
-{ident}		{return IDENT;}
+"TRUE"		{return TRUE;}
+"FALSE"		{return FALSE;}
 
-"(*"
-[\t]
-[\r\n]
+{BOOLEAN}
+{CHAR}		{return CHAR;}
+{INTEGER}	{return INT;}
+{REAL}		{return REAL;}
+{LONGREAL}	{return LONGREAL;}
+{STRING}	{return STRING;}
+{IDENT}		{return IDENT;}
 
-array
+"(*"		{}
+[\t]		{}
+[\r\n]		{}
+
+ARRAY
 begin***
-const
-else
-exit
-import
-loop
-module
-nil
-or
-pointer
-procedure
-return
-type
-var
-with
+CONST
+EXIT
+IMPORT
+LOOP                                                                                                                                              
+MODULE
+NIL
+OR
+POINTER
+PROCEDURE
+RETURN
+TYPE
+VAR
+WITH
 
 %%
