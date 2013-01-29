@@ -20,10 +20,10 @@
 /* regular definitions */
 digit		[0-9]
 letter		[A-Za-z]
-hexdigit	[0-9A-F]
+hexdigit	[0-9A-Fa-f]
 
 BOOLEAN		[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]
-CHAR		['][.][']
+CHAR		(([0]{hexdigit}{hexdigit}[Xx])|([0]{hexdigit}[Xx]))
 INTEGER		{digit}+
 REAL		{INTEGER}"."{digit}*
 STRING		["][^"]*["]
