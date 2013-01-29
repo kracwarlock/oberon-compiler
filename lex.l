@@ -1,12 +1,20 @@
+/*
+        * Copyright (c) 2013 Group 14 Dawood, Mridul, Rabi, Shikhar
+        * All rights reserved.
+
+        * Created in CS335 course Oberon-2 lexical analyzer
+
+*/
+
 %{
-	# include "y.tab.h"
 	# include <stdio.h>
 	# include <stdlib.h>
 	# include <string.h>
 	/* definitions of manifest constants	
 	*/
-	extern int yylineno = 0;
 	void yyerror(const char *s);
+	void AvoidComments();
+
 %}
 
 /* regular definitions */
@@ -14,94 +22,332 @@ digit		[0-9]
 letter		[A-Za-z]
 hexdigit	[0-9A-F]
 
-BOOLEAN		"TRUE"|"FALSE"
-CHAR		[.\n]|digit{hexdigit}"X"
+BOOLEAN		[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]
+CHAR		['][.][']
 INTEGER		{digit}+
 REAL		{INTEGER}"."{digit}*
-LONGREAL	{INTEGER}"."{digit}*
-STRING		"""{char}*"""
-IDENT		letter{letter|digit}
+STRING		["][^"]*["]
+IDENT		{letter}({letter}|{digit})*
 
 %%
 
-"="		{return EQ_COMP;}
-"#"		{return UNEQ;}
-"<"		{return LT;}
-"<="		{return LE;}
-">"		{return GT;}
-">="		{return GE;}
-"IN"		{return IN;}
-"IS"		{return IS;}
+"="		{
+			printf(" EQUAL (%s) ",yytext);
+			//return EQ_COMP;
+		}
+"#"		{
+			printf(" HASH (%s) ",yytext);
+			//return UNEQ;
+		}
+"<"		{
+			printf(" LESS THAN (%s) ",yytext);
+			//return LT;
+		}
+"<="		{
+			printf(" LESS THAN EQUAL (%s) ",yytext);
+			//return LE;
+		}
 
-"+"		{return PLUS_SYM;}
-"-"		{return MINUS_SYM;}
-"*"		{return MULTIPLY_SYM;}
-"/"		{return DIVIDE_SYM;}
-"DIV"		{return DIV;}
-"MOD"		{return MOD;}
+">"		{
+			printf(" GREATER (%s) ",yytext);
+			//return GT;
+		}
+">="		{
+			printf(" GREATER THAN EQUAL (%s) ",yytext);
+			//return GE;
+		}
+"IN"		{
+			printf(" IN (%s) ",yytext);
+			//return IN;
+		}
+"IS"		{
+			printf(" IS (%s) ",yytext);
+			//return IS;
+		}
 
-"OR"		{return OR_SYM;}
-"&"		{return AND_SYM;}
-"∼"		{return TILDA;}
+"+"		{
+			printf(" PLUS (%s) ",yytext);
+			//return PLUS_SYM;
+		}
+"-"		{
+			printf(" MINUS (%s) ",yytext);
+			//return MINUS_SYM;
+		}
+"*"		{
+			printf(" MULTIPLY (%s) ",yytext);
+			//return MULTIPLY_SYM;
+		}
+"/"		{
+			printf(" DIVIDE (%s) ",yytext);
+			//return DIVIDE_SYM;
+		}
+"DIV"		{
+			printf(" DIVISION (%s) ",yytext);
+			//return DIV;
+		}
+"MOD"		{
+			printf(" MODULUS (%s) ",yytext);
+			//return MOD;
+		}
 
-":="		{return ASSIGN;}
+"OR"		{
+			printf(" OR|| (%s) ",yytext);
+			//return OR_SYM;
+		}
+"&"		{
+			printf(" AND (%s) ",yytext);
+			//return AND_SYM;
+		}
+"∼"		{
+			printf(" TILDA (%s) ",yytext);
+			//return TILDA;
+		}
+
+":="		{
+			printf(" ASSIGNMENT (%s) ",yytext);
+			//return ASSIGN;
+		}
 
 [ \t]		{;}
-[\r\n]		{yylineno++;}
 
-"REPEAT"	{return REPEAT;}
-"UNTIL"		{return UNTIL;}
-"FOR"		{return FOR;}
-"TO"		{return TO;}
-"BY"		{return BY;}
-"DO"		{return DOCASE;}
-"END"		{return END;}
-"WHILE"		{return WHILE;}
-"IF"		{return IF_COND;}
-"THEN"		{return THEN;}
-"ELSIF"		{return ELSEIF;}
-"ELSE"		{return ELSE;}
-"CASE"		{return CASE_COND;}
-"OF"		{return OF;}
+[\r\n]		{	
+			printf("\n");
+			printf("Tokenizing Line: %d ---- ",yylineno+1);
+			yylineno++;
+		}
 
-"STRLEN"	{return STRLEN;}
-"STRCAT"	{return STRCAT;}
-"STRCPY"	{return STRCPY;}
-"STRREV"	{return STRREV;}
-"STRCMP"	{return STRCMP;}
+"REPEAT"	{
+			printf(" REPEATT (%s) ",yytext);
+			//return REPEAT;
+		}
+"UNTIL"		{	
+			printf(" UNTILT (%s) ",yytext);
+			//return UNTIL;
+		}
+"FOR"		{
+			printf(" FOR Token (%s) ",yytext);
+			//return FOR;
+		}
+"TO"		{	
+			printf(" TO Token (%s) ",yytext);
+			//return TO;
+		}
+"BY"		{
+			printf(" BY Token (%s) ",yytext);
+			//return BY;
+		}
+"DO"		{
+			printf(" DO Token (%s) ",yytext);
+			//return DOCASE;
+		}
+"END"		{
+			printf(" END Token (%s) ",yytext);
+			//return END;
+		}
+"WHILE"		{	
+			printf(" WHILE Token (%s) ",yytext);
+			//return WHILE;
+		}
+"IF"		{
+			printf(" IF Token (%s) ",yytext);
+			//return IF_COND;
+		}
+"THEN"		{	
+			printf(" THEN Token (%s) ",yytext);
+			//return THEN;
+		}
+"ELSIF"		{
+			printf(" ELSE IF Token (%s) ",yytext);
+			//return ELSEIF;
+		}
+"ELSE"		{
+			printf(" ELSE Token (%s) ",yytext);
+			//return ELSE;
+		}
+"CASE"		{	
+			printf(" CASE Token (%s) ",yytext);
+			//return CASE_COND;
+		}
+"OF"		{	
+			printf(" OF Token (%s) ",yytext);
+			//return OF;
+		}
 
-"TRUE"		{return TRUE;}
-"FALSE"		{return FALSE;}
+"STRLEN"	{
+			printf(" STRLEN Token (%s) ",yytext);
+			//return STRLEN;
+		}
+"STRCAT"	{
+			printf(" STRCAT Token (%s) ",yytext);
+			//return STRCAT;
+		}
+"STRCPY"	{
+			printf(" STRCPY TOken (%s) ",yytext);
+			//return STRCPY;
+		}
+"STRREV"	{
+			printf(" STRREV Token (%s) ",yytext);
+			//return STRREV;
+		}
+"STRCMP"	{	
+			printf(" STRCMP Token (%s) ",yytext);
+			//return STRCMP;
+		}
 
-{BOOLEAN}	{return BOOLEAN;}
-{CHAR}		{return CHAR;}
-{INTEGER}	{return INT;}
-{REAL}		{return REAL;}
-{LONGREAL}	{return LONGREAL;}
-{STRING}	{return STRING;}
-{IDENT}		{return IDENT;}
+"TRUE"		{	
+			printf(" TRUE Token (%s) ",yytext);
+			//return TRUE;
+		}
+"FALSE"		{	
+			printf(" FALSE Token (%s) ",yytext);
+			//return FALSE;
+		}
 
-"(*"		{doComments();}
+"(*"		{
+			AvoidComments();
+			printf(" COMMENT ");
+		}
 
-ARRAY		{return ARRAY;}
-BEGIN		{return BEG;}
-CONST		{return CONST;}
-EXIT		{return EXIT;}
-IMPORT		{return IMPORT;}
-LOOP		{return LOOP;}
-MODULE		{return MODULE;}
-NIL		{return NIL;}
-OR		{return OR;}
-POINTER		{return POINTER;}
-PROCEDURE	{return PROCEDURE;}
-RETURN		{return RETURN;}
-TYPE		{return TYPE;}
-VAR		{return VAR;}
-WITH		{return WITH;}
+"ARRAY"		{	
+			printf(" ARRAY Token (%s) ",yytext);
+			//return ARRAY;
+		}
+"BEGIN"		{
+			printf(" BEGIN Token (%s) ",yytext);
+			//return BEG;
+		}
+"CONST"		{	
+			printf(" CONST Token (%s) ",yytext);
+			//return CONST;
+		}
+"EXIT"		{
+			printf(" EXIT Token (%s) ",yytext);
+			//return EXIT;
+		}
+"IMPORT"	{	
+			printf(" IMPORT Token (%s) ",yytext);
+			//return IMPORT;
+		}
+"LOOP"		{	
+			printf(" LOOP Token (%s) ",yytext);
+			//return LOOP;
+		}
+"MODULE"	{
+			printf(" MODULE Token (%s) ",yytext);
+			//return MODULE;
+		}
+"NIL"		{
+			printf(" NIL Token (%s) ",yytext);
+			//return NIL;
+		}
+"POINTER"	{
+			printf(" POINTER Token (%s) ",yytext);
+			//return POINTER;
+		}
+"PROCEDURE"	{
+			printf(" PROCEDURE Token (%s) ",yytext);
+			//return PROCEDURE;
+		}
+"RETURN"	{		
+			printf(" RETURN Token (%s) ",yytext);
+			//return RETURN;
+		}
+"TYPE"		{
+			printf(" TYPE Token (%s) ",yytext);
+			//return TYPE;
+		}
+"VAR"		{
+			printf(" VAR Token (%s) ",yytext);
+			//return VAR;
+		}
+"WITH"		{
+			printf(" WITH Token (%s) ",yytext);
+			//return WITH;
+		}
+
+
+{BOOLEAN}	{
+			printf(" BOOLEAN (%s)",yytext);
+			//return BOOLEAN;
+		}
+{CHAR}		{	
+			printf(" CHAR (%s) ",yytext);
+			//return CHAR;
+		}
+{INTEGER}	{
+			printf(" INTEGER (%s) ",yytext);
+			//return INTEGER;
+		}
+{REAL}		{
+			printf(" REAL (%s) ",yytext);
+			//return REAL;
+		}
+{STRING}	{
+			printf(" STRING (%s) ",yytext);
+			//return STRING;
+		}
+{IDENT}		{
+			printf(" IDENTIFIER (%s) ",yytext);
+			//return IDENTIFIER;
+		}
 
 %%
 
 void yyerror(const char *s)
 {
-	
+	return;
+}
+
+void AvoidComments(){
+	printf(" Cmmmts ");
+	int count=1;
+	int cp1=0;
+	int cp2=0;
+	int v1=0;
+	int v2=0;
+	char c;
+	while((c=input())!=EOF){
+		if (c=='\n')
+			yylineno++;
+		if (c=='('){
+			cp1=1;
+		}
+		else{
+			if (cp1==1)
+				v1=1;
+			else
+				v1=0;	
+			cp1=0;
+		}
+		if (c=='*'){
+			cp2=1;
+		}
+		else{
+			if (cp2==1)
+				v2=1;
+			else
+				v2=0;
+			cp2=0;
+		}
+		if (v1==1){
+			if (c=='*')
+				count++;
+		}
+		if (v2==1){
+			if (c==')' && count!=0){
+				count--;
+			}
+			if (c==')' && count==0){
+				break;
+			}
+		}
+	}
+}
+
+int main(){
+	printf("The Lexical Analysis Of the Program Is : \n");
+	printf("Tokenizing Line: %d ---- ",yylineno);
+	yylex();
+	printf("\n");
+	return 0;
 }
