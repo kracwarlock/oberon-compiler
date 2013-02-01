@@ -3,70 +3,83 @@ Tokenizing Line: 1 ----  MODULE Token (MODULE)  IDENTIFIER (L0Total) ;
 Tokenizing Line: 2 ---- 
 Tokenizing Line: 3 ----  Cmmmts  COMMENT 
 Tokenizing Line: 5 ---- 
-Tokenizing Line: 6 ----  IMPORT Token (IMPORT)  IDENTIFIER (In) , IDENTIFIER (Out) ;
-Tokenizing Line: 7 ---- 
-Tokenizing Line: 8 ----  CONST Token (CONST)  IDENTIFIER (MAX)  EQUAL (=)  INTEGER (10) ;
-Tokenizing Line: 9 ---- 
-Tokenizing Line: 10 ----  TYPE Token (TYPE) 
-Tokenizing Line: 11 ----  IDENTIFIER (y)  EQUAL (=)  IDENTIFIER (INTEGER) ;
-Tokenizing Line: 12 ----  IDENTIFIER (z)  EQUAL (=)  IDENTIFIER (y) ;
-Tokenizing Line: 13 ----  IDENTIFIER (y)  EQUAL (=)  REAL (123.234)  PLUS (+)  REAL (123.4224) ;
-Tokenizing Line: 14 ----  IDENTIFIER (y)  EQUAL (=)  INTEGER (123)  PLUS (+)  INTEGER (1313) ;
-Tokenizing Line: 15 ----  IDENTIFIER (y)  EQUAL (=)  BOOLEAN (True);
-Tokenizing Line: 16 ----  IDENTIFIER (y)  EQUAL (=)  BOOLEAN (False);
-Tokenizing Line: 17 ----  IDENTIFIER (y)  EQUAL (=)  STRING ("String") ;
-Tokenizing Line: 18 ----  IDENTIFIER (y)  EQUAL (=)  IDENTIFIER (A) ;
-Tokenizing Line: 19 ----  IDENTIFIER (y)  EQUAL (=)  CHAR (01X) ;
-Tokenizing Line: 20 ----  IDENTIFIER (y)  EQUAL (=)  CHAR (0AX) ;
-Tokenizing Line: 21 ----  IDENTIFIER (y)  EQUAL (=)  CHAR (0fX) ;
-Tokenizing Line: 22 ----  IDENTIFIER (y)  EQUAL (=)  CHAR (0fx) ;
-Tokenizing Line: 23 ----  IDENTIFIER (y)  EQUAL (=)  CHAR (0ffX) ;
-Tokenizing Line: 24 ----  IDENTIFIER (y)  EQUAL (=)  CHAR (0ffx) ;
-Tokenizing Line: 25 ----  IDENTIFIER (y)  EQUAL (=)  ABS Token (ABS) ( IDENTIFIER (x) );
-Tokenizing Line: 26 ----  IDENTIFIER (y)  EQUAL (=)  ODD Token (ODD) ( IDENTIFIER (x) );
-Tokenizing Line: 27 ----  IDENTIFIER (y)  EQUAL (=)  LEN Token (LEN) ( IDENTIFIER (x) );
-Tokenizing Line: 28 ----  IDENTIFIER (y)  EQUAL (=)  LSL Token (LSL) ( IDENTIFIER (x) , IDENTIFIER (n) );
-Tokenizing Line: 29 ----  IDENTIFIER (y)  EQUAL (=)  ASR Token (ASR) ( IDENTIFIER (x) , IDENTIFIER (n) );
-Tokenizing Line: 30 ----  IDENTIFIER (y)  EQUAL (=)  ROR Token (ROR) ( IDENTIFIER (x) , IDENTIFIER (n) );
-Tokenizing Line: 31 ----  IDENTIFIER (y)  EQUAL (=)  FLOOR Token (FLOOR) ( IDENTIFIER (x) );
-Tokenizing Line: 32 ----  IDENTIFIER (y)  EQUAL (=)  FLT Token (FLT) ( IDENTIFIER (x) );
-Tokenizing Line: 33 ----  IDENTIFIER (y)  EQUAL (=)  ORD Token (ORD) ( IDENTIFIER (x) );
-Tokenizing Line: 34 ----  IDENTIFIER (y)  EQUAL (=)  CHR Token (CHR) ( IDENTIFIER (x) );
-Tokenizing Line: 35 ----  IDENTIFIER (y)  EQUAL (=)  LONG Token (LONG) ( IDENTIFIER (x) );
-Tokenizing Line: 36 ----  IDENTIFIER (y)  EQUAL (=)  SHORT Token (SHORT) ( IDENTIFIER (x) );
-Tokenizing Line: 37 ----  IDENTIFIER (y)  EQUAL (=)  INC Token (INC) ( IDENTIFIER (v) );
-Tokenizing Line: 38 ----  IDENTIFIER (y)  EQUAL (=)  INC Token (INC) ( IDENTIFIER (v) , IDENTIFIER (n) );
-Tokenizing Line: 39 ----  IDENTIFIER (y)  EQUAL (=)  DEC Token (DEC) ( IDENTIFIER (v) );
-Tokenizing Line: 40 ----  IDENTIFIER (y)  EQUAL (=)  DEC Token (DEC) ( IDENTIFIER (v) , IDENTIFIER (n) );
-Tokenizing Line: 41 ----  IDENTIFIER (y)  EQUAL (=)  INCL Token (INCL) ( IDENTIFIER (v) , IDENTIFIER (x) );
-Tokenizing Line: 42 ----  IDENTIFIER (y)  EQUAL (=)  EXCL Token (EXCL) ( IDENTIFIER (v) , IDENTIFIER (x) );
-Tokenizing Line: 43 ----  IDENTIFIER (y)  EQUAL (=)  COPY Token (COPY) ( IDENTIFIER (x) , IDENTIFIER (v) );
-Tokenizing Line: 44 ----  IDENTIFIER (y)  EQUAL (=)  NEW Token (NEW) ( IDENTIFIER (v) );
-Tokenizing Line: 45 ----  IDENTIFIER (y)  EQUAL (=)  ASSERT Token (ASSERT) ( IDENTIFIER (b) );
-Tokenizing Line: 46 ----  IDENTIFIER (y)  EQUAL (=)  ASSERT Token (ASSERT) ( IDENTIFIER (b) , IDENTIFIER (n) );
-Tokenizing Line: 47 ----  IDENTIFIER (y)  EQUAL (=)  PACK Token (PACK) ( IDENTIFIER (x) , IDENTIFIER (y) );
-Tokenizing Line: 48 ----  IDENTIFIER (y)  EQUAL (=)  UNPK Token (UNPK) ( IDENTIFIER (x) , IDENTIFIER (y) );
-Tokenizing Line: 49 ----  IDENTIFIER (rc)  EQUAL (=)  RECORD Token (RECORD)  IDENTIFIER (a) , IDENTIFIER (b) , IDENTIFIER (c) : IDENTIFIER (INTEGER) ; IDENTIFIER (d) : POINTER Token (POINTER)  TO Token (TO)  ARRAY Token (ARRAY)  OF Token (OF)  IDENTIFIER (INTEGER) ; END Token (END) ;
-Tokenizing Line: 50 ----  IDENTIFIER (rc1)  EQUAL (=)  RECORD Token (RECORD)  IDENTIFIER (a) , IDENTIFIER (b) , IDENTIFIER (c) : IDENTIFIER (INTEGER) ; IDENTIFIER (d) : POINTER Token (POINTER)  TO Token (TO)  ARRAY Token (ARRAY)  OF Token (OF)  IDENTIFIER (INTEGER) ; END Token (END) ;
-Tokenizing Line: 51 ----  IDENTIFIER (rc2)  EQUAL (=)  RECORD Token (RECORD)  IDENTIFIER (name) , IDENTIFIER (firstname) : ARRAY Token (ARRAY)  INTEGER (32)  OF Token (OF)  IDENTIFIER (CHAR) ; IDENTIFIER (age) : IDENTIFIER (INTEGER) ; IDENTIFIER (salary) : IDENTIFIER (REAL) ; IDENTIFIER (check) : IDENTIFIER (rc1) ; END Token (END) 
-Tokenizing Line: 52 ----  IDENTIFIER (fn)  EQUAL (=)  PROCEDURE Token (PROCEDURE) ( IDENTIFIER (a) , IDENTIFIER (b) : IDENTIFIER (INTEGER) ; IDENTIFIER (c) , IDENTIFIER (d) : POINTER Token (POINTER)  TO Token (TO)  ARRAY Token (ARRAY)  OF Token (OF)  IDENTIFIER (INTEGER) ): IDENTIFIER (rc) ;
-Tokenizing Line: 53 ----  BEGIN Token (BEGIN) 
-Tokenizing Line: 54 ----  Cmmmts  COMMENT 
-Tokenizing Line: 55 ----  IDENTIFIER (N)  ASSIGNMENT (:=)  INTEGER (0) ;
-Tokenizing Line: 56 ----  IDENTIFIER (In) . IDENTIFIER (Int) ( IDENTIFIER (x) );
-Tokenizing Line: 57 ----  WHILE Token (WHILE)  IDENTIFIER (In) . IDENTIFIER (Done)  DO Token (DO) 
-Tokenizing Line: 58 ----  IDENTIFIER (pints) [ IDENTIFIER (N) ] ASSIGNMENT (:=)  IDENTIFIER (x) ;
-Tokenizing Line: 59 ----  IDENTIFIER (N)  ASSIGNMENT (:=)  IDENTIFIER (N)  PLUS (+)  INTEGER (1) ;
-Tokenizing Line: 60 ----  IDENTIFIER (In) . IDENTIFIER (Int) ( IDENTIFIER (x) )
-Tokenizing Line: 61 ----  END Token (END) ;
-Tokenizing Line: 62 ---- 
-Tokenizing Line: 63 ----  Cmmmts  COMMENT 
-Tokenizing Line: 64 ----  IDENTIFIER (k)  ASSIGNMENT (:=)  INTEGER (0) ; IDENTIFIER (total)  ASSIGNMENT (:=)  INTEGER (0) ;
-Tokenizing Line: 65 ----  WHILE Token (WHILE)  IDENTIFIER (k)  LESS THAN (<)  IDENTIFIER (N)  DO Token (DO) 
-Tokenizing Line: 66 ----  IDENTIFIER (total)  ASSIGNMENT (:=)  IDENTIFIER (total)  PLUS (+)  IDENTIFIER (pints) [ IDENTIFIER (k) ];
-Tokenizing Line: 67 ----  IDENTIFIER (k)  ASSIGNMENT (:=)  IDENTIFIER (k)  PLUS (+)  INTEGER (1) ;
-Tokenizing Line: 68 ----  END Token (END) ;
-Tokenizing Line: 69 ---- 
-Tokenizing Line: 70 ----  Cmmmts  COMMENT 
-Tokenizing Line: 71 ----  IDENTIFIER (Out) . IDENTIFIER (Int) ( IDENTIFIER (total) , INTEGER (0) ); IDENTIFIER (Out) . IDENTIFIER (Ln) 
-Tokenizing Line: 72 ----  END Token (END)  IDENTIFIER (L0Total) .
+Tokenizing Line: 6 ----  Cmmmts  COMMENT 
+Tokenizing Line: 8 ---- 
+Tokenizing Line: 9 ----  IMPORT Token (IMPORT)  IDENTIFIER (In) , IDENTIFIER (Out) ;
+Tokenizing Line: 10 ---- 
+Tokenizing Line: 11 ----  CONST Token (CONST)  IDENTIFIER (MAX)  EQUAL (=)  INTEGER (10) ;
+Tokenizing Line: 12 ---- 
+Tokenizing Line: 13 ----  TYPE Token (TYPE) 
+Tokenizing Line: 14 ----  IDENTIFIER (a) : INTEGER_IDENT (INTEGER) ;
+Tokenizing Line: 15 ----  IDENTIFIER (b) : CHAR_IDENT (CHAR) ;
+Tokenizing Line: 16 ----  IDENTIFIER (c) : BOOLEAN_IDENT (BOOLEAN);
+Tokenizing Line: 17 ----  IDENTIFIER (d) : REAL_IDENT (REAL) ;
+Tokenizing Line: 18 ----  IDENTIFIER (e) : LONGREAL_IDENT (LONGREAL) ;
+Tokenizing Line: 19 ---- 
+Tokenizing Line: 20 ----  IDENTIFIER (a)  EQUAL (=)  INTEGER (10) ;
+Tokenizing Line: 21 ----  IDENTIFIER (b)  EQUAL (=)  CHAR (01X) ;
+Tokenizing Line: 22 ----  IDENTIFIER (b)  EQUAL (=)  CHAR (0AX) ;
+Tokenizing Line: 23 ----  IDENTIFIER (c)  EQUAL (=)  TRUE Token (TRUE) ;
+Tokenizing Line: 24 ----  IDENTIFIER (d)  EQUAL (=)  REAL (123.232) ;
+Tokenizing Line: 25 ----  IDENTIFIER (e)  EQUAL (=)  REAL (10001.133311213143) ;
+Tokenizing Line: 26 ---- 
+Tokenizing Line: 27 ----  IDENTIFIER (z)  EQUAL (=)  IDENTIFIER (y) ;
+Tokenizing Line: 28 ----  IDENTIFIER (y)  EQUAL (=)  REAL (123.234)  PLUS (+)  REAL (123.4224) ;
+Tokenizing Line: 29 ----  IDENTIFIER (y)  EQUAL (=)  INTEGER (123)  PLUS (+)  INTEGER (1313) ;
+Tokenizing Line: 30 ----  IDENTIFIER (y)  EQUAL (=)  BOOLEAN (True);
+Tokenizing Line: 31 ----  IDENTIFIER (y)  EQUAL (=)  BOOLEAN (False);
+Tokenizing Line: 32 ----  IDENTIFIER (y)  EQUAL (=)  STRING ("String") ;
+Tokenizing Line: 33 ----  IDENTIFIER (y)  EQUAL (=)  IDENTIFIER (A) ;
+Tokenizing Line: 34 ----  IDENTIFIER (b)  EQUAL (=)  CHAR (0fX) ;
+Tokenizing Line: 35 ----  IDENTIFIER (b)  EQUAL (=)  CHAR (0fx) ;
+Tokenizing Line: 36 ----  IDENTIFIER (b)  EQUAL (=)  CHAR (0ffX) ;
+Tokenizing Line: 37 ----  IDENTIFIER (b)  EQUAL (=)  CHAR (0ffx) ;
+Tokenizing Line: 38 ----  IDENTIFIER (y)  EQUAL (=)  ABS Token (ABS) ( IDENTIFIER (x) );
+Tokenizing Line: 39 ----  IDENTIFIER (y)  EQUAL (=)  ODD Token (ODD) ( IDENTIFIER (x) );
+Tokenizing Line: 40 ----  IDENTIFIER (y)  EQUAL (=)  LEN Token (LEN) ( IDENTIFIER (x) );
+Tokenizing Line: 41 ----  IDENTIFIER (y)  EQUAL (=)  LSL Token (LSL) ( IDENTIFIER (x) , IDENTIFIER (n) );
+Tokenizing Line: 42 ----  IDENTIFIER (y)  EQUAL (=)  ASR Token (ASR) ( IDENTIFIER (x) , IDENTIFIER (n) );
+Tokenizing Line: 43 ----  IDENTIFIER (y)  EQUAL (=)  ROR Token (ROR) ( IDENTIFIER (x) , IDENTIFIER (n) );
+Tokenizing Line: 44 ----  IDENTIFIER (y)  EQUAL (=)  FLOOR Token (FLOOR) ( IDENTIFIER (x) );
+Tokenizing Line: 45 ----  IDENTIFIER (y)  EQUAL (=)  FLT Token (FLT) ( IDENTIFIER (x) );
+Tokenizing Line: 46 ----  IDENTIFIER (y)  EQUAL (=)  ORD Token (ORD) ( IDENTIFIER (x) );
+Tokenizing Line: 47 ----  IDENTIFIER (y)  EQUAL (=)  CHR Token (CHR) ( IDENTIFIER (x) );
+Tokenizing Line: 48 ----  IDENTIFIER (y)  EQUAL (=)  LONG Token (LONG) ( IDENTIFIER (x) );
+Tokenizing Line: 49 ----  IDENTIFIER (y)  EQUAL (=)  SHORT Token (SHORT) ( IDENTIFIER (x) );
+Tokenizing Line: 50 ----  IDENTIFIER (y)  EQUAL (=)  INC Token (INC) ( IDENTIFIER (v) );
+Tokenizing Line: 51 ----  IDENTIFIER (y)  EQUAL (=)  INC Token (INC) ( IDENTIFIER (v) , IDENTIFIER (n) );
+Tokenizing Line: 52 ----  IDENTIFIER (y)  EQUAL (=)  DEC Token (DEC) ( IDENTIFIER (v) );
+Tokenizing Line: 53 ----  IDENTIFIER (y)  EQUAL (=)  DEC Token (DEC) ( IDENTIFIER (v) , IDENTIFIER (n) );
+Tokenizing Line: 54 ----  IDENTIFIER (y)  EQUAL (=)  INCL Token (INCL) ( IDENTIFIER (v) , IDENTIFIER (x) );
+Tokenizing Line: 55 ----  IDENTIFIER (y)  EQUAL (=)  EXCL Token (EXCL) ( IDENTIFIER (v) , IDENTIFIER (x) );
+Tokenizing Line: 56 ----  IDENTIFIER (y)  EQUAL (=)  COPY Token (COPY) ( IDENTIFIER (x) , IDENTIFIER (v) );
+Tokenizing Line: 57 ----  IDENTIFIER (y)  EQUAL (=)  NEW Token (NEW) ( IDENTIFIER (v) );
+Tokenizing Line: 58 ----  IDENTIFIER (y)  EQUAL (=)  ASSERT Token (ASSERT) ( IDENTIFIER (b) );
+Tokenizing Line: 59 ----  IDENTIFIER (y)  EQUAL (=)  ASSERT Token (ASSERT) ( IDENTIFIER (b) , IDENTIFIER (n) );
+Tokenizing Line: 60 ----  IDENTIFIER (y)  EQUAL (=)  PACK Token (PACK) ( IDENTIFIER (x) , IDENTIFIER (y) );
+Tokenizing Line: 61 ----  IDENTIFIER (y)  EQUAL (=)  UNPK Token (UNPK) ( IDENTIFIER (x) , IDENTIFIER (y) );
+Tokenizing Line: 62 ----  IDENTIFIER (rc)  EQUAL (=)  RECORD Token (RECORD)  IDENTIFIER (a) , IDENTIFIER (b) , IDENTIFIER (c) : INTEGER_IDENT (INTEGER) ; IDENTIFIER (d) : POINTER Token (POINTER)  TO Token (TO)  ARRAY Token (ARRAY)  OF Token (OF)  INTEGER_IDENT (INTEGER) ; END Token (END) ;
+Tokenizing Line: 63 ----  IDENTIFIER (rc1)  EQUAL (=)  RECORD Token (RECORD)  IDENTIFIER (a) , IDENTIFIER (b) , IDENTIFIER (c) : INTEGER_IDENT (INTEGER) ; IDENTIFIER (d) : POINTER Token (POINTER)  TO Token (TO)  ARRAY Token (ARRAY)  OF Token (OF)  INTEGER_IDENT (INTEGER) ; END Token (END) ;
+Tokenizing Line: 64 ----  IDENTIFIER (rc2)  EQUAL (=)  RECORD Token (RECORD)  IDENTIFIER (name) , IDENTIFIER (firstname) : ARRAY Token (ARRAY)  INTEGER (32)  OF Token (OF)  CHAR_IDENT (CHAR) ; IDENTIFIER (age) : INTEGER_IDENT (INTEGER) ; IDENTIFIER (salary) : REAL_IDENT (REAL) ; IDENTIFIER (check) : IDENTIFIER (rc1) ; END Token (END) 
+Tokenizing Line: 65 ----  IDENTIFIER (fn)  EQUAL (=)  PROCEDURE Token (PROCEDURE) ( IDENTIFIER (a) , IDENTIFIER (b) : INTEGER_IDENT (INTEGER) ; IDENTIFIER (c) , IDENTIFIER (d) : POINTER Token (POINTER)  TO Token (TO)  ARRAY Token (ARRAY)  OF Token (OF)  INTEGER_IDENT (INTEGER) ): IDENTIFIER (rc) ;
+Tokenizing Line: 66 ----  BEGIN Token (BEGIN) 
+Tokenizing Line: 67 ----  Cmmmts  COMMENT 
+Tokenizing Line: 68 ----  IDENTIFIER (N)  ASSIGNMENT (:=)  INTEGER (0) ;
+Tokenizing Line: 69 ----  IDENTIFIER (In) . IDENTIFIER (Int) ( IDENTIFIER (x) );
+Tokenizing Line: 70 ----  WHILE Token (WHILE)  IDENTIFIER (In) . IDENTIFIER (Done)  DO Token (DO) 
+Tokenizing Line: 71 ----  IDENTIFIER (pints) [ IDENTIFIER (N) ] ASSIGNMENT (:=)  IDENTIFIER (x) ;
+Tokenizing Line: 72 ----  IDENTIFIER (N)  ASSIGNMENT (:=)  IDENTIFIER (N)  PLUS (+)  INTEGER (1) ;
+Tokenizing Line: 73 ----  IDENTIFIER (In) . IDENTIFIER (Int) ( IDENTIFIER (x) )
+Tokenizing Line: 74 ----  END Token (END) ;
+Tokenizing Line: 75 ---- 
+Tokenizing Line: 76 ----  Cmmmts  COMMENT 
+Tokenizing Line: 77 ----  IDENTIFIER (k)  ASSIGNMENT (:=)  INTEGER (0) ; IDENTIFIER (total)  ASSIGNMENT (:=)  INTEGER (0) ;
+Tokenizing Line: 78 ----  WHILE Token (WHILE)  IDENTIFIER (k)  LESS THAN (<)  IDENTIFIER (N)  DO Token (DO) 
+Tokenizing Line: 79 ----  IDENTIFIER (total)  ASSIGNMENT (:=)  IDENTIFIER (total)  PLUS (+)  IDENTIFIER (pints) [ IDENTIFIER (k) ];
+Tokenizing Line: 80 ----  IDENTIFIER (k)  ASSIGNMENT (:=)  IDENTIFIER (k)  PLUS (+)  INTEGER (1) ;
+Tokenizing Line: 81 ----  END Token (END) ;
+Tokenizing Line: 82 ---- 
+Tokenizing Line: 83 ----  Cmmmts  COMMENT 
+Tokenizing Line: 84 ----  IDENTIFIER (Out) . IDENTIFIER (Int) ( IDENTIFIER (total) , INTEGER (0) ); IDENTIFIER (Out) . IDENTIFIER (Ln) 
+Tokenizing Line: 85 ----  END Token (END)  IDENTIFIER (L0Total) .
+Tokenizing Line: 86 ---- 

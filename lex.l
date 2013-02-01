@@ -332,6 +332,27 @@ IDENT		{letter}({letter}|{digit})*
 			printf(" UNPK Token (%s) ",yytext);
 		}
 
+"BOOLEAN"	{
+			printf(" BOOLEAN_IDENT (%s)",yytext);
+			//return BOOLEAN;
+		}
+"CHAR"		{	
+			printf(" CHAR_IDENT (%s) ",yytext);
+			//return CHAR;
+		}
+"INTEGER"	{
+			printf(" INTEGER_IDENT (%s) ",yytext);
+			//return INTEGER;
+		}
+"REAL"		{
+			printf(" REAL_IDENT (%s) ",yytext);
+			//return REAL;
+		}
+"LONGREAL"	{
+			printf(" LONGREAL_IDENT (%s) ",yytext);
+			//return LONGREAL;
+		}
+
 {BOOLEAN}	{
 			printf(" BOOLEAN (%s)",yytext);
 			//return BOOLEAN;
@@ -411,7 +432,7 @@ void AvoidComments(){
 }
 
 int main(){
-	
+
 	printf("The Lexical Analysis Of the Program Is : \n");
 	printf("Tokenizing Line: %d ---- ",yylineno);
 	yylex();

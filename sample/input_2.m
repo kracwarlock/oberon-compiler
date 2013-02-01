@@ -3,12 +3,27 @@ MODULE L0Total;
 (* Read a file of integers from standard 
    input and print the total *)
 
+(* (* Nested comment 
+	implementation in Oberon  *) *)
+
 IMPORT In, Out;
 
 CONST MAX = 10;
 
 TYPE
-  y = INTEGER;
+  a: INTEGER;
+  b: CHAR;
+  c: BOOLEAN;
+  d: REAL;
+  e: LONGREAL;
+
+  a = 10;
+  b = 01X;
+  b = 0AX;
+  c = TRUE;
+  d = 123.232;
+  e = 10001.133311213143;
+  
   z = y;
   y = 123.234 + 123.4224;
   y = 123 + 1313;
@@ -16,12 +31,10 @@ TYPE
   y= False;
   y = "String";
   y = A;
-  y = 01X;
-  y = 0AX;
-  y = 0fX;
-  y = 0fx;
-  y = 0ffX;
-  y = 0ffx;
+  b = 0fX;
+  b = 0fx;
+  b = 0ffX;
+  b = 0ffx;
   y = ABS(x);
   y = ODD(x);
   y = LEN(x);
