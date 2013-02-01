@@ -212,6 +212,10 @@ IDENT		{letter}({letter}|{digit})*
 			printf(" ARRAY Token (%s) ",yytext);
 			//return ARRAY;
 		}
+"RECORD"	{	
+			printf(" RECORD Token (%s) ",yytext);
+			//return ARRAY;
+		}
 "BEGIN"		{
 			printf(" BEGIN Token (%s) ",yytext);
 			//return BEG;
@@ -264,7 +268,90 @@ IDENT		{letter}({letter}|{digit})*
 			printf(" WITH Token (%s) ",yytext);
 			//return WITH;
 		}
+"ABS"		{
+			printf(" ABS Token (%s) ",yytext);
+		}
+"ODD"		{
+			printf(" ODD Token (%s) ",yytext);
+		}
+"LEN"		{
+			printf(" LEN Token (%s) ",yytext);
+		}
+"LSL"		{
+			printf(" LSL Token (%s) ",yytext);
+		}
+"ASR"		{
+			printf(" ASR Token (%s) ",yytext);
+		}
+"ROR"		{
+			printf(" ROR Token (%s) ",yytext);
+		}
+"FLOOR"		{
+			printf(" FLOOR Token (%s) ",yytext);
+		}
+"FLT"		{
+			printf(" FLT Token (%s) ",yytext);
+		}
+"ORD"		{
+			printf(" ORD Token (%s) ",yytext);
+		}
+"CHR"		{
+			printf(" CHR Token (%s) ",yytext);
+		}
+"LONG"		{
+			printf(" LONG Token (%s) ",yytext);
+		}
+"SHORT"		{
+			printf(" SHORT Token (%s) ",yytext);
+		}
+"INC"		{
+			printf(" INC Token (%s) ",yytext);
+		}
+"DEC"		{
+			printf(" DEC Token (%s) ",yytext);
+		}
+"INCL"		{
+			printf(" INCL Token (%s) ",yytext);
+		}
+"EXCL"		{
+			printf(" EXCL Token (%s) ",yytext);
+		}
+"COPY"		{
+			printf(" COPY Token (%s) ",yytext);
+		}
+"NEW"		{
+			printf(" NEW Token (%s) ",yytext);
+		}
+"ASSERT"		{
+			printf(" ASSERT Token (%s) ",yytext);
+		}
+"PACK"		{
+			printf(" PACK Token (%s) ",yytext);
+		}
+"UNPK"		{
+			printf(" UNPK Token (%s) ",yytext);
+		}
 
+"BOOLEAN"	{
+			printf(" BOOLEAN_IDENT (%s)",yytext);
+			//return BOOLEAN;
+		}
+"CHAR"		{	
+			printf(" CHAR_IDENT (%s) ",yytext);
+			//return CHAR;
+		}
+"INTEGER"	{
+			printf(" INTEGER_IDENT (%s) ",yytext);
+			//return INTEGER;
+		}
+"REAL"		{
+			printf(" REAL_IDENT (%s) ",yytext);
+			//return REAL;
+		}
+"LONGREAL"	{
+			printf(" LONGREAL_IDENT (%s) ",yytext);
+			//return LONGREAL;
+		}
 
 {BOOLEAN}	{
 			printf(" BOOLEAN (%s)",yytext);
@@ -345,6 +432,7 @@ void AvoidComments(){
 }
 
 int main(){
+
 	printf("The Lexical Analysis Of the Program Is : \n");
 	printf("Tokenizing Line: %d ---- ",yylineno);
 	yylex();
