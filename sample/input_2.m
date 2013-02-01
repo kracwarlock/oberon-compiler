@@ -22,8 +22,33 @@ TYPE
   y = 0fx;
   y = 0ffX;
   y = 0ffx;
+  y = ABS(x);
+  y = ODD(x);
+  y = LEN(x);
+  y = LSL(x,n);
+  y = ASR(x,n);
+  y = ROR(x,n);
+  y = FLOOR(x);
+  y = FLT(x);
+  y = ORD(x);
+  y = CHR(x);
+  y = LONG(x);
+  y = SHORT(x);
+  y = INC(v);
+  y = INC(v,n);
+  y = DEC(v);
+  y = DEC(v,n);
+  y = INCL(v,x);
+  y = EXCL(v,x);
+  y = COPY(x,v);
+  y = NEW(v);
+  y = ASSERT(b);
+  y = ASSERT(b,n);
+  y = PACK(x,y);
+  y = UNPK(x,y);
   rc = RECORD a, b, c: INTEGER; d: POINTER TO ARRAY OF INTEGER; END;
   rc1 = RECORD a, b, c: INTEGER; d: POINTER TO ARRAY OF INTEGER; END;
+  rc2 = RECORD name, firstname: ARRAY 32 OF CHAR; age: INTEGER; salary: REAL; check : rc1; END
   fn = PROCEDURE ( a, b: INTEGER; c, d: POINTER TO ARRAY OF INTEGER ) : rc;
 BEGIN
   (* Read in the numbers *)
