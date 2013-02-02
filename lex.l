@@ -14,10 +14,10 @@ digit		[0-9]
 letter		[A-Za-z]
 hexdigit	[0-9A-Fa-f]
 
-BOOLEAN		[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]
-CHAR		(([0]{hexdigit}{hexdigit}[Xx])|([0]{hexdigit}[Xx]))
+BOOLEAN		"TRUE"|"FALSE"
+CHAR		(([0]{hexdigit}{hexdigit}"X")|([0]{hexdigit}"X"))
 INTEGER		{digit}+
-REAL		{INTEGER}"."{digit}*
+REAL		{INTEGER}"."{digit}+
 STRING		["][^"]*["]
 IDENT		{letter}({letter}|{digit})*
 
@@ -94,10 +94,13 @@ IDENT		{letter}({letter}|{digit})*
 			printf(" TILDA (%s) ",yytext);
 			//return TILDA;
 		}
-
 ":="		{
 			printf(" ASSIGNMENT (%s) ",yytext);
 			//return ASSIGN;
+		}
+".."		{
+			printf(" DOTDOT (%s) ",yytext);
+			//return DOTDOT;
 		}
 
 [ \t]		{;}
@@ -185,16 +188,6 @@ IDENT		{letter}({letter}|{digit})*
 			printf(" STRCMP Token (%s) ",yytext);
 			//return STRCMP;
 		}
-
-"TRUE"		{	
-			printf(" TRUE Token (%s) ",yytext);
-			//return TRUE;
-		}
-"FALSE"		{	
-			printf(" FALSE Token (%s) ",yytext);
-			//return FALSE;
-		}
-
 "(*"		{
 			AvoidComments();
 			printf(" COMMENT ");
@@ -207,6 +200,10 @@ IDENT		{letter}({letter}|{digit})*
 "RECORD"	{	
 			printf(" RECORD Token (%s) ",yytext);
 			//return ARRAY;
+		}
+"SET"		{	
+			printf(" SET Token (%s) ",yytext);
+			//return SET;
 		}
 "BEGIN"		{
 			printf(" BEGIN Token (%s) ",yytext);
