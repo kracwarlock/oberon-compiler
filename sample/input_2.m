@@ -3,12 +3,27 @@ MODULE L0Total;
 (* Read a file of integers from standard 
    input and print the total *)
 
+(* (* Nested comment 
+	implementation in Oberon  *) *)
+
 IMPORT In, Out;
 
 CONST MAX = 10;
 
 TYPE
-  y = INTEGER;
+  a: INTEGER;
+  b: CHAR;
+  c: BOOLEAN;
+  d: REAL;
+  e: LONGREAL;
+
+  a = 10;
+  b = 01X;
+  b = 0AX;
+  c = TRUE;
+  d = 123.232;
+  e = 10001.133311213143;
+  
   z = y;
   y = 123.234 + 123.4224;
   y = 123 + 1313;
@@ -16,14 +31,37 @@ TYPE
   y= False;
   y = "String";
   y = A;
-  y = 01X;
-  y = 0AX;
-  y = 0fX;
-  y = 0fx;
-  y = 0ffX;
-  y = 0ffx;
+  b = 0fX;
+  b = 0fx;
+  b = 0ffX;
+  b = 0ffx;
+  y = ABS(x);
+  y = ODD(x);
+  y = LEN(x);
+  y = LSL(x,n);
+  y = ASR(x,n);
+  y = ROR(x,n);
+  y = FLOOR(x);
+  y = FLT(x);
+  y = ORD(x);
+  y = CHR(x);
+  y = LONG(x);
+  y = SHORT(x);
+  y = INC(v);
+  y = INC(v,n);
+  y = DEC(v);
+  y = DEC(v,n);
+  y = INCL(v,x);
+  y = EXCL(v,x);
+  y = COPY(x,v);
+  y = NEW(v);
+  y = ASSERT(b);
+  y = ASSERT(b,n);
+  y = PACK(x,y);
+  y = UNPK(x,y);
   rc = RECORD a, b, c: INTEGER; d: POINTER TO ARRAY OF INTEGER; END;
   rc1 = RECORD a, b, c: INTEGER; d: POINTER TO ARRAY OF INTEGER; END;
+  rc2 = RECORD name, firstname: ARRAY 32 OF CHAR; age: INTEGER; salary: REAL; check : rc1; END
   fn = PROCEDURE ( a, b: INTEGER; c, d: POINTER TO ARRAY OF INTEGER ) : rc;
 BEGIN
   (* Read in the numbers *)
