@@ -1,11 +1,3 @@
-/*
-        * Copyright (c) 2013 Group 14 Dawood, Mridul, Rabi, Shikhar
-        * All rights reserved.
-
-        * Created in CS335 course Oberon-2 lexical analyzer
-
-*/
-
 %{
 	# include <stdio.h>
 	# include <stdlib.h>
@@ -432,7 +424,6 @@ void AvoidComments(){
 }
 
 int main(){
-
 	printf("The Lexical Analysis Of the Program Is : \n");
 	printf("Tokenizing Line: %d ---- ",yylineno);
 	yylex();
