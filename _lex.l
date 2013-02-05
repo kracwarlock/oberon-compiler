@@ -17,7 +17,7 @@ hexdigit    [0-9A-Fa-f]
 BOOLEAN     "TRUE"|"FALSE"
 CHAR        (([0]{hexdigit}{hexdigit}[Xx])|([0]{hexdigit}[Xx]))
 INTEGER     {digit}+
-REAL        {INTEGER}"."{digit}*
+REAL        {INTEGER}"."{digit}+
 STRING      ["][^"]*["]
 IDENT       {letter}({letter}|{digit})*
 
@@ -63,12 +63,6 @@ IDENT       {letter}({letter}|{digit})*
 "CASE"          {return CASE_COND;}
 "OF"            {return OF;}
 
-"STRLEN"        {return STRLEN;}
-"STRCAT"        {return STRCAT;}
-"STRCPY"        {return STRCPY;}
-"STRREV"        {return STRREV;}
-"STRCMP"        {return STRCMP;}
-
 {BOOLEAN}       {return BOOLEAN;}
 {CHAR}          {return CHAR;}
 {INTEGER}       {return INT;}
@@ -94,6 +88,8 @@ IDENT       {letter}({letter}|{digit})*
 "VAR"           {return VAR;}
 "WITH"          {return WITH;}
 
+.               {return yytext[0];}
+
 %%
 
 void yyerror(const char *s)
@@ -102,12 +98,9 @@ void yyerror(const char *s)
 }
 
 void AvoidComments(){
-    printf(" Cmmmts ");
     int count=1;
-    int cp1=0;
-    int cp2=0;
-    int v1=0;
-    int v2=0;
+    int cp1=0, cp2=0;
+    int v1=0, v2=0;
     char c;
     while((c=input())!=EOF){
         if (c=='\n')
