@@ -23,8 +23,6 @@ IDENT       {letter}({letter}|{digit})*
 
 %%
 
-"="             {return EQ_COMP;}
-"#"             {return UNEQ;}
 "<"             {return LT;}
 "<="            {return LE;}
 ">"             {return GT;}
@@ -32,16 +30,9 @@ IDENT       {letter}({letter}|{digit})*
 "IN"            {return IN;}
 "IS"            {return IS;}
 
-"+"             {return PLUS_SYM;}
-"-"             {return MINUS_SYM;}
-"*"             {return MULTIPLY_SYM;}
-"/"             {return DIVIDE_SYM;}
 "DIV"           {return DIV;}
 "MOD"           {return MOD;}
-
-"OR"            {return OR_SYM;}
-"&"             {return AND_SYM;}
-"∼"             {return TILDA;}
+"OR"            {return OR;}
 
 ":="            {return ASSIGN;}
 
@@ -53,7 +44,7 @@ IDENT       {letter}({letter}|{digit})*
 "FOR"           {return FOR;}
 "TO"            {return TO;}
 "BY"            {return BY;}
-"DO"            {return DOCASE;}
+"DO"            {return DO;}
 "END"           {return END;}
 "WHILE"         {return WHILE;}
 "IF"            {return IF_COND;}
