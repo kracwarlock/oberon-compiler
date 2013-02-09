@@ -2,6 +2,7 @@
 	# include <stdio.h>
 	# include <stdlib.h>
 	# include <string.h>
+	# include "y.tab.h"
 	/* definitions of manifest constants	
 	*/
 	void yyerror(const char *s);
@@ -24,83 +25,82 @@ IDENT		{letter}({letter}|{digit})*
 %%
 
 "="		{
-			printf(" EQUAL (%s) ",yytext);
-			//return EQ_COMP;
+			return EQ_COMP;
 		}
 "#"		{
 			printf(" HASH (%s) ",yytext);
-			//return UNEQ;
+			return UNEQ;
 		}
 "<"		{
 			printf(" LESS THAN (%s) ",yytext);
-			//return LT;
+			return LT;
 		}
 "<="		{
 			printf(" LESS THAN EQUAL (%s) ",yytext);
-			//return LE;
+			return LE;
 		}
 
 ">"		{
 			printf(" GREATER (%s) ",yytext);
-			//return GT;
+			return GT;
 		}
 ">="		{
 			printf(" GREATER THAN EQUAL (%s) ",yytext);
-			//return GE;
+			return GE;
 		}
 "IN"		{
 			printf(" IN (%s) ",yytext);
-			//return IN;
+			return IN;
 		}
 "IS"		{
 			printf(" IS (%s) ",yytext);
-			//return IS;
+			return IS;
 		}
 
 "+"		{
 			printf(" PLUS (%s) ",yytext);
-			//return PLUS_SYM;
+			return PLUS_SYM;
 		}
 "-"		{
 			printf(" MINUS (%s) ",yytext);
-			//return MINUS_SYM;
+			return MINUS_SYM;
 		}
 "*"		{
 			printf(" MULTIPLY (%s) ",yytext);
-			//return MULTIPLY_SYM;
+			return MULTIPLY_SYM;
 		}
 "/"		{
 			printf(" DIVIDE (%s) ",yytext);
-			//return DIVIDE_SYM;
+			return DIVIDE_SYM;
 		}
 "DIV"		{
 			printf(" DIVISION (%s) ",yytext);
-			//return DIV;
+			return DIV;
 		}
 "MOD"		{
 			printf(" MODULUS (%s) ",yytext);
-			//return MOD;
+			return MOD;
 		}
 
 "OR"		{
 			printf(" OR|| (%s) ",yytext);
-			//return OR_SYM;
+			return OR_SYM;
 		}
 "&"		{
 			printf(" AND (%s) ",yytext);
-			//return AND_SYM;
+			return AND_SYM;
 		}
 "∼"		{
 			printf(" TILDA (%s) ",yytext);
-			//return TILDA;
+			return TILDA;
 		}
 ":="		{
 			printf(" ASSIGNMENT (%s) ",yytext);
-			//return ASSIGN;
+			return ASSIGN;
 		}
 ".."		{
 			printf(" DOTDOT (%s) ",yytext);
-			//return DOTDOT;
+			return DOTDOT;
 		}
 
 [ \t]		{;}
@@ -113,80 +113,80 @@ IDENT		{letter}({letter}|{digit})*
 
 "REPEAT"	{
 			printf(" REPEATT (%s) ",yytext);
-			//return REPEAT;
+			return REPEAT;
 		}
 "UNTIL"		{	
 			printf(" UNTILT (%s) ",yytext);
-			//return UNTIL;
+			return UNTIL;
 		}
 "FOR"		{
 			printf(" FOR Token (%s) ",yytext);
-			//return FOR;
+			return FOR;
 		}
 "TO"		{	
 			printf(" TO Token (%s) ",yytext);
-			//return TO;
+			return TO;
 		}
 "BY"		{
 			printf(" BY Token (%s) ",yytext);
-			//return BY;
+			return BY;
 		}
 "DO"		{
 			printf(" DO Token (%s) ",yytext);
-			//return DOCASE;
+			return DOCASE;
 		}
 "END"		{
 			printf(" END Token (%s) ",yytext);
-			//return END;
+			return END;
 		}
 "WHILE"		{	
 			printf(" WHILE Token (%s) ",yytext);
-			//return WHILE;
+			return WHILE;
 		}
 "IF"		{
 			printf(" IF Token (%s) ",yytext);
-			//return IF_COND;
+			return IF_COND;
 		}
 "THEN"		{	
 			printf(" THEN Token (%s) ",yytext);
-			//return THEN;
+			return THEN;
 		}
 "ELSIF"		{
 			printf(" ELSE IF Token (%s) ",yytext);
-			//return ELSEIF;
+			return ELSEIF;
 		}
 "ELSE"		{
 			printf(" ELSE Token (%s) ",yytext);
-			//return ELSE;
+			return ELSE;
 		}
 "CASE"		{	
 			printf(" CASE Token (%s) ",yytext);
-			//return CASE_COND;
+			return CASE_COND;
 		}
 "OF"		{	
 			printf(" OF Token (%s) ",yytext);
-			//return OF;
+			return OF;
 		}
 
 "STRLEN"	{
 			printf(" STRLEN Token (%s) ",yytext);
-			//return STRLEN;
+			return STRLEN;
 		}
 "STRCAT"	{
 			printf(" STRCAT Token (%s) ",yytext);
-			//return STRCAT;
+			return STRCAT;
 		}
 "STRCPY"	{
 			printf(" STRCPY TOken (%s) ",yytext);
-			//return STRCPY;
+			return STRCPY;
 		}
 "STRREV"	{
 			printf(" STRREV Token (%s) ",yytext);
-			//return STRREV;
+			return STRREV;
 		}
 "STRCMP"	{	
 			printf(" STRCMP Token (%s) ",yytext);
-			//return STRCMP;
+			return STRCMP;
 		}
 "(*"		{
 			AvoidComments();
@@ -195,176 +195,197 @@ IDENT		{letter}({letter}|{digit})*
 
 "ARRAY"		{	
 			printf(" ARRAY Token (%s) ",yytext);
-			//return ARRAY;
+			return ARRAY;
 		}
 "RECORD"	{	
 			printf(" RECORD Token (%s) ",yytext);
-			//return ARRAY;
+			return RECORD;
 		}
 "SET"		{	
 			printf(" SET Token (%s) ",yytext);
-			//return SET;
+			return SET;
 		}
 "BEGIN"		{
 			printf(" BEGIN Token (%s) ",yytext);
-			//return BEG;
+			return BEG;
 		}
 "CONST"		{	
 			printf(" CONST Token (%s) ",yytext);
-			//return CONST;
+			return CONST;
 		}
 "EXIT"		{
 			printf(" EXIT Token (%s) ",yytext);
-			//return EXIT;
+			return EXIT;
 		}
 "IMPORT"	{	
 			printf(" IMPORT Token (%s) ",yytext);
-			//return IMPORT;
+			return IMPORT;
 		}
 "LOOP"		{	
 			printf(" LOOP Token (%s) ",yytext);
-			//return LOOP;
+			return LOOP;
 		}
 "MODULE"	{
 			printf(" MODULE Token (%s) ",yytext);
-			//return MODULE;
+			return MODULE;
 		}
 "NIL"		{
 			printf(" NIL Token (%s) ",yytext);
-			//return NIL;
+			return NIL;
 		}
 "POINTER"	{
 			printf(" POINTER Token (%s) ",yytext);
-			//return POINTER;
+			return POINTER;
 		}
 "PROCEDURE"	{
 			printf(" PROCEDURE Token (%s) ",yytext);
-			//return PROCEDURE;
+			return PROCEDURE;
 		}
 "RETURN"	{		
 			printf(" RETURN Token (%s) ",yytext);
-			//return RETURN;
+			return RETURN;
 		}
 "TYPE"		{
 			printf(" TYPE Token (%s) ",yytext);
-			//return TYPE;
+			return TYPE;
 		}
 "VAR"		{
 			printf(" VAR Token (%s) ",yytext);
-			//return VAR;
+			return VAR;
 		}
 "WITH"		{
 			printf(" WITH Token (%s) ",yytext);
-			//return WITH;
+			return WITH;
 		}
 "ABS"		{
 			printf(" ABS Token (%s) ",yytext);
+			return ABS;
 		}
 "ODD"		{
 			printf(" ODD Token (%s) ",yytext);
+			return ODD;
 		}
 "LEN"		{
 			printf(" LEN Token (%s) ",yytext);
+			return LEN;
 		}
 "LSL"		{
 			printf(" LSL Token (%s) ",yytext);
+			return LSL;
 		}
 "ASR"		{
 			printf(" ASR Token (%s) ",yytext);
+			return ASR;
 		}
 "ROR"		{
 			printf(" ROR Token (%s) ",yytext);
+			return ROR;
 		}
 "FLOOR"		{
 			printf(" FLOOR Token (%s) ",yytext);
+			return FLOOR;
 		}
 "FLT"		{
 			printf(" FLT Token (%s) ",yytext);
+			return FLT;
 		}
 "ORD"		{
 			printf(" ORD Token (%s) ",yytext);
+			return ORD;
 		}
 "CHR"		{
 			printf(" CHR Token (%s) ",yytext);
+			return CHR;
 		}
 "LONG"		{
 			printf(" LONG Token (%s) ",yytext);
+			return LONG;
 		}
 "SHORT"		{
 			printf(" SHORT Token (%s) ",yytext);
+			return SHORT;
 		}
 "INC"		{
 			printf(" INC Token (%s) ",yytext);
+			return INC;
 		}
 "DEC"		{
 			printf(" DEC Token (%s) ",yytext);
+			return DEC;
 		}
 "INCL"		{
 			printf(" INCL Token (%s) ",yytext);
+			return INCL;
 		}
 "EXCL"		{
 			printf(" EXCL Token (%s) ",yytext);
+			return EXCL;
 		}
 "COPY"		{
 			printf(" COPY Token (%s) ",yytext);
+			return COPY;
 		}
 "NEW"		{
 			printf(" NEW Token (%s) ",yytext);
+			return NEW;
 		}
 "ASSERT"		{
 			printf(" ASSERT Token (%s) ",yytext);
+			return ASSERT;
 		}
 "PACK"		{
 			printf(" PACK Token (%s) ",yytext);
+			return PACK;
 		}
 "UNPK"		{
 			printf(" UNPK Token (%s) ",yytext);
+			return UNPK;
 		}
 
 "BOOLEAN"	{
 			printf(" BOOLEAN_IDENT (%s)",yytext);
-			//return BOOLEAN;
+			return BOOLEAN;
 		}
 "CHAR"		{	
 			printf(" CHAR_IDENT (%s) ",yytext);
-			//return CHAR;
+			return CHAR;
 		}
 "INTEGER"	{
 			printf(" INTEGER_IDENT (%s) ",yytext);
-			//return INTEGER;
+			return INTEGER;
 		}
 "REAL"		{
 			printf(" REAL_IDENT (%s) ",yytext);
-			//return REAL;
+			return REAL;
 		}
 "LONGREAL"	{
 			printf(" LONGREAL_IDENT (%s) ",yytext);
-			//return LONGREAL;
+			return LONGREAL;
 		}
 
 {BOOLEAN}	{
 			printf(" BOOLEAN (%s)",yytext);
-			//return BOOLEAN;
+			return BOOLEAN_VAL;
 		}
 {CHAR}		{	
 			printf(" CHAR (%s) ",yytext);
-			//return CHAR;
+			return CHAR_VAL;
 		}
 {INTEGER}	{
 			printf(" INTEGER (%s) ",yytext);
-			//return INTEGER;
+			return INTEGER_VAL;
 		}
 {REAL}		{
 			printf(" REAL (%s) ",yytext);
-			//return REAL;
+			return REAL_VAL;
 		}
 {STRING}	{
 			printf(" STRING (%s) ",yytext);
-			//return STRING;
+			return STRING_VAL;
 		}
 {IDENT}		{
 			printf(" IDENTIFIER (%s) ",yytext);
-			//return IDENTIFIER;
+			return ident;
 		}
 
 %%
@@ -420,10 +441,6 @@ void AvoidComments(){
 	}
 }
 
-int main(){
-	printf("The Lexical Analysis Of the Program Is : \n");
-	printf("Tokenizing Line: %d ---- ",yylineno);
-	yylex();
-	printf("\n");
-	return 0;
+int yywrap(void) {
+	return 1;
 }
