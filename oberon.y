@@ -1,31 +1,44 @@
+%token EQ_COMP UNEQ
+%token TILDA ASSIGN DOTDOT
+%token REPEAT UNTIL FOR TO BY DOCASE END
+%token WHILE IF_COND THEN ELSEIF ELSE CASE_COND OF
+%token STRLEN STRCAT STRCMP STRREV STRCPY
+%token ARRAY RECORD SET BEG CONST EXIT
+%token IMPORT LOOP MODULE NIL
+%token POINTER PROCEDURE RETURN TYPE
+%token VAR WITH ABS ODD LEN LSL ASR ROR FLOOR FLT ORD CHR LONG SHORT 
+%token INC DEC INCL EXCL COPY NEW ASSERT PACK UNPK
+%token BOOLEAN CHAR INTEGER LONGREAL REAL
+%token BOOLEAN_VAL CHAR_VAL INTEGER_VAL REAL_VAL STRING_VAL ident
+// %token ident    OF
+// %token REPEAT
+// %token UNTIL    FOR     TO
+// %token BY       DO      END
+// %token WHILE    IF_COND THEN
+// %token ELSEIF   ELSE    CASE_COND
+// %token BOOLEAN  CHAR    INT
+// %token REAL     STRING  LONGREAL
+// %token ARRAY    BEG     CONST
+// %token EXIT     IMPORT  LOOP
+// %token MODULE   NIL     POINTER
+// %token RETURN   TYPE    PROCEDURE
+// %token VAR      WITH
+// %token OR       
+// %token ASSIGN   LE    GE    DOTDOT
+// %token RECORD
+
+%nonassoc EQ_COMP  UNEQ  LT  LE  GT  GE  IN  IS
+%left PLUS_SYM  MINUS_SYM  OR
+%left MULTIPLY_SYM  DIVIDE_SYM  DIV  MOD  AND_SYM OR_SYM
+
 %{
-  extern char *yytext;
-  extern int yylineno;
-  int yyerror(char *msg);
+
+#include<stdio.h>
+void yyerror(char *);
+int yylex(void);
+int sym[26];
 
 %}
-
-%token IDENT    OF
-%token REPEAT   UNTIL   REPEAT
-%token UNTIL    FOR     TO
-%token BY       DO      END
-%token WHILE    IF_COND THEN
-%token ELSEIF   ELSE    CASE_COND
-%token BOOLEAN  CHAR    INT
-%token REAL     STRING  LONGREAL
-%token ARRAY    BEG     CONST
-%token EXIT     IMPORT  LOOP
-%token MODULE   NIL     POINTER
-%token RETURN   TYPE    PROCEDURE
-%token VAR      WITH
-%token OR       
-%token ASSIGN   LE    GE    DOTDOT
-
-%nonassoc '='  '#'  LT  LE  GT  GE  IN  IS
-%nonassoc UPLUS UMINUS
-%left '+'  '-'  OR
-%left '*'  '/'  DIV  MOD  '&'
-
 
 %%
 
@@ -49,7 +62,7 @@ Import:
     ;
 
 StatBlock:
-    BBEGIN StatementSeq
+    BEG StatementSeq
     | 
     ;
 
@@ -65,12 +78,12 @@ DataList:
 ;
 
 ConstList :
-  IdentDef '=' ConstExpr ';' ConstList
+  IdentDef EQ_COMP ConstExpr ';' ConstList
 | 
 ;
 
 TypeList : 
-  IdentDef '=' Type ';' TypeList
+  IdentDef EQ_COMP Type ';' TypeList
 |
 ;
 
@@ -154,12 +167,12 @@ StatementSeq :
 Statement    : 
   Designator ASSIGN Expr 
 | Designator
-| IF Expr THEN StatementSeq ElseIfBlock Else END 
-| CASE Expr OF CaseList Else END 
-| WHILE Expr DO StatementSeq END 
+| IF_COND Expr THEN StatementSeq ElseIfBlock Else END 
+| CASE_COND Expr OF CaseList Else END 
+| WHILE Expr DOCASE StatementSeq END 
 | REPEAT StatementSeq UNTIL Expr 
-| FOR ident ASSIGN Expr TO Expr BY ConstExpr DO StatementSeq END 
-| FOR ident ASSIGN Expr TO Expr DO StatementSeq END 
+| FOR ident ASSIGN Expr TO Expr BY ConstExpr DOCASE StatementSeq END 
+| FOR ident ASSIGN Expr TO Expr DOCASE StatementSeq END 
 | LOOP StatementSeq END
 | WITH GuardStatList Else END
 | EXIT 
@@ -169,7 +182,7 @@ Statement    :
 ;
 
 ElseIfBlock:
-  ELSIF Expr THEN StatementSeq ElseIfBlock
+  ELSEIF Expr THEN StatementSeq ElseIfBlock
 |
 ;
 
@@ -180,7 +193,7 @@ Else:
 
 CaseList:
   Case
-| Case '|' CaseList
+| Case OR_SYM CaseList
 ;
 
 Case: 
@@ -195,12 +208,12 @@ CaseLabelList:
 
 CaseLabels: 
   ConstExpr 
-| ConstExpr DOTS ConstExpr
+| ConstExpr DOTDOT ConstExpr
 ;
 
 GuardStatList :
-  Guard DO StatementSeq '|' GuardStatList
-| Guard DO StatementSeq 
+  Guard DOCASE StatementSeq OR_SYM GuardStatList
+| Guard DOCASE StatementSeq 
 ;
 
 Guard        : 
@@ -213,36 +226,35 @@ ConstExpr    :
 
 Expr         : 
 /* Relations */
-  Expr '=' Expr
-| Expr '#' Expr
+  Expr EQ_COMP Expr
+| Expr UNEQ Expr
 | Expr LT Expr
 | Expr LE Expr
 | Expr GT Expr
 | Expr GE Expr
 | Expr IN Expr
 | Expr IS Expr
-| '+' Expr %prec UPLUS
-| '-' Expr %prec UMINUS
-| Expr '+' Expr
-| Expr '-' Expr
+// | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
+// | MINUS_SYM Expr %prec UMINUS
+| Expr PLUS_SYM Expr
+| Expr MINUS_SYM Expr
 | Expr OR Expr
-| Expr '*' Expr
-| Expr '/' Expr
+| Expr MULTIPLY_SYM Expr
+| Expr DIVIDE_SYM Expr
 | Expr DIV Expr
 | Expr MOD Expr
-| Expr '&' Expr
+| Expr AND_SYM Expr
 | Factor
 ;
 
 Factor       : 
   Designator
-| CONSTnum 
-| CONSTchar 
-| CONSTstring 
+| INTEGER
+| CHAR
 | NIL 
 | Set 
 | '(' Expr ')' 
-| '~' Factor
+| TILDA Factor
 ;
 
 Set          : 
@@ -261,7 +273,7 @@ ElementList :
 
 Element      : 
   Expr 
-| Expr DOTS Expr
+| Expr DOTDOT Expr
 ;
 
 Designator   : 
@@ -295,8 +307,8 @@ Qualident    :
 
 IdentDef     : 
   ident      
-| ident '*'    
-| ident '-'
+| ident MULTIPLY_SYM
+| ident MINUS_SYM
 ;
 
 
@@ -309,7 +321,5 @@ int main()
     printf("Successful parse\n");
   else
     printf("Encountered errors\n");
-  exit(res);
 }
-
 
