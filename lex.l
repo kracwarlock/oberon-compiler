@@ -385,7 +385,7 @@ IDENT		{letter}({letter}|{digit})*
 		}
 {IDENT}		{
 			printf(" IDENTIFIER (%s) ",yytext);
-			return ident;
+			return IDENT;
 		}
 
 %%

@@ -1,3 +1,6 @@
+// Please write the name of the definitions using underscore if specifying more than two words in your program
+// First letter after every underscore shud be capital
+
 %token EQ_COMP UNEQ
 %token TILDA ASSIGN DOTDOT
 %token REPEAT UNTIL FOR TO BY DOCASE END
@@ -9,8 +12,8 @@
 %token VAR WITH ABS ODD LEN LSL ASR ROR FLOOR FLT ORD CHR LONG SHORT 
 %token INC DEC INCL EXCL COPY NEW ASSERT PACK UNPK
 %token BOOLEAN CHAR INTEGER LONGREAL REAL
-%token BOOLEAN_VAL CHAR_VAL INTEGER_VAL REAL_VAL STRING_VAL ident
-// %token ident    OF
+%token BOOLEAN_VAL CHAR_VAL INTEGER_VAL REAL_VAL STRING_VAL IDENT
+// %token IDENT    OF
 // %token REPEAT
 // %token UNTIL    FOR     TO
 // %token BY       DO      END
@@ -43,47 +46,154 @@ int sym[26];
 %%
 
 Module: 
-    MODULE ident ';' ImportList DeclSeq StatBlock END ident '.'
+    MODULE IDENT ';' Main_Block END IDENT '.'
     ;
 
-ImportList: 
-    IMPORT ImportListTemp ';'
+Main_Block:
+       Import_Modules Decl_Seq Stat_Block
+    ;
+
+Import_Modules: 
+    IMPORT Import_Modules_List ';'
     |
     ;
 
-ImportListTemp: 
-    ImportListTemp ',' Import  
+Import_Modules_List: 
+    Import_Modules_List ',' Import  
     | Import
     ;
 
 Import:
-    ident ASSIGN ident
-    | ident
+    IDENT ASSIGN IDENT
+    | IDENT
     ;
 
-StatBlock:
-    BEG StatementSeq
+Stat_Block:
+    BEG Statement_Sequence
     | 
     ;
 
-DeclSeq: 
-  DataList ProcList
-;
+Statement_Sequence:
+    Statement ';' Statement_Sequence
+    | Statement ';'
+    ;
 
-DataList:
-  CONST ConstList DataList 
-| TYPE  TypeList  DataList
-| VAR   VarList DataList
+Statement    : 
+  Designator ASSIGN Expr 
+| Designator
+| IF_COND Expr THEN Statement_Sequence Else_If_Block Else END 
+| CASE_COND Expr OF Case_Parameters Else END 
+| WHILE Expr DOCASE Statement_Sequence END 
+| REPEAT Statement_Sequence UNTIL Expr
+| FOR IDENT ASSIGN Expr TO Expr BY ConstExpr DOCASE Statement_Sequence END 
+| FOR IDENT ASSIGN Expr TO Expr DOCASE Statement_Sequence END 
+| LOOP Statement_Sequence END
+| EXIT 
+| RETURN Expr
+| RETURN
 |
 ;
 
-ConstList :
-  IdentDef EQ_COMP ConstExpr ';' ConstList
+Expr         : 
+/* Relations */
+  Expr EQ_COMP Expr
+| Expr UNEQ Expr
+| Expr LT Expr
+| Expr LE Expr
+| Expr GT Expr
+| Expr GE Expr
+| Expr IN Expr
+| Expr IS Expr
+// | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
+// | MINUS_SYM Expr %prec UMINUS
+| Expr PLUS_SYM Expr
+| Expr MINUS_SYM Expr
+| Expr OR Expr
+| Expr MULTIPLY_SYM Expr
+| Expr DIVIDE_SYM Expr
+| Expr DIV Expr
+| Expr MOD Expr
+| Expr AND_SYM Expr
+| Factor
+;
+
+Factor       : 
+  Designator
+| INTEGER_VAL
+| CHAR_VAL
+| NIL 
+| Set 
+| '(' Expr ')' 
+| TILDA Factor
+;
+  
+Designator   : 
+  IDENT optSuffix
+;
+
+optSuffix :
+  '.' IDENT  optSuffix
+| '[' ExprList ']'  optSuffix
+| '^'  optSuffix
+| '(' ExprList ')' optSuffix   /* Changes from original grammar */
+| '(' ')'                      /* Changes from original grammar */
+|
+;
+
+Else_If_Block:
+  ELSEIF Expr THEN Statement_Sequence Else_If_Block
+|
+;
+
+Else:
+  ELSE Statement_Sequence
+|
+;
+
+Case_Parameters:
+  Case_Single
+| Case_Single OR_SYM Case_Parameters
+;
+
+Case_Single: 
+  Case_Expression_List ':' Statement_Sequence
+|
+;
+
+Case_Expression_List:                // Case label list beacuse of the expression matching could be to a integer but also to a list of integers or list of expressions
+  Case_Expression  
+| Case_Expression ',' Case_Expression_List
+;
+
+Case_Expression: 
+  Expr 
+| Expr DOTDOT Expr
+;
+
+Decl_Seq: 
+  Data_List ProcList
+;
+
+Data_List:
+  CONST Const_List Data_List 
+| TYPE  Type_List  Data_List
+| VAR   Var_List Data_List
+|
+;
+
+Const_List :
+  Identifier_list EQ_COMP ConstExpr ';' Const_List
 | 
 ;
 
-TypeList : 
-  IdentDef EQ_COMP Type ';' TypeList
+// We have to commence from here....
+// We have to commence from here....
+// We have to commence from here....
+// We have to commence from here....
+
+
+Type_List : 
+  Identifier_List EQ_COMP Type ';' Type_List
 |
 ;
 
@@ -92,12 +202,31 @@ VarList  :
 | 
 ;
 
+Identifier_List:
+  IDENT      
+| IDENT ',' Identifier_List
+;
+
+Type: 
+Qualident
+| ARRAY ConstExprList OF Type 
+| ARRAY               OF Type 
+| RECORD Type_List END                         // Changes Look at it
+| RECORD                 FieldList END
+| POINTER TO Type
+| PROCEDURE FormalPars
+;
+
+Qualident    :             // For referencing a particular data type
+  IDENT       
+| IDENT '.' IDENT          // For referencing an object within in a different module 
+;
+
 ProcList     :
   ProcDecl ';' ProcList
 | ForwardDecl ';' ProcList
 |
 ;
-
 
 ProcDecl     : 
   PROCEDURE Receiver IdentDef FormalPars ';' 
@@ -138,15 +267,6 @@ Receiver:
 | 
 ;
 
-Type: 
-Qualident
-| ARRAY ConstExprList OF Type 
-| ARRAY               OF Type 
-| RECORD '('Qualident')' FieldList END
-| RECORD                 FieldList END
-| POINTER TO Type
-| PROCEDURE FormalPars
-;
 
 ConstExprList :
   ConstExpr ',' ConstExprList
@@ -159,102 +279,8 @@ FieldList    :
 |
 ;
 
-StatementSeq : 
-  Statement ';' StatementSeq
-| Statement
-;
-
-Statement    : 
-  Designator ASSIGN Expr 
-| Designator
-| IF_COND Expr THEN StatementSeq ElseIfBlock Else END 
-| CASE_COND Expr OF CaseList Else END 
-| WHILE Expr DOCASE StatementSeq END 
-| REPEAT StatementSeq UNTIL Expr 
-| FOR ident ASSIGN Expr TO Expr BY ConstExpr DOCASE StatementSeq END 
-| FOR ident ASSIGN Expr TO Expr DOCASE StatementSeq END 
-| LOOP StatementSeq END
-| WITH GuardStatList Else END
-| EXIT 
-| RETURN Expr
-| RETURN
-|
-;
-
-ElseIfBlock:
-  ELSEIF Expr THEN StatementSeq ElseIfBlock
-|
-;
-
-Else:
-  ELSE StatementSeq
-|
-;
-
-CaseList:
-  Case
-| Case OR_SYM CaseList
-;
-
-Case: 
-  CaseLabelList ':' StatementSeq
-|
-;
-
-CaseLabelList:
-  CaseLabels
-| CaseLabels ',' CaseLabelList
-;
-
-CaseLabels: 
-  ConstExpr 
-| ConstExpr DOTDOT ConstExpr
-;
-
-GuardStatList :
-  Guard DOCASE StatementSeq OR_SYM GuardStatList
-| Guard DOCASE StatementSeq 
-;
-
-Guard        : 
-  Qualident ':' Qualident
-;
-
 ConstExpr    : 
   Expr
-;
-
-Expr         : 
-/* Relations */
-  Expr EQ_COMP Expr
-| Expr UNEQ Expr
-| Expr LT Expr
-| Expr LE Expr
-| Expr GT Expr
-| Expr GE Expr
-| Expr IN Expr
-| Expr IS Expr
-// | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
-// | MINUS_SYM Expr %prec UMINUS
-| Expr PLUS_SYM Expr
-| Expr MINUS_SYM Expr
-| Expr OR Expr
-| Expr MULTIPLY_SYM Expr
-| Expr DIVIDE_SYM Expr
-| Expr DIV Expr
-| Expr MOD Expr
-| Expr AND_SYM Expr
-| Factor
-;
-
-Factor       : 
-  Designator
-| INTEGER
-| CHAR
-| NIL 
-| Set 
-| '(' Expr ')' 
-| TILDA Factor
 ;
 
 Set          : 
@@ -276,19 +302,6 @@ Element      :
 | Expr DOTDOT Expr
 ;
 
-Designator   : 
-  ident optSuffix
-;
-
-optSuffix :
-  '.' ident  optSuffix
-| '[' ExprList ']'  optSuffix
-| '^'  optSuffix
-| '(' ExprList ')' optSuffix   /* Changes from original grammar */
-| '(' ')'                      /* Changes from original grammar */
-|
-;
-
 ExprList     : 
   Expr 
 | Expr ',' ExprList
@@ -298,11 +311,6 @@ IdentDefList    :
   IdentDef      
 | IdentDef ',' IdentDefList
                 
-;
-
-Qualident    : 
-  ident         
-| ident '.' ident
 ;
 
 IdentDef     : 
