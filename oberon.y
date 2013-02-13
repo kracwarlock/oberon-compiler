@@ -1,6 +1,7 @@
 // Please write the name of the definitions using underscore if specifying more than two words in your program
 // First letter after every underscore shud be capital
 
+%token SEMIC COMMA COLON RIGHTBRAC LEFTBRAC DOTSYM LSQBR RSQBR LCBR RCBR CARR
 %token EQ_COMP UNEQ
 %token TILDA ASSIGN DOTDOT
 %token REPEAT UNTIL FOR TO BY DOCASE END
@@ -37,55 +38,60 @@
 %{
 
 #include<stdio.h>
-void yyerror(char *);
+void yyerror(const char *);
 int yylex(void);
-int sym[26];
 
 %}
 
 %%
 
-Module: 
-    MODULE IDENT ';' Main_Block END IDENT '.'
+// Defining Module and all other blocks in a Oberon File
+
+Module:
+    cast_away Main_Block END IDENT DOTSYM     {printf("haahs1\n");}
+    ;
+
+cast_away:
+    MODULE IDENT SEMIC  {printf("haahs2\n");}
     ;
 
 Main_Block:
-       Import_Modules Decl_Seq Stat_Block
+       Import_Modules Decl_Seq Stat_Block   {printf("haahs3\n");}
     ;
 
 Import_Modules: 
-    IMPORT Import_Modules_List ';'
+    IMPORT Import_Modules_List SEMIC    {printf("haahs4\n");}
     |
     ;
 
 Import_Modules_List: 
-    Import_Modules_List ',' Import  
-    | Import
+    Import_Modules_List COMMA Import    {printf("haahs5\n");}
+    | Import   {printf("haahs6\n");}
     ;
 
 Import:
-    IDENT ASSIGN IDENT
-    | IDENT
+    IDENT ASSIGN IDENT    {printf("haahs7\n");}
+    | IDENT      {printf("haahs8\n");}
     ;
 
 Stat_Block:
-    BEG Statement_Sequence
+    BEG Statement_Sequence     {printf("haahs lkjj\n");}
     | 
     ;
 
 Statement_Sequence:
-    Statement ';' Statement_Sequence
-    | Statement ';'
+    Statement SEMIC Statement_Sequence
+    | Statement SEMIC
     ;
 
 Statement    : 
-  Designator ASSIGN Expr 
+  Designator ASSIGN Expr {printf("idhae see bhi\n");}
 | Designator
 | IF_COND Expr THEN Statement_Sequence Else_If_Block Else END 
 | CASE_COND Expr OF Case_Parameters Else END 
 | WHILE Expr DOCASE Statement_Sequence END 
 | REPEAT Statement_Sequence UNTIL Expr
-| FOR IDENT ASSIGN Expr TO Expr BY ConstExpr DOCASE Statement_Sequence END 
+| FOR IDENT ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END 
 | FOR IDENT ASSIGN Expr TO Expr DOCASE Statement_Sequence END 
 | LOOP Statement_Sequence END
 | EXIT 
@@ -106,7 +112,7 @@ Expr         :
 | Expr IS Expr
 // | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
 // | MINUS_SYM Expr %prec UMINUS
-| Expr PLUS_SYM Expr
+| Expr PLUS_SYM Expr           {printf("idhae see ++++++++++");}
 | Expr MINUS_SYM Expr
 | Expr OR Expr
 | Expr MULTIPLY_SYM Expr
@@ -114,30 +120,49 @@ Expr         :
 | Expr DIV Expr
 | Expr MOD Expr
 | Expr AND_SYM Expr
-| Factor
+| Factor                {printf("idhae see\n");}
 ;
 
 Factor       : 
   Designator
-| INTEGER_VAL
+| INTEGER_VAL   {printf("integer val is %d",$1);}
 | CHAR_VAL
 | NIL 
 | Set 
-| '(' Expr ')' 
+| LEFTBRAC Expr RIGHTBRAC 
 | TILDA Factor
 ;
-  
+
 Designator   : 
   IDENT optSuffix
 ;
 
 optSuffix :
-  '.' IDENT  optSuffix
-| '[' ExprList ']'  optSuffix
-| '^'  optSuffix
-| '(' ExprList ')' optSuffix   /* Changes from original grammar */
-| '(' ')'                      /* Changes from original grammar */
+  DOTSYM IDENT  optSuffix
+| LSQBR Expr_List RSQBR  optSuffix
+| CARR  optSuffix
+| LEFTBRAC Expr_List RIGHTBRAC optSuffix   /* Changes from original grammar */
+| LEFTBRAC RIGHTBRAC                      /* Changes from original grammar */
 |
+;
+
+Expr_List     : 
+  Expr 
+| Expr COMMA Expr_List
+;              
+
+Set          : 
+  LCBR Element_List RCBR
+;
+
+Element_List :
+  Element COMMA Element_List
+| Element 
+;
+
+Element      : 
+  Expr 
+| Expr DOTDOT Expr
 ;
 
 Else_If_Block:
@@ -156,13 +181,13 @@ Case_Parameters:
 ;
 
 Case_Single: 
-  Case_Expression_List ':' Statement_Sequence
+  Case_Expression_List COLON Statement_Sequence
 |
 ;
 
 Case_Expression_List:                // Case label list beacuse of the expression matching could be to a integer but also to a list of integers or list of expressions
   Case_Expression  
-| Case_Expression ',' Case_Expression_List
+| Case_Expression COMMA Case_Expression_List
 ;
 
 Case_Expression: 
@@ -170,153 +195,111 @@ Case_Expression:
 | Expr DOTDOT Expr
 ;
 
+
+// This section declares the various sections of the declaration Part...
+// In this part there are two types of sections namely:  Data declation list and procedure declaration list.
+
 Decl_Seq: 
-  Data_List ProcList
+  Data_List Proc_List  {printf("haahs  999\n");}
 ;
 
 Data_List:
-  CONST Const_List Data_List 
+  CONST Const_List Data_List  {printf("haahs\n");}
 | TYPE  Type_List  Data_List
 | VAR   Var_List Data_List
-|
+| {printf("ddddd\n");}
 ;
+
+
+// In this region we are declaring various types of declaration namely "const declaration,var decaration and type declaration"
 
 Const_List :
-  Identifier_list EQ_COMP ConstExpr ';' Const_List
+  Identifier_List EQ_COMP Const_Expr SEMIC Const_List {printf("haahs\n");}
 | 
 ;
 
-// We have to commence from here....
-// We have to commence from here....
-// We have to commence from here....
-// We have to commence from here....
-
-
 Type_List : 
-  Identifier_List EQ_COMP Type ';' Type_List
+  Identifier_List EQ_COMP Type SEMIC Type_List
 |
 ;
 
-VarList  : 
-  IdentDefList ':' Type ';' VarList
+Var_List  : 
+  Identifier_List COLON Type SEMIC Var_List
 | 
 ;
 
-Identifier_List:
-  IDENT      
-| IDENT ',' Identifier_List
-;
+// this Qualident contains the various various type declaration methods like array, record , 
+// pointer and procedure declarations
 
 Type: 
 Qualident
-| ARRAY ConstExprList OF Type 
-| ARRAY               OF Type 
-| RECORD Type_List END                         // Changes Look at it
-| RECORD                 FieldList END
+| INTEGER
+| CHAR
+| BOOLEAN
+| REAL
+| LONGREAL
+| ARRAY Const_Expr_List OF Type 
+| ARRAY OF Type 
+| RECORD LEFTBRAC Qualident RIGHTBRAC Field_List END           // Changes Look at it
+| RECORD Field_List END
 | POINTER TO Type
-| PROCEDURE FormalPars
+| PROCEDURE Formal_Pars
 ;
 
 Qualident    :             // For referencing a particular data type
   IDENT       
-| IDENT '.' IDENT          // For referencing an object within in a different module 
+| IDENT DOTSYM IDENT          {printf("loada a\n");}// For referencing an object within in a different module 
 ;
 
-ProcList     :
-  ProcDecl ';' ProcList
-| ForwardDecl ';' ProcList
-|
-;
-
-ProcDecl     : 
-  PROCEDURE Receiver IdentDef FormalPars ';' 
-            DeclSeq StatBlock
-  END ident
-;
-
-ForwardDecl :
-  PROCEDURE '^' Receiver IdentDef FormalPars
-;
-
-
-FormalPars: 
-  '(' FPsectionList ')' ':' Qualident
-| '(' FPsectionList ')' 
-|  '(' ')'
-|
-;
-
-FPsectionList:
-  FPsection ';' FPsectionList
-| FPsection
-;
-
-FPsection:
-  IdentList ':' Type 
-| VAR IdentList ':' Type
-;
-
-IdentList:
-  IdentList ',' ident
-| ident
-;
-
-Receiver: 
-  '(' ident ':' ident ')'
-| '(' VAR ident ':' ident ')'
-| 
-;
-
-
-ConstExprList :
-  ConstExpr ',' ConstExprList
-| ConstExpr
-;
-
-FieldList    : 
-  IdentDefList ':' Type ';' FieldList
-| IdentDefList ':' Type
-|
-;
-
-ConstExpr    : 
+Const_Expr    : 
   Expr
 ;
 
-Set          : 
-  '{' optElementList '}'
+Const_Expr_List :
+  Const_Expr COMMA Const_Expr_List
+| Const_Expr
 ;
 
-optElementList :
-  ElementList
-| 
+
+Field_List    : 
+  Identifier_List COLON Type SEMIC Field_List
+| Identifier_List COLON Type
+|
 ;
 
-ElementList :
-  Element ',' ElementList
-| Element 
+// Now it is th part where we would be declaring the procedures...
+
+Proc_List     :
+  Proc_Decl SEMIC Proc_List
+|
 ;
 
-Element      : 
-  Expr 
-| Expr DOTDOT Expr
+Proc_Decl     : 
+  PROCEDURE IDENT Formal_Pars SEMIC Decl_Seq Stat_Block END IDENT    {printf("dsksdksd");}
 ;
 
-ExprList     : 
-  Expr 
-| Expr ',' ExprList
+// In this part we are writing the grammar for the FORMAL PARMAMETERS of the procedure dclarartion in data_list
+
+Formal_Pars: 
+  LEFTBRAC FP_section_List RIGHTBRAC COLON Type    {printf("formail pappaassss");}
+| LEFTBRAC FP_section_List RIGHTBRAC {printf("formail pappaasssssssssssssssssss");}
+|  LEFTBRAC RIGHTBRAC  {printf("formail pappaasssssssssssssss");}
+|  {printf("formail pappaasssssssssssssssssss");}
 ;
 
-IdentDefList    : 
-  IdentDef      
-| IdentDef ',' IdentDefList
-                
+FP_section_List:
+  FP_section SEMIC FP_section_List
+| FP_section   {printf("formail pappaa");}
 ;
 
-IdentDef     : 
-  ident      
-| ident MULTIPLY_SYM
-| ident MINUS_SYM
+FP_section:
+  Identifier_List COLON Type 
+| VAR Identifier_List COLON Type
+;
+
+Identifier_List:
+  IDENT                             {printf("haahs akela ident\n");}
+| IDENT COMMA Identifier_List        {printf("haahs iden\n");}
 ;
 
 
