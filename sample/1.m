@@ -1,5 +1,4 @@
- MODULE Example;
-
+ MODULE S1ArraySum;
 
     PROCEDURE ArraySum(r: ARRAY OF INTEGER): INTEGER;
     VAR 
@@ -14,4 +13,4 @@
     
   BEGIN
     ArraySum(vec);
-  END Example.
+  END S1ArraySum.
