@@ -28,364 +28,409 @@ IDENT		{letter}({letter}|{digit})*
 			return EQ_COMP;
 		}
 "#"		{
-			printf(" HASH (%s) ",yytext);
+			//printf(" HASH (%s) ",yytext);
 			return UNEQ;
 		}
 "<"		{
-			printf(" LESS THAN (%s) ",yytext);
+			//printf(" LESS THAN (%s) ",yytext);
 			return LT;
 		}
 "<="		{
-			printf(" LESS THAN EQUAL (%s) ",yytext);
+			//printf(" LESS THAN EQUAL (%s) ",yytext);
 			return LE;
 		}
 
 ">"		{
-			printf(" GREATER (%s) ",yytext);
+			//printf(" GREATER (%s) ",yytext);
 			return GT;
 		}
 ">="		{
-			printf(" GREATER THAN EQUAL (%s) ",yytext);
+			//printf(" GREATER THAN EQUAL (%s) ",yytext);
 			return GE;
 		}
 "IN"		{
-			printf(" IN (%s) ",yytext);
+			//printf(" IN (%s) ",yytext);
 			return IN;
 		}
 "IS"		{
-			printf(" IS (%s) ",yytext);
+			//printf(" IS (%s) ",yytext);
 			return IS;
 		}
 
 "+"		{
-			printf(" PLUS (%s) ",yytext);
+			//printf(" PLUS (%s) ",yytext);
 			return PLUS_SYM;
 		}
 "-"		{
-			printf(" MINUS (%s) ",yytext);
+			//printf(" MINUS (%s) ",yytext);
 			return MINUS_SYM;
 		}
 "*"		{
-			printf(" MULTIPLY (%s) ",yytext);
+			//printf(" MULTIPLY (%s) ",yytext);
 			return MULTIPLY_SYM;
 		}
 "/"		{
-			printf(" DIVIDE (%s) ",yytext);
+			//printf(" DIVIDE (%s) ",yytext);
 			return DIVIDE_SYM;
 		}
 "DIV"		{
-			printf(" DIVISION (%s) ",yytext);
+			//printf(" DIVISION (%s) ",yytext);
 			return DIV;
 		}
 "MOD"		{
-			printf(" MODULUS (%s) ",yytext);
+			//printf(" MODULUS (%s) ",yytext);
 			return MOD;
 		}
 
 "OR"		{
-			printf(" OR|| (%s) ",yytext);
+			//printf(" OR|| (%s) ",yytext);
 			return OR_SYM;
 		}
 "&"		{
-			printf(" AND (%s) ",yytext);
+			//printf(" AND (%s) ",yytext);
 			return AND_SYM;
 		}
 "∼"		{
-			printf(" TILDA (%s) ",yytext);
+			//printf(" TILDA (%s) ",yytext);
 			return TILDA;
 		}
 ":="		{
-			printf(" ASSIGNMENT (%s) ",yytext);
+			//printf(" ASSIGNMENT (%s) ",yytext);
 			return ASSIGN;
 		}
 ".."		{
-			printf(" DOTDOT (%s) ",yytext);
+			//printf(" DOTDOT (%s) ",yytext);
 			return DOTDOT;
 		}
 
 [ \t]		{;}
 
 [\r\n]		{	
-			printf("\n");
-			printf("Tokenizing Line: %d ---- ",yylineno+1);
+			//printf("\n");
+			//printf("Tokenizing Line: %d ---- ",yylineno+1);
 			yylineno++;
 		}
 
 "REPEAT"	{
-			printf(" REPEATT (%s) ",yytext);
+			//printf(" REPEATT (%s) ",yytext);
 			return REPEAT;
 		}
 "UNTIL"		{	
-			printf(" UNTILT (%s) ",yytext);
+			//printf(" UNTILT (%s) ",yytext);
 			return UNTIL;
 		}
 "FOR"		{
-			printf(" FOR Token (%s) ",yytext);
+			//printf(" FOR Token (%s) ",yytext);
 			return FOR;
 		}
 "TO"		{	
-			printf(" TO Token (%s) ",yytext);
+			//printf(" TO Token (%s) ",yytext);
 			return TO;
 		}
 "BY"		{
-			printf(" BY Token (%s) ",yytext);
+			//printf(" BY Token (%s) ",yytext);
 			return BY;
 		}
 "DO"		{
-			printf(" DO Token (%s) ",yytext);
+			//printf(" DO Token (%s) ",yytext);
 			return DOCASE;
 		}
 "END"		{
-			printf(" END Token (%s) ",yytext);
+			//printf(" END Token (%s) ",yytext);
 			return END;
 		}
 "WHILE"		{	
-			printf(" WHILE Token (%s) ",yytext);
+			//printf(" WHILE Token (%s) ",yytext);
 			return WHILE;
 		}
 "IF"		{
-			printf(" IF Token (%s) ",yytext);
+			//printf(" IF Token (%s) ",yytext);
 			return IF_COND;
 		}
 "THEN"		{	
-			printf(" THEN Token (%s) ",yytext);
+			//printf(" THEN Token (%s) ",yytext);
 			return THEN;
 		}
 "ELSIF"		{
-			printf(" ELSE IF Token (%s) ",yytext);
+			//printf(" ELSE IF Token (%s) ",yytext);
 			return ELSEIF;
 		}
 "ELSE"		{
-			printf(" ELSE Token (%s) ",yytext);
+			//printf(" ELSE Token (%s) ",yytext);
 			return ELSE;
 		}
 "CASE"		{	
-			printf(" CASE Token (%s) ",yytext);
+			//printf(" CASE Token (%s) ",yytext);
 			return CASE_COND;
 		}
 "OF"		{	
-			printf(" OF Token (%s) ",yytext);
+			//printf(" OF Token (%s) ",yytext);
 			return OF;
 		}
 
 "STRLEN"	{
-			printf(" STRLEN Token (%s) ",yytext);
+			//printf(" STRLEN Token (%s) ",yytext);
 			return STRLEN;
 		}
 "STRCAT"	{
-			printf(" STRCAT Token (%s) ",yytext);
+			//printf(" STRCAT Token (%s) ",yytext);
 			return STRCAT;
 		}
 "STRCPY"	{
-			printf(" STRCPY TOken (%s) ",yytext);
+			//printf(" STRCPY TOken (%s) ",yytext);
 			return STRCPY;
 		}
 "STRREV"	{
-			printf(" STRREV Token (%s) ",yytext);
+			//printf(" STRREV Token (%s) ",yytext);
 			return STRREV;
 		}
 "STRCMP"	{	
-			printf(" STRCMP Token (%s) ",yytext);
+			//printf(" STRCMP Token (%s) ",yytext);
 			return STRCMP;
 		}
 "(*"		{
 			AvoidComments();
-			printf(" COMMENT ");
+			//printf(" COMMENT ");
 		}
 
 "ARRAY"		{	
-			printf(" ARRAY Token (%s) ",yytext);
+			//printf(" ARRAY Token (%s) ",yytext);
 			return ARRAY;
 		}
 "RECORD"	{	
-			printf(" RECORD Token (%s) ",yytext);
+			//printf(" RECORD Token (%s) ",yytext);
 			return RECORD;
 		}
 "SET"		{	
-			printf(" SET Token (%s) ",yytext);
+			//printf(" SET Token (%s) ",yytext);
 			return SET;
 		}
 "BEGIN"		{
-			printf(" BEGIN Token (%s) ",yytext);
+			//printf(" BEGIN Token (%s) ",yytext);
 			return BEG;
 		}
 "CONST"		{	
-			printf(" CONST Token (%s) ",yytext);
+			//printf(" CONST Token (%s) ",yytext);
 			return CONST;
 		}
 "EXIT"		{
-			printf(" EXIT Token (%s) ",yytext);
+			//printf(" EXIT Token (%s) ",yytext);
 			return EXIT;
 		}
 "IMPORT"	{	
-			printf(" IMPORT Token (%s) ",yytext);
+			//printf(" IMPORT Token (%s) ",yytext);
 			return IMPORT;
 		}
 "LOOP"		{	
-			printf(" LOOP Token (%s) ",yytext);
+			//printf(" LOOP Token (%s) ",yytext);
 			return LOOP;
 		}
 "MODULE"	{
-			printf(" MODULE Token (%s) ",yytext);
+			//printf(" MODULE Token (%s) ",yytext);
 			return MODULE;
 		}
 "NIL"		{
-			printf(" NIL Token (%s) ",yytext);
+			//printf(" NIL Token (%s) ",yytext);
 			return NIL;
 		}
 "POINTER"	{
-			printf(" POINTER Token (%s) ",yytext);
+			//printf(" POINTER Token (%s) ",yytext);
 			return POINTER;
 		}
 "PROCEDURE"	{
-			printf(" PROCEDURE Token (%s) ",yytext);
+			//printf(" PROCEDURE Token (%s) ",yytext);
 			return PROCEDURE;
 		}
 "RETURN"	{		
-			printf(" RETURN Token (%s) ",yytext);
+			//printf(" RETURN Token (%s) ",yytext);
 			return RETURN;
 		}
 "TYPE"		{
-			printf(" TYPE Token (%s) ",yytext);
+			//printf(" TYPE Token (%s) ",yytext);
 			return TYPE;
 		}
 "VAR"		{
-			printf(" VAR Token (%s) ",yytext);
+			//printf(" VAR Token (%s) ",yytext);
 			return VAR;
 		}
 "WITH"		{
-			printf(" WITH Token (%s) ",yytext);
+			//printf(" WITH Token (%s) ",yytext);
 			return WITH;
 		}
 "ABS"		{
-			printf(" ABS Token (%s) ",yytext);
+			//printf(" ABS Token (%s) ",yytext);
 			return ABS;
 		}
 "ODD"		{
-			printf(" ODD Token (%s) ",yytext);
+			//printf(" ODD Token (%s) ",yytext);
 			return ODD;
 		}
 "LEN"		{
-			printf(" LEN Token (%s) ",yytext);
+			//printf(" LEN Token (%s) ",yytext);
 			return LEN;
 		}
 "LSL"		{
-			printf(" LSL Token (%s) ",yytext);
+			//printf(" LSL Token (%s) ",yytext);
 			return LSL;
 		}
 "ASR"		{
-			printf(" ASR Token (%s) ",yytext);
+			//printf(" ASR Token (%s) ",yytext);
 			return ASR;
 		}
 "ROR"		{
-			printf(" ROR Token (%s) ",yytext);
+			//printf(" ROR Token (%s) ",yytext);
 			return ROR;
 		}
 "FLOOR"		{
-			printf(" FLOOR Token (%s) ",yytext);
+			//printf(" FLOOR Token (%s) ",yytext);
 			return FLOOR;
 		}
 "FLT"		{
-			printf(" FLT Token (%s) ",yytext);
+			//printf(" FLT Token (%s) ",yytext);
 			return FLT;
 		}
 "ORD"		{
-			printf(" ORD Token (%s) ",yytext);
+			//printf(" ORD Token (%s) ",yytext);
 			return ORD;
 		}
 "CHR"		{
-			printf(" CHR Token (%s) ",yytext);
+			//printf(" CHR Token (%s) ",yytext);
 			return CHR;
 		}
 "LONG"		{
-			printf(" LONG Token (%s) ",yytext);
+			//printf(" LONG Token (%s) ",yytext);
 			return LONG;
 		}
 "SHORT"		{
-			printf(" SHORT Token (%s) ",yytext);
+			//printf(" SHORT Token (%s) ",yytext);
 			return SHORT;
 		}
 "INC"		{
-			printf(" INC Token (%s) ",yytext);
+			//printf(" INC Token (%s) ",yytext);
 			return INC;
 		}
 "DEC"		{
-			printf(" DEC Token (%s) ",yytext);
+			//printf(" DEC Token (%s) ",yytext);
 			return DEC;
 		}
 "INCL"		{
-			printf(" INCL Token (%s) ",yytext);
+			//printf(" INCL Token (%s) ",yytext);
 			return INCL;
 		}
 "EXCL"		{
-			printf(" EXCL Token (%s) ",yytext);
+			//printf(" EXCL Token (%s) ",yytext);
 			return EXCL;
 		}
 "COPY"		{
-			printf(" COPY Token (%s) ",yytext);
+			//printf(" COPY Token (%s) ",yytext);
 			return COPY;
 		}
 "NEW"		{
-			printf(" NEW Token (%s) ",yytext);
+			//printf(" NEW Token (%s) ",yytext);
 			return NEW;
 		}
 "ASSERT"		{
-			printf(" ASSERT Token (%s) ",yytext);
+			//printf(" ASSERT Token (%s) ",yytext);
 			return ASSERT;
 		}
 "PACK"		{
-			printf(" PACK Token (%s) ",yytext);
+			//printf(" PACK Token (%s) ",yytext);
 			return PACK;
 		}
 "UNPK"		{
-			printf(" UNPK Token (%s) ",yytext);
+			//printf(" UNPK Token (%s) ",yytext);
 			return UNPK;
 		}
 
 "BOOLEAN"	{
-			printf(" BOOLEAN_IDENT (%s)",yytext);
+			//printf(" BOOLEAN_IDENT (%s)",yytext);
 			return BOOLEAN;
 		}
 "CHAR"		{	
-			printf(" CHAR_IDENT (%s) ",yytext);
+			//printf(" CHAR_IDENT (%s) ",yytext);
 			return CHAR;
 		}
 "INTEGER"	{
-			printf(" INTEGER_IDENT (%s) ",yytext);
+			//printf(" INTEGER_IDENT (%s) ",yytext);
 			return INTEGER;
 		}
 "REAL"		{
-			printf(" REAL_IDENT (%s) ",yytext);
+			//printf(" REAL_IDENT (%s) ",yytext);
 			return REAL;
 		}
 "LONGREAL"	{
-			printf(" LONGREAL_IDENT (%s) ",yytext);
+			//printf(" LONGREAL_IDENT (%s) ",yytext);
 			return LONGREAL;
 		}
 
+";"	{
+			//printf(" SEMIC (%s) ",yytext);
+			return SEMIC;
+		}
+","	{
+			//printf(" SEMIC (%s) ",yytext);
+			return COMMA;
+		}
+":"	{
+			//printf(" SEMIC (%s) ",yytext);
+			return COLON;
+		}
+"("		{
+			//printf(" SEMIC (%s) ",yytext);
+			return LEFTBRAC;
+		}
+")"		{
+			//printf(" SEMIC (%s) ",yytext);
+			return RIGHTBRAC;
+		}
+"."		{
+			//printf(" SEMIC (%s) ",yytext);
+			return DOTSYM;
+		}
+"["		{
+			//printf(" SEMIC (%s) ",yytext);
+			return LSQBR;
+		}
+"]"		{
+			//printf(" SEMIC (%s) ",yytext);
+			return RSQBR;
+		}
+"{"		{
+			//printf(" SEMIC (%s) ",yytext);
+			return LCBR;
+		}
+"}"		{
+			//printf(" SEMIC (%s) ",yytext);
+			return RCBR;
+		}
+"^"		{
+			//printf(" SEMIC (%s) ",yytext);
+			return CARR;
+		}
+
 {BOOLEAN}	{
-			printf(" BOOLEAN (%s)",yytext);
+			//printf(" BOOLEAN (%s)",yytext);
 			return BOOLEAN_VAL;
 		}
 {CHAR}		{	
-			printf(" CHAR (%s) ",yytext);
+			//printf(" CHAR (%s) ",yytext);
 			return CHAR_VAL;
 		}
 {INTEGER}	{
-			printf(" INTEGER (%s) ",yytext);
+			//printf(" INTEGER (%d) ",atoi(yytext));
 			return INTEGER_VAL;
 		}
 {REAL}		{
-			printf(" REAL (%s) ",yytext);
+			//printf(" REAL (%s) ",yytext);
 			return REAL_VAL;
 		}
 {STRING}	{
-			printf(" STRING (%s) ",yytext);
+			//printf(" STRING (%s) ",yytext);
 			return STRING_VAL;
 		}
 {IDENT}		{
-			printf(" IDENTIFIER (%s) ",yytext);
-			return ident;
+			//printf(" IDENTIFIER (%s) ",yytext);
+			return IDENT;
 		}
 
 %%
@@ -396,7 +441,7 @@ void yyerror(const char *s)
 }
 
 void AvoidComments(){
-	printf(" Cmmmts ");
+	//printf(" Cmmmts ");
 	int count=1;
 	int cp1=0;
 	int cp2=0;
