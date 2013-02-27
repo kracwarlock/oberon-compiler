@@ -1,17 +1,18 @@
 // Please write the name of the definitions using underscore if specifying more than two words in your program
 // First letter after every underscore shud be capital
 
+%error-verbose
 %token SEMIC COMMA COLON RIGHTBRAC LEFTBRAC DOTSYM LSQBR RSQBR LCBR RCBR CARR
 %token EQ_COMP UNEQ
 %token TILDA ASSIGN DOTDOT
 %token REPEAT UNTIL FOR TO BY DOCASE END
 %token WHILE IF_COND THEN ELSEIF ELSE CASE_COND OF
-%token STRLEN STRCAT STRCMP STRREV STRCPY
+%token STRLEN STRCAT STRCMP STRREV STRCPY NEW
 %token ARRAY RECORD SET BEG CONST EXIT
 %token IMPORT LOOP MODULE NIL
 %token POINTER PROCEDURE RETURN TYPE
 %token VAR WITH ABS ODD LEN LSL ASR ROR FLOOR FLT ORD CHR LONG SHORT 
-%token INC DEC INCL EXCL COPY NEW ASSERT PACK UNPK
+%token INC DEC INCL EXCL COPY ASSERT PACK UNPK
 %token BOOLEAN CHAR INTEGER LONGREAL REAL
 %token BOOLEAN_VAL CHAR_VAL INTEGER_VAL REAL_VAL STRING_VAL IDENT
 // %token IDENT    OF
@@ -38,8 +39,11 @@
 %{
 
 #include<stdio.h>
+#include "symbol_table.h"
 void yyerror(const char *);
 int yylex(void);
+
+extern char * yytext; 
 
 %}
 
@@ -48,11 +52,11 @@ int yylex(void);
 // Defining Module and all other blocks in a Oberon File
 
 Module:
-    cast_away Main_Block END IDENT DOTSYM     {printf("start \n");}
+    cast_away Main_Block END IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa qqq%s\n",yytext);} DOTSYM     {printf("start \n");}
     ;
 
 cast_away:
-    MODULE IDENT SEMIC  {printf("Module\n");}
+    MODULE IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa aaaa%s\n",yytext);} SEMIC  {printf("Module\n");}
     ;
 
 Main_Block:
@@ -70,8 +74,12 @@ Import_Modules_List:
     ;
 
 Import:
-    IDENT ASSIGN IDENT    {printf("IDENT ASSIGN IDENT\n");}
-    | IDENT      {printf("IDENT\n");}
+    IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa1 %s\n",yytext);} Import_Aux
+    ;
+
+Import_Aux:
+    ASSIGN IDENT  {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa %s\n",yytext);}  {printf("IDENT ASSIGN IDENT\n");}
+    |
     ;
 
 Stat_Block:
@@ -91,13 +99,17 @@ Statement    :
 | CASE_COND Expr OF Case_Parameters Else END {printf(" CASE_COND Expr OF Case_Parameters Else END \n");}
 | WHILE Expr DOCASE Statement_Sequence END      {printf("WHILE Expr DOCASE Statement_Sequence END\n");}
 | REPEAT Statement_Sequence UNTIL Expr          {printf("REPEAT Statement_Sequence UNTIL Expr\n");}
-| FOR IDENT ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END  {printf(" FOR IDENT ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END\n");} 
-| FOR IDENT ASSIGN Expr TO Expr DOCASE Statement_Sequence END     {printf("FOR IDENT ASSIGN Expr TO Expr DOCASE Statement_Sequence END\n");}
+| FOR IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa3 %s\n",yytext);} Statement_Aux
 | LOOP Statement_Sequence END         {printf("LOOP Statement_Sequence END\n");}
 | EXIT                                {printf(" EXIT\n");}
 | RETURN Expr                         {printf(" RETURN Expr\n");}
 | RETURN                              {printf(" RETURN\n");}
 |                                     {printf(" stat_nothing\n");}
+;
+
+Statement_Aux :
+ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END  {printf(" FOR IDENT ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END\n");} 
+| ASSIGN Expr TO Expr DOCASE Statement_Sequence END     {printf("FOR IDENT ASSIGN Expr TO Expr DOCASE Statement_Sequence END\n");}
 ;
 
 Expr         : 
@@ -134,11 +146,11 @@ Factor       :
 ;
 
 Designator   : 
-  IDENT optSuffix     {printf("IDENT optSuffix\n");}
+  IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa4 %s\n",yytext);} optSuffix     {printf("IDENT optSuffix\n");}
 ;
 
 optSuffix :
-  DOTSYM IDENT  optSuffix                       {printf("DOTSYM IDENT  optSuffix\n");}
+  DOTSYM IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa5 %s\n",yytext);} optSuffix {printf("DOTSYM IDENT  optSuffix\n");}
 | LSQBR Expr_List RSQBR  optSuffix              {printf("LSQBR Expr_List RSQBR  optSuffix\n");}
 | CARR  optSuffix                               {printf("CARR  optSuffix\n");}
 | LEFTBRAC Expr_List RIGHTBRAC optSuffix   /* Changes from original grammar */  {printf("LEFTBRAC Expr_List RIGHTBRAC optSuffix\n");}
@@ -248,9 +260,14 @@ Qualident                           {printf("Qualident\n");}
 ;
 
 Qualident    :             // For referencing a particular data type
-  IDENT                       {printf("IDENT\n");}
-| IDENT DOTSYM IDENT          {printf("IDENT DOTSYM IDENT\n");}// For referencing an object within in a different module 
+  IDENT  {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa6 %s\n",yytext);}  Qualident_Aux                 
 ;
+
+Qualident_Aux:
+  DOTSYM IDENT  {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa7 %s\n",yytext);}    {printf("IDENT DOTSYM IDENT\n");}// For referencing an object within in a different module 
+  |
+;  
+
 
 Const_Expr    :                                   
   Expr                                            {printf("Expr\n");}
@@ -276,7 +293,7 @@ Proc_List     :
 ;
 
 Proc_Decl     : 
-  PROCEDURE IDENT Formal_Pars SEMIC Decl_Seq Stat_Block END IDENT    {printf("PROCEDURE IDENT Formal_Pars SEMIC Decl_Seq Stat_Block END IDENT\n");}
+  PROCEDURE IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa 8%s\n",yytext);} Formal_Pars SEMIC Decl_Seq Stat_Block END IDENT  {if (Lookup(yytext)==NULL) Insert(yytext);printf("asas %s\n",yytext);}  {printf("PROCEDURE IDENT Formal_Pars SEMIC Decl_Seq Stat_Block END IDENT\n");}
 ;
 
 // In this part we are writing the grammar for the FORMAL PARMAMETERS of the procedure dclarartion in data_list
@@ -299,19 +316,25 @@ FP_section:
 ;
 
 Identifier_List:
-  IDENT                             {printf("IDENT\n");}
-| IDENT COMMA Identifier_List        {printf("IDENT COMMA Identifier_List\n");}
+  IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa 101%s\n",yytext);} Identifier_List_Aux
 ;
 
+Identifier_List_Aux:
+COMMA Identifier_List        {printf("IDENT COMMA Identifier_List\n");}
+|
+;
 
 %%
+
+void yyerror(const char *s){
+    fprintf(stderr, "************************** %s **************************\n", s);
+}
 
 int main()
 {
   int res = yyparse();
+  print_token();
   if (res==0)
     printf("Successful parse\n");
-  else
-    printf("Encountered errors\n");
 }
 

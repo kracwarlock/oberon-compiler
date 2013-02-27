@@ -5,7 +5,6 @@
 	# include "y.tab.h"
 	/* definitions of manifest constants	
 	*/
-	void yyerror(const char *s);
 	void AvoidComments();
 
 %}
@@ -434,11 +433,6 @@ IDENT		{letter}({letter}|{digit})*
 		}
 
 %%
-
-void yyerror(const char *s)
-{
-	return;
-}
 
 void AvoidComments(){
 	//printf(" Cmmmts ");

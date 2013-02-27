@@ -23,8 +23,6 @@ PROCEDURE IncWord(VAR s: ARRAY OF CHAR; VAR p: Tree) : INTEGER;
   VAR q: Tree;
 BEGIN
   IF (p = NIL) THEN
-    (*NEW(q);
-    COPY(s, q.word);*)           (*check here*)
     q.count := 1; 
     q.left := NIL;
     q.right := NIL;
