@@ -15,22 +15,6 @@
 %token INC DEC INCL EXCL COPY ASSERT PACK UNPK
 %token BOOLEAN CHAR INTEGER LONGREAL REAL
 %token BOOLEAN_VAL CHAR_VAL INTEGER_VAL REAL_VAL STRING_VAL IDENT
-// %token IDENT    OF
-// %token REPEAT
-// %token UNTIL    FOR     TO
-// %token BY       DO      END
-// %token WHILE    IF_COND THEN
-// %token ELSEIF   ELSE    CASE_COND
-// %token BOOLEAN  CHAR    INT
-// %token REAL     STRING  LONGREAL
-// %token ARRAY    BEG     CONST
-// %token EXIT     IMPORT  LOOP
-// %token MODULE   NIL     POINTER
-// %token RETURN   TYPE    PROCEDURE
-// %token VAR      WITH
-// %token OR       
-// %token ASSIGN   LE    GE    DOTDOT
-// %token RECORD
 
 %nonassoc EQ_COMP  UNEQ  LT  LE  GT  GE  IN  IS
 %left PLUS_SYM  MINUS_SYM  OR
@@ -40,6 +24,8 @@
 
 #include<stdio.h>
 #include "symbol_table.h"
+#include "ast.h"
+#include "ast.c"
 void yyerror(const char *);
 int yylex(void);
 
@@ -52,11 +38,11 @@ extern char * yytext;
 // Defining Module and all other blocks in a Oberon File
 
 Module:
-    cast_away Main_Block END IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa qqq%s\n",yytext);} DOTSYM     {printf("start \n");}
+    cast_away Main_Block END ident DOTSYM     {printf("start \n");}
     ;
 
 cast_away:
-    MODULE IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa aaaa%s\n",yytext);} SEMIC  {printf("Module\n");}
+    MODULE ident SEMIC  {printf("Module\n");}
     ;
 
 Main_Block:
@@ -74,11 +60,11 @@ Import_Modules_List:
     ;
 
 Import:
-    IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa1 %s\n",yytext);} Import_Aux
+    ident Import_Aux
     ;
 
 Import_Aux:
-    ASSIGN IDENT  {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa %s\n",yytext);}  {printf("IDENT ASSIGN IDENT\n");}
+    ASSIGN ident  {printf("IDENT ASSIGN IDENT\n");}
     |
     ;
 
@@ -99,7 +85,7 @@ Statement    :
 | CASE_COND Expr OF Case_Parameters Else END {printf(" CASE_COND Expr OF Case_Parameters Else END \n");}
 | WHILE Expr DOCASE Statement_Sequence END      {printf("WHILE Expr DOCASE Statement_Sequence END\n");}
 | REPEAT Statement_Sequence UNTIL Expr          {printf("REPEAT Statement_Sequence UNTIL Expr\n");}
-| FOR IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa3 %s\n",yytext);} Statement_Aux
+| FOR ident Statement_Aux
 | LOOP Statement_Sequence END         {printf("LOOP Statement_Sequence END\n");}
 | EXIT                                {printf(" EXIT\n");}
 | RETURN Expr                         {printf(" RETURN Expr\n");}
@@ -146,11 +132,11 @@ Factor       :
 ;
 
 Designator   : 
-  IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa4 %s\n",yytext);} optSuffix     {printf("IDENT optSuffix\n");}
+  ident optSuffix     {printf("IDENT optSuffix\n");}
 ;
 
 optSuffix :
-  DOTSYM IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa5 %s\n",yytext);} optSuffix {printf("DOTSYM IDENT  optSuffix\n");}
+  DOTSYM ident optSuffix {printf("DOTSYM IDENT  optSuffix\n");}
 | LSQBR Expr_List RSQBR  optSuffix              {printf("LSQBR Expr_List RSQBR  optSuffix\n");}
 | CARR  optSuffix                               {printf("CARR  optSuffix\n");}
 | LEFTBRAC Expr_List RIGHTBRAC optSuffix   /* Changes from original grammar */  {printf("LEFTBRAC Expr_List RIGHTBRAC optSuffix\n");}
@@ -260,11 +246,11 @@ Qualident                           {printf("Qualident\n");}
 ;
 
 Qualident    :             // For referencing a particular data type
-  IDENT  {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa6 %s\n",yytext);}  Qualident_Aux                 
+  ident Qualident_Aux                 
 ;
 
 Qualident_Aux:
-  DOTSYM IDENT  {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa7 %s\n",yytext);}    {printf("IDENT DOTSYM IDENT\n");}// For referencing an object within in a different module 
+  DOTSYM ident {printf("IDENT DOTSYM IDENT\n");}// For referencing an object within in a different module 
   |
 ;  
 
@@ -293,7 +279,7 @@ Proc_List     :
 ;
 
 Proc_Decl     : 
-  PROCEDURE IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa 8%s\n",yytext);} Formal_Pars SEMIC Decl_Seq Stat_Block END IDENT  {if (Lookup(yytext)==NULL) Insert(yytext);printf("asas %s\n",yytext);}  {printf("PROCEDURE IDENT Formal_Pars SEMIC Decl_Seq Stat_Block END IDENT\n");}
+  PROCEDURE ident Formal_Pars SEMIC Decl_Seq Stat_Block END ident {printf("PROCEDURE IDENT Formal_Pars SEMIC Decl_Seq Stat_Block END IDENT\n");}
 ;
 
 // In this part we are writing the grammar for the FORMAL PARMAMETERS of the procedure dclarartion in data_list
@@ -316,12 +302,16 @@ FP_section:
 ;
 
 Identifier_List:
-  IDENT {if (Lookup(yytext)==NULL) Insert(yytext);printf("asasa 101%s\n",yytext);} Identifier_List_Aux
+  ident Identifier_List_Aux
 ;
 
 Identifier_List_Aux:
 COMMA Identifier_List        {printf("IDENT COMMA Identifier_List\n");}
 |
+;
+
+ident:
+  IDENT {$$ = makeNode(IDENT, yytext, NOTSET, REF, NULL, NULL); }
 ;
 
 %%
@@ -333,7 +323,6 @@ void yyerror(const char *s){
 int main()
 {
   int res = yyparse();
-  print_token();
   if (res==0)
     printf("Successful parse\n");
 }
