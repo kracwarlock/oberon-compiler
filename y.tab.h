@@ -72,40 +72,40 @@
      STRCMP = 290,
      STRREV = 291,
      STRCPY = 292,
-     ARRAY = 293,
-     RECORD = 294,
-     SET = 295,
-     BEG = 296,
-     CONST = 297,
-     EXIT = 298,
-     IMPORT = 299,
-     LOOP = 300,
-     MODULE = 301,
-     NIL = 302,
-     POINTER = 303,
-     PROCEDURE = 304,
-     RETURN = 305,
-     TYPE = 306,
-     VAR = 307,
-     WITH = 308,
-     ABS = 309,
-     ODD = 310,
-     LEN = 311,
-     LSL = 312,
-     ASR = 313,
-     ROR = 314,
-     FLOOR = 315,
-     FLT = 316,
-     ORD = 317,
-     CHR = 318,
-     LONG = 319,
-     SHORT = 320,
-     INC = 321,
-     DEC = 322,
-     INCL = 323,
-     EXCL = 324,
-     COPY = 325,
-     NEW = 326,
+     NEW = 293,
+     ARRAY = 294,
+     RECORD = 295,
+     SET = 296,
+     BEG = 297,
+     CONST = 298,
+     EXIT = 299,
+     IMPORT = 300,
+     LOOP = 301,
+     MODULE = 302,
+     NIL = 303,
+     POINTER = 304,
+     PROCEDURE = 305,
+     RETURN = 306,
+     TYPE = 307,
+     VAR = 308,
+     WITH = 309,
+     ABS = 310,
+     ODD = 311,
+     LEN = 312,
+     LSL = 313,
+     ASR = 314,
+     ROR = 315,
+     FLOOR = 316,
+     FLT = 317,
+     ORD = 318,
+     CHR = 319,
+     LONG = 320,
+     SHORT = 321,
+     INC = 322,
+     DEC = 323,
+     INCL = 324,
+     EXCL = 325,
+     COPY = 326,
      ASSERT = 327,
      PACK = 328,
      UNPK = 329,
@@ -173,40 +173,40 @@
 #define STRCMP 290
 #define STRREV 291
 #define STRCPY 292
-#define ARRAY 293
-#define RECORD 294
-#define SET 295
-#define BEG 296
-#define CONST 297
-#define EXIT 298
-#define IMPORT 299
-#define LOOP 300
-#define MODULE 301
-#define NIL 302
-#define POINTER 303
-#define PROCEDURE 304
-#define RETURN 305
-#define TYPE 306
-#define VAR 307
-#define WITH 308
-#define ABS 309
-#define ODD 310
-#define LEN 311
-#define LSL 312
-#define ASR 313
-#define ROR 314
-#define FLOOR 315
-#define FLT 316
-#define ORD 317
-#define CHR 318
-#define LONG 319
-#define SHORT 320
-#define INC 321
-#define DEC 322
-#define INCL 323
-#define EXCL 324
-#define COPY 325
-#define NEW 326
+#define NEW 293
+#define ARRAY 294
+#define RECORD 295
+#define SET 296
+#define BEG 297
+#define CONST 298
+#define EXIT 299
+#define IMPORT 300
+#define LOOP 301
+#define MODULE 302
+#define NIL 303
+#define POINTER 304
+#define PROCEDURE 305
+#define RETURN 306
+#define TYPE 307
+#define VAR 308
+#define WITH 309
+#define ABS 310
+#define ODD 311
+#define LEN 312
+#define LSL 313
+#define ASR 314
+#define ROR 315
+#define FLOOR 316
+#define FLT 317
+#define ORD 318
+#define CHR 319
+#define LONG 320
+#define SHORT 321
+#define INC 322
+#define DEC 323
+#define INCL 324
+#define EXCL 325
+#define COPY 326
 #define ASSERT 327
 #define PACK 328
 #define UNPK 329
