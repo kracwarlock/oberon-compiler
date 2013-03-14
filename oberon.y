@@ -1,6 +1,3 @@
-// Please write the name of the definitions using underscore if specifying more than two words in your program
-// First letter after every underscore shud be capital
-
 %error-verbose
 %token SEMIC COMMA COLON RIGHTBRAC LEFTBRAC DOTSYM LSQBR RSQBR LCBR RCBR CARR
 %token EQ_COMP UNEQ
@@ -13,7 +10,7 @@
 %token POINTER PROCEDURE RETURN TYPE
 %token VAR WITH ABS ODD LEN LSL ASR ROR FLOOR FLT ORD CHR LONG SHORT 
 %token INC DEC INCL EXCL COPY ASSERT PACK UNPK
-%token BOOLEAN CHAR INTEGER LONGREAL REAL
+%token BOOLEAN_TYPE CHAR_TYPE INTEGER_TYPE LONGREAL_TYPE REAL_TYPE
 %token BOOLEAN_VAL CHAR_VAL INTEGER_VAL REAL_VAL STRING_VAL IDENT
 
 %nonassoc EQ_COMP  UNEQ  LT  LE  GT  GE  IN  IS
@@ -22,10 +19,24 @@
 
 %{
 
-#include<stdio.h>
-#include "symbol_table.h"
+#include <stdio.h>
+#include <string.h>
 #include "ast.h"
+#include "symbol_table.h"
 #include "ast.c"
+
+SymbolTable symbolTable;
+
+type_EntryTable *p;
+
+int currentScope = 0;
+int scopeCount = 5;
+int order = 0;
+
+int passType = VAL;
+
+#define NULL 0
+
 void yyerror(const char *);
 int yylex(void);
 
@@ -33,16 +44,39 @@ extern char * yytext;
 
 %}
 
+%union
+{
+  int         int_value;
+  char*       str_value;
+  type_tableEntry* type_value;
+  AstNode*    node;
+}
+
+%type <node> cast_away
+%type <node> ident
+%type <node> Designator
+%type <type_value> Type;
+%type <int_value> Const_Expr;
+%type <type_value> Qualident;
+
 %%
 
 // Defining Module and all other blocks in a Oberon File
 
 Module:
-    cast_away Main_Block END ident DOTSYM     {printf("start \n");}
+    cast_away Main_Block END ident DOTSYM     
+    {
+      if (strcmp($1->node_value,$4->node_value) != 0) {
+        printf("Different Names Used in ident in begin and end",$1->node_value);
+      }
+    }
     ;
 
 cast_away:
-    MODULE ident SEMIC  {printf("Module\n");}
+    MODULE ident SEMIC  
+    {
+      $$ = $2;
+    }
     ;
 
 Main_Block:
@@ -50,7 +84,7 @@ Main_Block:
     ;
 
 Import_Modules: 
-    IMPORT Import_Modules_List SEMIC    {printf("IMPORT Import_Modules_List SEMIC\n");}
+    IMPORT Import_Modules_List SEMIC    {changeVariableType(&symbolTable,NULL,MODULE_VALUE); }
     |                                   {printf("IMPORT Import_Modules_List SEMIC_nothing\n");}
     ;
 
@@ -60,12 +94,8 @@ Import_Modules_List:
     ;
 
 Import:
-    ident Import_Aux
-    ;
-
-Import_Aux:
-    ASSIGN ident  {printf("IDENT ASSIGN IDENT\n");}
-    |
+    ident ASSIGN ident { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, NULL, IDENTIFIER, 0, NULL, 0,0, NULL, 0, NULL)); }
+    | ident
     ;
 
 Stat_Block:
@@ -123,7 +153,7 @@ Expr         :
 
 Factor       : 
   Designator    {printf("Designator\n");}
-| INTEGER_VAL   {printf("integer val is %d",$1);}
+| INTEGER_VAL   {printf("integer val is ");}
 | CHAR_VAL      {printf("CHAR_VAL\n");}
 | NIL           {printf("NIL\n");}
 | Set           {printf("Set\n");}      
@@ -217,59 +247,150 @@ Const_List :
 ;
 
 Type_List : 
-  Identifier_List EQ_COMP Type SEMIC Type_List      {printf("Identifier_List EQ_COMP Type SEMIC Type_List\n");}
-|                                                   {printf("Type_List_Nothing\n");}
+  Identifier_List EQ_COMP Type {changeVariableType(&symbolTable, $3,TYPE_VALUE); } SEMIC Type_List      
+|
 ;
 
 Var_List  : 
-  Identifier_List COLON Type SEMIC Var_List         {printf("Identifier_List COLON Type SEMIC Var_List\n");}
+  Identifier_List COLON Type                        {changeVariableType(&symbolTable, $3,VAR_VALUE); } SEMIC Var_List
 |                                                   {printf("Var_List_Nothing\n");}
 ;
 
-// this Qualident contains the various various type declaration methods like array, record , 
-// pointer and procedure declarations
-
 Type: 
-Qualident                           {printf("Qualident\n");}
-| INTEGER                           {printf("INTEGER\n");}
-| CHAR                              {printf("CHAR\n");}
-| BOOLEAN                           {printf("BOOLEAN\n");}
-| REAL                              {printf("REAL\n");}
-| LONGREAL                          {printf("LONGREAL\n");}
-| ARRAY Const_Expr_List OF Type     {printf("ARRAY Const_Expr_List OF Type\n");}
-| ARRAY OF Type                     {printf("ARRAY OF Type\n");}
-| RECORD LEFTBRAC Qualident RIGHTBRAC Field_List END           {printf("RECORD LEFTBRAC Qualident RIGHTBRAC Field_List END\n");}// Changes Look at it
-| RECORD Field_List END             {printf("RECORD Field_List END\n");}
-| POINTER TO Type                   {printf("POINTER TO Type\n");}
-| PROCEDURE Formal_Pars             {printf("PROCEDURE Formal_Pars\n");}
-| SET                               {printf("SET\n");}
+Qualident                           
+{ 
+ insert_last(p,create_typeEntry(QUALIDENT_TYPE,NULL,NULL));
+ $$ = p->last;
+ remove_last(p);
+}
+| INTEGER_TYPE                      
+{ 
+  insert_last(p,create_typeEntry(INTEGER,NULL,NULL));
+  $$ = p->last; 
+  remove_last(p);
+}
+| CHAR_TYPE                         
+{ 
+  insert_last(p,create_typeEntry(CHAR,NULL,NULL));
+  $$ = p->last;
+  remove_last(p);
+}
+| BOOLEAN_TYPE                      
+{ 
+  insert_last(p,create_typeEntry(BOOLEAN,NULL,NULL));
+  $$ = p->last;
+  remove_last(p);
+}
+| REAL_TYPE                         
+{ 
+  insert_last(p,create_typeEntry(REAL,NULL,NULL));
+  $$ = p->last;
+  remove_last(p);
+}
+| LONGREAL_TYPE
+{
+  insert_last(p,create_typeEntry(LONGREAL,NULL,NULL));
+  $$ = p->last;
+  remove_last(p);
+}
+| ARRAY 
+  {
+    insert_last(p,create_typeEntry(ARRAY_TYPE,NULL,NULL));
+  } OF Type 
+  {
+    $$ = p->last;
+    remove_last(p);
+  }
+| ARRAY
+   {
+      insert_last(p,create_typeEntry(ARRAY_TYPE,NULL,NULL));
+   } Const_Expr_List OF Type    
+   { 
+      $$ = p->last;
+      remove_last(p);
+   }
+| RECORD 
+  {
+    insert_last(p,create_typeEntry(RECORD_TYPE,NULL,NULL));
+  }
+  Field_List END             
+  {
+    $$ = p->last;
+    remove_last(p);
+  }
+| POINTER 
+  {
+    insert_last(p,create_typeEntry(POINTER_TYPE,NULL,NULL));
+  }
+  TO Type                   
+  { 
+    $$ = p->last;
+    remove_last(p);
+  }
+| PROCEDURE
+{
+  insert_last(p,create_typeEntry(PROC_TYPE,NULL,NULL));
+}
+Formal_Pars_Dec             
+{ 
+  $$ = p->last;
+  remove_last(p);
+}
+| SET                               
+{
+ insert_last(p,create_typeEntry(SET_TYPE,NULL,NULL));
+ $$ = p->last;
+ remove_last(p);
+}
 ;
 
-Qualident    :             // For referencing a particular data type
-  ident Qualident_Aux                 
+Qualident    :             
+  ident DOTDOT ident 
+{
+  if (module_lookup_bool(&symbolTable,$1->node_value)){
+    $$ = type_lookup(&symbolTable,$3->node_value,currentScope);
+  }
+  else{
+    printf("module lookup failed");
+  }
+}
+| ident 
+{
+  $$ = type_lookup(&symbolTable,$1->node_value,currentScope);
+}                 
 ;
-
-Qualident_Aux:
-  DOTSYM ident {printf("IDENT DOTSYM IDENT\n");}// For referencing an object within in a different module 
-  |
-;  
-
 
 Const_Expr    :                                   
   Expr                                            {printf("Expr\n");}
 ;
 
 Const_Expr_List :
-  Const_Expr COMMA Const_Expr_List                {printf("Const_Expr COMMA Const_Expr_List\n");}
-| Const_Expr                                      {printf("Const_Expr\n");}
+  Const_Expr COMMA Const_Expr_List    
+  { 
+    {add_type_FormalParameter(p, createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,0,NULL));}    
+  }
+| Const_Expr 
+  { 
+    {add_type_FormalParameter(p, createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,0,NULL));}    
+  }
 ;
 
 
 Field_List    : 
-  Identifier_List COLON Type SEMIC Field_List     {printf("Identifier_List COLON Type SEMIC Field_List\n");}
-| Identifier_List COLON Type                      {printf("Identifier_List COLON Type\n");}
+  fi_Identifier_List COLON Type { change_type_FormalParamType(p, $3); } SEMIC Field_List
+| fi_Identifier_List COLON Type { change_type_FormalParamType(p, $3); }
 |                                                 {printf("Field_List_Nothing\n");}
 ;
+
+fi_Identifier_List:
+  ident fi_Identifier_List_Aux      { add_type_FormalParameter(p, createTableEntry($1->node_value, NULL, passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,0,NULL));}    
+;
+
+fi_Identifier_List_Aux:
+COMMA fi_Identifier_List
+|
+;
+
 
 // Now it is th part where we would be declaring the procedures...
 
@@ -279,13 +400,23 @@ Proc_List     :
 ;
 
 Proc_Decl     : 
-  PROCEDURE ident Formal_Pars SEMIC Decl_Seq Stat_Block END ident {printf("PROCEDURE IDENT Formal_Pars SEMIC Decl_Seq Stat_Block END IDENT\n");}
+  PROCEDURE ident
+  {
+      insert_last(p,create_typeEntry(PROC_TYPE,NULL,NULL));
+      addSymbolTableEntry(&symbolTable, createTableEntry($2->node_value, p->last , VAL, PROC_NAME, 0, NULL, 0, ++scopeCount, NULL, 0, NULL));
+      currentScope = scopeCount;
+  } 
+  Formal_Pars SEMIC Decl_Seq Stat_Block END ident 
+  {
+      currentScope = 0;
+      remove_last(p);
+  }
 ;
 
 // In this part we are writing the grammar for the FORMAL PARMAMETERS of the procedure dclarartion in data_list
 
 Formal_Pars: 
-  LEFTBRAC FP_section_List RIGHTBRAC COLON Type    {printf("LEFTBRAC FP_section_List RIGHTBRAC COLON Type\n");}
+  LEFTBRAC FP_section_List RIGHTBRAC COLON Type
 | LEFTBRAC FP_section_List RIGHTBRAC {printf("LEFTBRAC FP_section_List RIGHTBRAC\n");}
 |  LEFTBRAC RIGHTBRAC  {printf("LEFTBRAC RIGHTBRAC\n");}
 |  {printf("Formal_Pars_nothing\n");}
@@ -297,16 +428,51 @@ FP_section_List:
 ;
 
 FP_section:
-  Identifier_List COLON Type         {printf("Identifier_List COLON Type\n");}
-| VAR Identifier_List COLON Type     {printf("VAR Identifier_List COLON Type\n");}
+  fp_Identifier_List COLON Type                 { change_type_FormalParamType(p, $3); }
+| VAR fp_Identifier_List COLON Type             { change_type_FormalParamType(p, $4); }
+;
+
+fp_Identifier_List:
+  ident fp_Identifier_List_Aux                  { add_type_FormalParameter(p, createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,0,NULL));}
+;
+
+fp_Identifier_List_Aux:
+COMMA fp_Identifier_List              
+|
+;
+
+Formal_Pars_Dec: 
+  LEFTBRAC FP_section_List_Dec RIGHTBRAC COLON Type    {printf("LEFTBRAC FP_section_List RIGHTBRAC COLON Type\n");}
+| LEFTBRAC FP_section_List_Dec RIGHTBRAC {printf("LEFTBRAC FP_section_List RIGHTBRAC\n");}
+|  LEFTBRAC RIGHTBRAC  {printf("LEFTBRAC RIGHTBRAC\n");}
+|  {printf("Formal_Pars_nothing\n");}
+;
+
+FP_section_List_Dec:
+  FP_section_Dec SEMIC FP_section_List_Dec    {printf("FP_section SEMIC FP_section_List");}
+| FP_section_Dec   {printf("FP_section");}
+;
+
+FP_section_Dec:
+  fp_Identifier_List_Dec COLON Type      { change_type_FormalParamType(p, $3); }
+| VAR fp_Identifier_List_Dec COLON Type  { change_type_FormalParamType(p, $4); }
+;
+
+fp_Identifier_List_Dec:
+  ident fp_Identifier_List_Aux_Dec      { add_type_FormalParameter(p, createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,0,NULL));}
+;
+
+fp_Identifier_List_Aux_Dec:
+COMMA fp_Identifier_List_Dec              
+|
 ;
 
 Identifier_List:
-  ident Identifier_List_Aux
+  ident Identifier_List_Aux         { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, VAL, IDENTIFIER, 0, NULL, currentScope, currentScope, NULL, 0, NULL)); }
 ;
 
 Identifier_List_Aux:
-COMMA Identifier_List        {printf("IDENT COMMA Identifier_List\n");}
+COMMA Identifier_List               {printf("IDENT COMMA Identifier_List\n");}
 |
 ;
 
@@ -322,8 +488,11 @@ void yyerror(const char *s){
 
 int main()
 {
+  createSymbolTable(&symbolTable);
+  p = create_typeEntry();
   int res = yyparse();
   if (res==0)
     printf("Successful parse\n");
+  print_Symbol(&symbolTable);
+  return 0;
 }
-

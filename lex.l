@@ -2,6 +2,7 @@
 	# include <stdio.h>
 	# include <stdlib.h>
 	# include <string.h>
+	# include "ast.h"
 	# include "y.tab.h"
 	/* definitions of manifest constants	
 	*/
@@ -343,23 +344,23 @@ IDENT		{letter}({letter}|{digit})*
 
 "BOOLEAN"	{
 			//printf(" BOOLEAN_IDENT (%s)",yytext);
-			return BOOLEAN;
+			return BOOLEAN_TYPE;
 		}
 "CHAR"		{	
 			//printf(" CHAR_IDENT (%s) ",yytext);
-			return CHAR;
+			return CHAR_TYPE;
 		}
 "INTEGER"	{
 			//printf(" INTEGER_IDENT (%s) ",yytext);
-			return INTEGER;
+			return INTEGER_TYPE;
 		}
 "REAL"		{
 			//printf(" REAL_IDENT (%s) ",yytext);
-			return REAL;
+			return REAL_TYPE;
 		}
 "LONGREAL"	{
 			//printf(" LONGREAL_IDENT (%s) ",yytext);
-			return LONGREAL;
+			return LONGREAL_TYPE;
 		}
 
 ";"	{
