@@ -1,8 +1,0 @@
-For Running The Parser:
-
-yacc -d oberon.y
-lex lex.l
-gcc lex.yy.c y.tab.c -o main
-./main
-
-:) after executing main nothing would happen currenlty working on this ...

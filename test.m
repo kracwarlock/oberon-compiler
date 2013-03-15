@@ -10,9 +10,10 @@ CONST MAX = 10;
 TYPE
   y = INTEGER;
   z = y;
+  m = BOOLEAN;
   rc = RECORD a, b, c: INTEGER; d: POINTER TO ARRAY OF INTEGER; END;
-  rc1 = RECORD a, b, c: INTEGER; d: POINTER TO ARRAY OF INTEGER; END;
-  fn = PROCEDURE ( a, b: INTEGER; c, d: POINTER TO ARRAY OF INTEGER ) : rc;
+  rc1 = RECORD e, f, g: INTEGER; h: POINTER TO ARRAY OF INTEGER; END;
+  fn = PROCEDURE ( i, j: INTEGER; k, l: POINTER TO ARRAY OF INTEGER ) : rc;
 BEGIN
   (* Read in the numbers *)
   N := 100;

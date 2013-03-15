@@ -621,11 +621,10 @@ char *yytext;
 	# include "y.tab.h"
 	/* definitions of manifest constants	
 	*/
-	void yyerror(const char *s);
 	void AvoidComments();
 
 /* regular definitions */
-#line 629 "lex.yy.c"
+#line 628 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -812,10 +811,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 25 "lex.l"
+#line 24 "lex.l"
 
 
-#line 819 "lex.yy.c"
+#line 818 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -900,14 +899,14 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 27 "lex.l"
+#line 26 "lex.l"
 {
 			return EQ_COMP;
 		}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 30 "lex.l"
+#line 29 "lex.l"
 {
 			//printf(" HASH (%s) ",yytext);
 			return UNEQ;
@@ -915,7 +914,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 34 "lex.l"
+#line 33 "lex.l"
 {
 			//printf(" LESS THAN (%s) ",yytext);
 			return LT;
@@ -923,7 +922,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 38 "lex.l"
+#line 37 "lex.l"
 {
 			//printf(" LESS THAN EQUAL (%s) ",yytext);
 			return LE;
@@ -931,7 +930,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 43 "lex.l"
+#line 42 "lex.l"
 {
 			//printf(" GREATER (%s) ",yytext);
 			return GT;
@@ -939,7 +938,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 47 "lex.l"
+#line 46 "lex.l"
 {
 			//printf(" GREATER THAN EQUAL (%s) ",yytext);
 			return GE;
@@ -947,7 +946,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 51 "lex.l"
+#line 50 "lex.l"
 {
 			//printf(" IN (%s) ",yytext);
 			return IN;
@@ -955,7 +954,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 55 "lex.l"
+#line 54 "lex.l"
 {
 			//printf(" IS (%s) ",yytext);
 			return IS;
@@ -963,7 +962,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 60 "lex.l"
+#line 59 "lex.l"
 {
 			//printf(" PLUS (%s) ",yytext);
 			return PLUS_SYM;
@@ -971,7 +970,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 64 "lex.l"
+#line 63 "lex.l"
 {
 			//printf(" MINUS (%s) ",yytext);
 			return MINUS_SYM;
@@ -979,7 +978,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 68 "lex.l"
+#line 67 "lex.l"
 {
 			//printf(" MULTIPLY (%s) ",yytext);
 			return MULTIPLY_SYM;
@@ -987,7 +986,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 72 "lex.l"
+#line 71 "lex.l"
 {
 			//printf(" DIVIDE (%s) ",yytext);
 			return DIVIDE_SYM;
@@ -995,7 +994,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 76 "lex.l"
+#line 75 "lex.l"
 {
 			//printf(" DIVISION (%s) ",yytext);
 			return DIV;
@@ -1003,7 +1002,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 80 "lex.l"
+#line 79 "lex.l"
 {
 			//printf(" MODULUS (%s) ",yytext);
 			return MOD;
@@ -1011,7 +1010,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 85 "lex.l"
+#line 84 "lex.l"
 {
 			//printf(" OR|| (%s) ",yytext);
 			return OR_SYM;
@@ -1019,7 +1018,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 89 "lex.l"
+#line 88 "lex.l"
 {
 			//printf(" AND (%s) ",yytext);
 			return AND_SYM;
@@ -1027,7 +1026,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 93 "lex.l"
+#line 92 "lex.l"
 {
 			//printf(" TILDA (%s) ",yytext);
 			return TILDA;
@@ -1035,7 +1034,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 97 "lex.l"
+#line 96 "lex.l"
 {
 			//printf(" ASSIGNMENT (%s) ",yytext);
 			return ASSIGN;
@@ -1043,7 +1042,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 101 "lex.l"
+#line 100 "lex.l"
 {
 			//printf(" DOTDOT (%s) ",yytext);
 			return DOTDOT;
@@ -1051,13 +1050,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 106 "lex.l"
+#line 105 "lex.l"
 {;}
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 108 "lex.l"
+#line 107 "lex.l"
 {	
 			//printf("\n");
 			//printf("Tokenizing Line: %d ---- ",yylineno+1);
@@ -1066,7 +1065,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 114 "lex.l"
+#line 113 "lex.l"
 {
 			//printf(" REPEATT (%s) ",yytext);
 			return REPEAT;
@@ -1074,7 +1073,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 118 "lex.l"
+#line 117 "lex.l"
 {	
 			//printf(" UNTILT (%s) ",yytext);
 			return UNTIL;
@@ -1082,7 +1081,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 122 "lex.l"
+#line 121 "lex.l"
 {
 			//printf(" FOR Token (%s) ",yytext);
 			return FOR;
@@ -1090,7 +1089,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 126 "lex.l"
+#line 125 "lex.l"
 {	
 			//printf(" TO Token (%s) ",yytext);
 			return TO;
@@ -1098,7 +1097,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 130 "lex.l"
+#line 129 "lex.l"
 {
 			//printf(" BY Token (%s) ",yytext);
 			return BY;
@@ -1106,7 +1105,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 134 "lex.l"
+#line 133 "lex.l"
 {
 			//printf(" DO Token (%s) ",yytext);
 			return DOCASE;
@@ -1114,7 +1113,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 138 "lex.l"
+#line 137 "lex.l"
 {
 			//printf(" END Token (%s) ",yytext);
 			return END;
@@ -1122,7 +1121,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 142 "lex.l"
+#line 141 "lex.l"
 {	
 			//printf(" WHILE Token (%s) ",yytext);
 			return WHILE;
@@ -1130,7 +1129,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 146 "lex.l"
+#line 145 "lex.l"
 {
 			//printf(" IF Token (%s) ",yytext);
 			return IF_COND;
@@ -1138,7 +1137,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 150 "lex.l"
+#line 149 "lex.l"
 {	
 			//printf(" THEN Token (%s) ",yytext);
 			return THEN;
@@ -1146,7 +1145,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 154 "lex.l"
+#line 153 "lex.l"
 {
 			//printf(" ELSE IF Token (%s) ",yytext);
 			return ELSEIF;
@@ -1154,7 +1153,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 158 "lex.l"
+#line 157 "lex.l"
 {
 			//printf(" ELSE Token (%s) ",yytext);
 			return ELSE;
@@ -1162,7 +1161,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 162 "lex.l"
+#line 161 "lex.l"
 {	
 			//printf(" CASE Token (%s) ",yytext);
 			return CASE_COND;
@@ -1170,7 +1169,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 166 "lex.l"
+#line 165 "lex.l"
 {	
 			//printf(" OF Token (%s) ",yytext);
 			return OF;
@@ -1178,7 +1177,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 171 "lex.l"
+#line 170 "lex.l"
 {
 			//printf(" STRLEN Token (%s) ",yytext);
 			return STRLEN;
@@ -1186,7 +1185,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 175 "lex.l"
+#line 174 "lex.l"
 {
 			//printf(" STRCAT Token (%s) ",yytext);
 			return STRCAT;
@@ -1194,7 +1193,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 179 "lex.l"
+#line 178 "lex.l"
 {
 			//printf(" STRCPY TOken (%s) ",yytext);
 			return STRCPY;
@@ -1202,7 +1201,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 183 "lex.l"
+#line 182 "lex.l"
 {
 			//printf(" STRREV Token (%s) ",yytext);
 			return STRREV;
@@ -1210,7 +1209,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 187 "lex.l"
+#line 186 "lex.l"
 {	
 			//printf(" STRCMP Token (%s) ",yytext);
 			return STRCMP;
@@ -1218,7 +1217,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 191 "lex.l"
+#line 190 "lex.l"
 {
 			AvoidComments();
 			//printf(" COMMENT ");
@@ -1226,7 +1225,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 196 "lex.l"
+#line 195 "lex.l"
 {	
 			//printf(" ARRAY Token (%s) ",yytext);
 			return ARRAY;
@@ -1234,7 +1233,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 200 "lex.l"
+#line 199 "lex.l"
 {	
 			//printf(" RECORD Token (%s) ",yytext);
 			return RECORD;
@@ -1242,7 +1241,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 204 "lex.l"
+#line 203 "lex.l"
 {	
 			//printf(" SET Token (%s) ",yytext);
 			return SET;
@@ -1250,7 +1249,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 208 "lex.l"
+#line 207 "lex.l"
 {
 			//printf(" BEGIN Token (%s) ",yytext);
 			return BEG;
@@ -1258,7 +1257,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 212 "lex.l"
+#line 211 "lex.l"
 {	
 			//printf(" CONST Token (%s) ",yytext);
 			return CONST;
@@ -1266,7 +1265,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 216 "lex.l"
+#line 215 "lex.l"
 {
 			//printf(" EXIT Token (%s) ",yytext);
 			return EXIT;
@@ -1274,7 +1273,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 220 "lex.l"
+#line 219 "lex.l"
 {	
 			//printf(" IMPORT Token (%s) ",yytext);
 			return IMPORT;
@@ -1282,7 +1281,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 224 "lex.l"
+#line 223 "lex.l"
 {	
 			//printf(" LOOP Token (%s) ",yytext);
 			return LOOP;
@@ -1290,7 +1289,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 228 "lex.l"
+#line 227 "lex.l"
 {
 			//printf(" MODULE Token (%s) ",yytext);
 			return MODULE;
@@ -1298,7 +1297,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 232 "lex.l"
+#line 231 "lex.l"
 {
 			//printf(" NIL Token (%s) ",yytext);
 			return NIL;
@@ -1306,7 +1305,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 236 "lex.l"
+#line 235 "lex.l"
 {
 			//printf(" POINTER Token (%s) ",yytext);
 			return POINTER;
@@ -1314,7 +1313,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 240 "lex.l"
+#line 239 "lex.l"
 {
 			//printf(" PROCEDURE Token (%s) ",yytext);
 			return PROCEDURE;
@@ -1322,7 +1321,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 244 "lex.l"
+#line 243 "lex.l"
 {		
 			//printf(" RETURN Token (%s) ",yytext);
 			return RETURN;
@@ -1330,7 +1329,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 248 "lex.l"
+#line 247 "lex.l"
 {
 			//printf(" TYPE Token (%s) ",yytext);
 			return TYPE;
@@ -1338,7 +1337,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 252 "lex.l"
+#line 251 "lex.l"
 {
 			//printf(" VAR Token (%s) ",yytext);
 			return VAR;
@@ -1346,7 +1345,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 256 "lex.l"
+#line 255 "lex.l"
 {
 			//printf(" WITH Token (%s) ",yytext);
 			return WITH;
@@ -1354,7 +1353,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 260 "lex.l"
+#line 259 "lex.l"
 {
 			//printf(" ABS Token (%s) ",yytext);
 			return ABS;
@@ -1362,7 +1361,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 264 "lex.l"
+#line 263 "lex.l"
 {
 			//printf(" ODD Token (%s) ",yytext);
 			return ODD;
@@ -1370,7 +1369,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 268 "lex.l"
+#line 267 "lex.l"
 {
 			//printf(" LEN Token (%s) ",yytext);
 			return LEN;
@@ -1378,7 +1377,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 272 "lex.l"
+#line 271 "lex.l"
 {
 			//printf(" LSL Token (%s) ",yytext);
 			return LSL;
@@ -1386,7 +1385,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 276 "lex.l"
+#line 275 "lex.l"
 {
 			//printf(" ASR Token (%s) ",yytext);
 			return ASR;
@@ -1394,7 +1393,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 280 "lex.l"
+#line 279 "lex.l"
 {
 			//printf(" ROR Token (%s) ",yytext);
 			return ROR;
@@ -1402,7 +1401,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 284 "lex.l"
+#line 283 "lex.l"
 {
 			//printf(" FLOOR Token (%s) ",yytext);
 			return FLOOR;
@@ -1410,7 +1409,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 288 "lex.l"
+#line 287 "lex.l"
 {
 			//printf(" FLT Token (%s) ",yytext);
 			return FLT;
@@ -1418,7 +1417,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 292 "lex.l"
+#line 291 "lex.l"
 {
 			//printf(" ORD Token (%s) ",yytext);
 			return ORD;
@@ -1426,7 +1425,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 296 "lex.l"
+#line 295 "lex.l"
 {
 			//printf(" CHR Token (%s) ",yytext);
 			return CHR;
@@ -1434,7 +1433,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 300 "lex.l"
+#line 299 "lex.l"
 {
 			//printf(" LONG Token (%s) ",yytext);
 			return LONG;
@@ -1442,7 +1441,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 304 "lex.l"
+#line 303 "lex.l"
 {
 			//printf(" SHORT Token (%s) ",yytext);
 			return SHORT;
@@ -1450,7 +1449,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 308 "lex.l"
+#line 307 "lex.l"
 {
 			//printf(" INC Token (%s) ",yytext);
 			return INC;
@@ -1458,7 +1457,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 312 "lex.l"
+#line 311 "lex.l"
 {
 			//printf(" DEC Token (%s) ",yytext);
 			return DEC;
@@ -1466,7 +1465,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 316 "lex.l"
+#line 315 "lex.l"
 {
 			//printf(" INCL Token (%s) ",yytext);
 			return INCL;
@@ -1474,7 +1473,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 320 "lex.l"
+#line 319 "lex.l"
 {
 			//printf(" EXCL Token (%s) ",yytext);
 			return EXCL;
@@ -1482,7 +1481,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 324 "lex.l"
+#line 323 "lex.l"
 {
 			//printf(" COPY Token (%s) ",yytext);
 			return COPY;
@@ -1490,7 +1489,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 328 "lex.l"
+#line 327 "lex.l"
 {
 			//printf(" NEW Token (%s) ",yytext);
 			return NEW;
@@ -1498,7 +1497,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 332 "lex.l"
+#line 331 "lex.l"
 {
 			//printf(" ASSERT Token (%s) ",yytext);
 			return ASSERT;
@@ -1506,7 +1505,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 336 "lex.l"
+#line 335 "lex.l"
 {
 			//printf(" PACK Token (%s) ",yytext);
 			return PACK;
@@ -1514,7 +1513,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 340 "lex.l"
+#line 339 "lex.l"
 {
 			//printf(" UNPK Token (%s) ",yytext);
 			return UNPK;
@@ -1522,7 +1521,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 345 "lex.l"
+#line 344 "lex.l"
 {
 			//printf(" BOOLEAN_IDENT (%s)",yytext);
 			return BOOLEAN;
@@ -1530,7 +1529,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 349 "lex.l"
+#line 348 "lex.l"
 {	
 			//printf(" CHAR_IDENT (%s) ",yytext);
 			return CHAR;
@@ -1538,7 +1537,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 353 "lex.l"
+#line 352 "lex.l"
 {
 			//printf(" INTEGER_IDENT (%s) ",yytext);
 			return INTEGER;
@@ -1546,7 +1545,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 357 "lex.l"
+#line 356 "lex.l"
 {
 			//printf(" REAL_IDENT (%s) ",yytext);
 			return REAL;
@@ -1554,7 +1553,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 361 "lex.l"
+#line 360 "lex.l"
 {
 			//printf(" LONGREAL_IDENT (%s) ",yytext);
 			return LONGREAL;
@@ -1562,7 +1561,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 366 "lex.l"
+#line 365 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return SEMIC;
@@ -1570,7 +1569,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 370 "lex.l"
+#line 369 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return COMMA;
@@ -1578,7 +1577,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 374 "lex.l"
+#line 373 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return COLON;
@@ -1586,7 +1585,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 378 "lex.l"
+#line 377 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return LEFTBRAC;
@@ -1594,7 +1593,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 382 "lex.l"
+#line 381 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return RIGHTBRAC;
@@ -1602,7 +1601,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 386 "lex.l"
+#line 385 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return DOTSYM;
@@ -1610,7 +1609,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 390 "lex.l"
+#line 389 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return LSQBR;
@@ -1618,7 +1617,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 394 "lex.l"
+#line 393 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return RSQBR;
@@ -1626,7 +1625,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 398 "lex.l"
+#line 397 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return LCBR;
@@ -1634,7 +1633,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 402 "lex.l"
+#line 401 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return RCBR;
@@ -1642,7 +1641,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 406 "lex.l"
+#line 405 "lex.l"
 {
 			//printf(" SEMIC (%s) ",yytext);
 			return CARR;
@@ -1650,7 +1649,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 411 "lex.l"
+#line 410 "lex.l"
 {
 			//printf(" BOOLEAN (%s)",yytext);
 			return BOOLEAN_VAL;
@@ -1658,7 +1657,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 415 "lex.l"
+#line 414 "lex.l"
 {	
 			//printf(" CHAR (%s) ",yytext);
 			return CHAR_VAL;
@@ -1666,7 +1665,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 419 "lex.l"
+#line 418 "lex.l"
 {
 			//printf(" INTEGER (%d) ",atoi(yytext));
 			return INTEGER_VAL;
@@ -1674,7 +1673,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 423 "lex.l"
+#line 422 "lex.l"
 {
 			//printf(" REAL (%s) ",yytext);
 			return REAL_VAL;
@@ -1683,7 +1682,7 @@ YY_RULE_SETUP
 case 99:
 /* rule 99 can match eol */
 YY_RULE_SETUP
-#line 427 "lex.l"
+#line 426 "lex.l"
 {
 			//printf(" STRING (%s) ",yytext);
 			return STRING_VAL;
@@ -1691,7 +1690,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 431 "lex.l"
+#line 430 "lex.l"
 {
 			//printf(" IDENTIFIER (%s) ",yytext);
 			return IDENT;
@@ -1699,10 +1698,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 436 "lex.l"
+#line 435 "lex.l"
 ECHO;
 	YY_BREAK
-#line 1706 "lex.yy.c"
+#line 1705 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2700,14 +2699,9 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 436 "lex.l"
+#line 435 "lex.l"
 
 
-
-void yyerror(const char *s)
-{
-	return;
-}
 
 void AvoidComments(){
 	//printf(" Cmmmts ");
