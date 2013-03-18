@@ -13,6 +13,8 @@
 %token BOOLEAN_TYPE CHAR_TYPE INTEGER_TYPE LONGREAL_TYPE REAL_TYPE
 %token BOOLEAN_VAL CHAR_VAL INTEGER_VAL REAL_VAL STRING_VAL IDENT
 
+%token NUM OPR
+
 %nonassoc EQ_COMP  UNEQ  LT  LE  GT  GE  IN  IS
 %left PLUS_SYM  MINUS_SYM  OR
 %left MULTIPLY_SYM  DIVIDE_SYM  DIV  MOD  AND_SYM OR_SYM
@@ -25,7 +27,13 @@
 #include "symbol_table.h"
 #include "ast.c"
 
+AstNode *ast_head;
+
 SymbolTable symbolTable;
+
+owner_list *own;
+
+tableEntry *owner_func;
 
 type_EntryTable *p;
 
@@ -54,9 +62,27 @@ extern char * yytext;
 
 %type <node> cast_away
 %type <node> ident
+%type <node> Factor
 %type <node> Designator
+%type <node> Element_List
+%type <node> Expr_List
+%type <node> Set
+%type <node> optSuffix
+%type <node> Expr
+%type <node> Element
+%type <node> Stat_Block
+%type <node> Statement
+%type <node> Statement_Sequence
+%type <node> Statement_Aux
+%type <node> Else
+%type <node> Else_If_Block
+%type <node> Case_Parameters
+%type <node> Case_Single
+%type <node> Case_Expression
+%type <node> Case_Expression_List
+
 %type <type_value> Type;
-%type <int_value> Const_Expr;
+%type <str_value> Const_Expr;
 %type <type_value> Qualident;
 
 %%
@@ -94,133 +120,170 @@ Import_Modules_List:
     ;
 
 Import:
-    ident ASSIGN ident { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, NULL, IDENTIFIER, 0, NULL, 0,0, NULL, 0, NULL)); }
+    ident ASSIGN ident { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, NULL, IDENTIFIER, 0, NULL, 0,0,NULL,NULL)); }
     | ident
     ;
 
 Stat_Block:
-    BEG Statement_Sequence     {printf("BEG Statement_Sequence\n");}
-    |                          {printf("BEG Statement_Sequence_Nothing\n");}
+    BEG Statement_Sequence     { ast_head = makeNode(OPR, "BEG", NOTSET, VAL, NULL, $2);}
+    |                          { ast_head = NULL;}
     ;
 
 Statement_Sequence:
-    Statement SEMIC Statement_Sequence  {printf("Statement SEMIC Statement_Sequence\n");}
-    | Statement SEMIC                   {printf("Statement SEMIC\n");}
+    Statement SEMIC Statement_Sequence  { $$ = makeNode(OPR, ";", NOTSET, VAL, $1, $3);}
+    | Statement SEMIC                   { $$ = makeNode(OPR, ";", NOTSET, VAL, NULL, $1);}
     ;
 
 Statement    : 
-  Designator ASSIGN Expr {printf(" Designator ASSIGN Expr \n");}
-| Designator              {printf(" Designator\n");}
-| IF_COND Expr THEN Statement_Sequence Else_If_Block Else END  {printf(" IF_COND Expr THEN Statement_Sequence Else_If_Block Else END\n");}
-| CASE_COND Expr OF Case_Parameters Else END {printf(" CASE_COND Expr OF Case_Parameters Else END \n");}
-| WHILE Expr DOCASE Statement_Sequence END      {printf("WHILE Expr DOCASE Statement_Sequence END\n");}
-| REPEAT Statement_Sequence UNTIL Expr          {printf("REPEAT Statement_Sequence UNTIL Expr\n");}
-| FOR ident Statement_Aux
-| LOOP Statement_Sequence END         {printf("LOOP Statement_Sequence END\n");}
-| EXIT                                {printf(" EXIT\n");}
-| RETURN Expr                         {printf(" RETURN Expr\n");}
-| RETURN                              {printf(" RETURN\n");}
-|                                     {printf(" stat_nothing\n");}
+  Designator ASSIGN Expr  { $$ = makeNode(OPR, ":=", NOTSET, VAL, $1 , $3);}
+| Designator              { $$ = $1;}
+| IF_COND Expr THEN Statement_Sequence Else_If_Block Else END
+  { 
+    $$ = makeNode(OPR, "IF", NOTSET, VAL, $2 , makeNode(OPR, "THEN", NOTSET, VAL, $4 , makeNode(OPR, "REM_ELSE", NOTSET, VAL, $5 , $6) ));
+  }
+| CASE_COND Expr OF Case_Parameters Else END 
+{
+  $$ = makeNode(OPR, "CASE", NOTSET, VAL, $2 , makeNode(OPR, "CASE_PARAMS", NOTSET, VAL, $4, makeNode(OPR, "ELSE", NOTSET, VAL, NULL, $5))); 
+}
+| WHILE Expr DOCASE Statement_Sequence END      
+{
+  $$ = makeNode(OPR, "WHILE", NOTSET, VAL, $2 , makeNode(OPR, "DOCASE_WHILE", NOTSET, VAL, NULL, $4));
+}
+| REPEAT Statement_Sequence UNTIL Expr 
+{
+  $$ = makeNode(OPR, "REPEAT", NOTSET, VAL, $2 , makeNode(OPR, "UNTIL_REPEAT", NOTSET, VAL, NULL, $4)); 
+}
+| FOR ident Statement_Aux             
+{ 
+  $$ = makeNode(OPR, "FOR", NOTSET, VAL, $2 , $3);
+}
+| LOOP Statement_Sequence END         
+{
+ $$ = makeNode(OPR, "LOOP", NOTSET, VAL, NULL, $2);
+}
+| EXIT                                
+{
+ $$ = makeNode(OPR, "EXIT", NOTSET, VAL, NULL, NULL); 
+}
+| RETURN Expr                         
+{ 
+  $$ = makeNode(OPR, "RETURN", NOTSET, VAL, NULL, $2);
+}
+| RETURN                              
+{ 
+  $$ = makeNode(OPR, "RETURN", NOTSET, VAL, NULL, NULL);
+}
+|                                     
+{ 
+  $$ = NULL; 
+}
 ;
 
 Statement_Aux :
-ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END  {printf(" FOR IDENT ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END\n");} 
-| ASSIGN Expr TO Expr DOCASE Statement_Sequence END     {printf("FOR IDENT ASSIGN Expr TO Expr DOCASE Statement_Sequence END\n");}
+ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END  
+{
+ $$ = makeNode(OPR, "ASSIGN_FOR", NOTSET, VAL, $2 , makeNode(OPR, "TO_FOR", NOTSET, VAL, $4, makeNode(OPR, "BY_FOR", NOTSET, VAL, $6, makeNode(OPR, "DO_FOR", NOTSET, VAL, $8, NULL ) ) )); 
+} 
+| ASSIGN Expr TO Expr DOCASE Statement_Sequence END     
+{
+$$ = makeNode(OPR, "ASSIGN_FOR", NOTSET, VAL, $2 , makeNode(OPR, "TO_FOR", NOTSET, VAL, $4, makeNode(OPR, "DO_FOR", NOTSET, VAL, $6 , NULL ))); 
+}
 ;
 
 Expr         : 
 /* Relations */
-  Expr EQ_COMP Expr       {printf("Expr EQ_COMP Expr\n");}
-| Expr UNEQ Expr          {printf(" Expr UNEQ Expr\n");}
-| Expr LT Expr            {printf(" Expr LT Expr\n");}
-| Expr LE Expr            {printf(" Expr LE Expr\n");}
-| Expr GT Expr            {printf(" Expr GT Expr\n");}
-| Expr GE Expr            {printf(" Expr GE Expr\n");}
-| Expr IN Expr            {printf(" Expr IN Expr\n");}
-| Expr IS Expr            {printf(" Expr IS Expr\n");}
+  Expr EQ_COMP Expr       { $$ = makeNode(OPR, "=", NOTSET, VAL, $1, $3); }
+| Expr UNEQ Expr          { $$ = makeNode(OPR, "#", NOTSET, VAL, $1, $3); }
+| Expr LT Expr            { $$ = makeNode(OPR, "<", NOTSET, VAL, $1, $3); }
+| Expr LE Expr            { $$ = makeNode(OPR, "<=", NOTSET, VAL, $1, $3); }
+| Expr GT Expr            { $$ = makeNode(OPR, ">", NOTSET, VAL, $1, $3); }
+| Expr GE Expr            { $$ = makeNode(OPR, ">=", NOTSET, VAL, $1, $3); }
+| Expr IN Expr            { $$ = makeNode(OPR, "IN", NOTSET, VAL, $1, $3); }
+| Expr IS Expr            { $$ = makeNode(OPR, "IS", NOTSET, VAL, $1, $3); }
 // | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
 // | MINUS_SYM Expr %prec UMINUS
-| Expr PLUS_SYM Expr           {printf("Expr PLUS_SYM Expr\n");}
-| Expr MINUS_SYM Expr          {printf("Expr MINUS_SYM Expr\n");}
-| Expr OR Expr                 {printf("Expr OR Expr\n");}
-| Expr MULTIPLY_SYM Expr       {printf("Expr MULTIPLY_SYM Expr\n");}
-| Expr DIVIDE_SYM Expr         {printf("Expr DIVIDE_SYM Expr\n");}
-| Expr DIV Expr                {printf("Expr DIV Expr\n");}
-| Expr MOD Expr                {printf("Expr MOD Expr\n");}
-| Expr AND_SYM Expr            {printf("Expr AND_SYM Expr\n");}
-| Factor                       {printf("Factor\n");}
+| Expr PLUS_SYM Expr           { $$ = makeNode(OPR, "+", NOTSET, VAL, $1, $3); }
+| Expr MINUS_SYM Expr          { $$ = makeNode(OPR, "-", NOTSET, VAL, $1, $3); }
+| Expr OR Expr                 { $$ = makeNode(OPR, "OR", NOTSET, VAL, $1, $3); }
+| Expr MULTIPLY_SYM Expr       { $$ = makeNode(OPR, "*", NOTSET, VAL, $1, $3); }
+| Expr DIVIDE_SYM Expr         { $$ = makeNode(OPR, "/", NOTSET, VAL, $1, $3); }
+| Expr DIV Expr                { $$ = makeNode(OPR, "DIV", NOTSET, VAL, $1, $3); }
+| Expr MOD Expr                { $$ = makeNode(OPR, "MOD", NOTSET, VAL, $1, $3); }
+| Expr AND_SYM Expr            { $$ = makeNode(OPR, "&", NOTSET, VAL, $1, $3); }
+| Factor                       { $$ = $1;}
 ;
 
 Factor       : 
   Designator    {printf("Designator\n");}
-| INTEGER_VAL   {printf("integer val is ");}
-| CHAR_VAL      {printf("CHAR_VAL\n");}
-| NIL           {printf("NIL\n");}
-| Set           {printf("Set\n");}      
-| LEFTBRAC Expr RIGHTBRAC   {printf("LEFTBRAC Expr RIGHTBRAC\n");}
-| TILDA Factor  {printf("TILDA Factor\n");} 
+| BOOLEAN_VAL   { $$ = makeNode(NUM, yytext, BOOLEAN, VAL, NULL, NULL); }
+| REAL_VAL      { $$ = makeNode(NUM, yytext, REAL, VAL, NULL, NULL); }
+| CHAR_VAL      { $$ = makeNode(NUM, yytext, CHAR, VAL, NULL, NULL); }
+| INTEGER_VAL   { $$ = makeNode(NUM, yytext, INTEGER, VAL, NULL, NULL); }
+| NIL           { $$ = makeNode(NUM, yytext, NO, VAL, NULL, NULL); }
+| Set           { $$ = $1; }      
+| LEFTBRAC Expr RIGHTBRAC   { $$ = makeNode(OPR, "()", NOTSET, VAL, NULL , $2); }
+| TILDA Factor  { $$ = makeNode(OPR, "~", NOTSET, VAL, NULL , $2); }
 ;
 
 Designator   : 
-  ident optSuffix     {printf("IDENT optSuffix\n");}
+  ident optSuffix     { $$ = make_new_node($1,$2);}
 ;
 
 optSuffix :
-  DOTSYM ident optSuffix {printf("DOTSYM IDENT  optSuffix\n");}
-| LSQBR Expr_List RSQBR  optSuffix              {printf("LSQBR Expr_List RSQBR  optSuffix\n");}
-| CARR  optSuffix                               {printf("CARR  optSuffix\n");}
-| LEFTBRAC Expr_List RIGHTBRAC optSuffix   /* Changes from original grammar */  {printf("LEFTBRAC Expr_List RIGHTBRAC optSuffix\n");}
-| LEFTBRAC RIGHTBRAC                      /* Changes from original grammar */   {printf("LEFTBRAC RIGHTBRAC\n");}
-|                                               {printf("optSuffix_Nothing\n");}
+  DOTSYM ident optSuffix  { $$ = makeNode(OPR, ".", NOTSET, VAL, NULL, make_new_node($2,$3));}
+| LSQBR Expr_List RSQBR  optSuffix  { $$ = makeNode(OPR, "[]", NOTSET, VAL, NULL, make_new_node($2,$4));}
+| CARR  optSuffix    { $$ = makeNode(OPR, "^", NOTSET, VAL, NULL, $2);}
+| LEFTBRAC Expr_List RIGHTBRAC optSuffix   { $$ = makeNode(OPR, "()", NOTSET, VAL, NULL, make_new_node($2,$4));}
+|   { $$ = NULL;}
 ;
 
 Expr_List     : 
-  Expr                                          {printf("Expr\n");}
-| Expr COMMA Expr_List                          {printf("Expr COMMA Expr_List\n");}
+  Expr                                          { $$ = $1; }
+| Expr COMMA Expr_List                          { $$ = makeNode(OPR, ",", NOTSET, VAL, $1, $3); }
 ;              
 
 Set          : 
-  LCBR Element_List RCBR                        {printf("LCBR Element_List RCBR\n");}
+  LCBR Element_List RCBR                        { $$ = $2; }
 ;
 
 Element_List :
-  Element COMMA Element_List                    {printf("Element COMMA Element_List\n");}
-| Element                                       {printf("Element\n");}
+  Element COMMA Element_List                    { $$ = makeNode(OPR, ",", NOTSET, VAL, $1, $3); }
+| Element                                       { $$ = $1; }
 ;
 
 Element      : 
-  Expr                                          {printf("Expr\n");}
-| Expr DOTDOT Expr                              {printf("Expr DOTDOT Expr\n");}
+  Expr                                          { $$ = $1; }
+| Expr DOTDOT Expr                              { $$ = makeNode(OPR, "..", NOTSET, VAL, $1, $3); }
 ;
 
 Else_If_Block:
-  ELSEIF Expr THEN Statement_Sequence Else_If_Block     {printf("ELSEIF Expr THEN Statement_Sequence Else_If_Block\n");}
-|                                                       {printf("Else_If_Block_Nothing\n");}
+  ELSEIF Expr THEN Statement_Sequence Else_If_Block     { $$ = makeNode(OPR, "ELSEIF", NOTSET, VAL, $2 , makeNode(OPR, "ELSEIF_AUX", NOTSET, VAL, $4 , $5)); }
+|                                                       { $$ = NULL; }
 ;
 
 Else:
-  ELSE Statement_Sequence                        {printf("ELSE Statement_Sequence\n");}
-|                                                {printf("Else_Nothing\n");}
+  ELSE Statement_Sequence                        { $$ = makeNode(OPR, "ELSE", NOTSET, VAL, NULL, $2);}
+|                                                { $$ = NULL; }
 ;
 
 Case_Parameters:
-  Case_Single                                     {printf("Case_Single\n");}
-| Case_Single OR_SYM Case_Parameters              {printf("Case_Single OR_SYM Case_Parameters\n");}
+  Case_Single                                     { $$ = $1; }
+| Case_Single OR_SYM Case_Parameters              { $$ = makeNode(OPR, "OR", NOTSET, VAL, $1 , $3);}
 ;
 
 Case_Single: 
-  Case_Expression_List COLON Statement_Sequence   {printf("Case_Expression_List COLON Statement_Sequence\n");}
-|                                                 {printf("Case_Single_Nothing\n");}
+  Case_Expression_List COLON Statement_Sequence   { $$ = makeNode(OPR, ";", NOTSET, VAL, $1, $3); }
+|                                                 { $$ = NULL;}
 ;
 
 Case_Expression_List:                // Case label list beacuse of the expression matching could be to a integer but also to a list of integers or list of expressions
-  Case_Expression                                 {printf("Case_Expression\n");}
-| Case_Expression COMMA Case_Expression_List      {printf("Case_Expression COMMA Case_Expression_List\n");}
+  Case_Expression                                 { $$ = $1; }
+| Case_Expression COMMA Case_Expression_List      { $$ = makeNode(OPR, ",", NOTSET, VAL, $1 , $3);}
 ;
 
 Case_Expression: 
-  Expr                                            {printf("Expr\n");}
-| Expr DOTDOT Expr                                {printf("Expr DOTDOT Expr\n");}
+  Expr                                            { $$ = $1; }
+| Expr DOTDOT Expr                                { $$ = makeNode(OPR, "..", NOTSET, VAL, $1 , $3);}
 ;
 
 
@@ -255,6 +318,7 @@ Var_List  :
   Identifier_List COLON Type                        {changeVariableType(&symbolTable, $3,VAR_VALUE); } SEMIC Var_List
 |                                                   {printf("Var_List_Nothing\n");}
 ;
+
 
 Type: 
 Qualident                           
@@ -296,7 +360,8 @@ Qualident
 | ARRAY 
   {
     insert_last(p,create_typeEntry(ARRAY_TYPE,NULL,NULL));
-  } OF Type 
+  } 
+  OF Type 
   {
     $$ = p->last;
     remove_last(p);
@@ -304,7 +369,8 @@ Qualident
 | ARRAY
    {
       insert_last(p,create_typeEntry(ARRAY_TYPE,NULL,NULL));
-   } Const_Expr_List OF Type    
+   } 
+   Const_Expr_List OF Type    
    { 
       $$ = p->last;
       remove_last(p);
@@ -367,11 +433,11 @@ Const_Expr    :
 Const_Expr_List :
   Const_Expr COMMA Const_Expr_List    
   { 
-    {add_type_FormalParameter(p, createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,0,NULL));}    
+    {add_type_FormalParameter(p->last , createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,NULL));}    
   }
 | Const_Expr 
   { 
-    {add_type_FormalParameter(p, createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,0,NULL));}    
+    {add_type_FormalParameter(p->last, createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,NULL));}    
   }
 ;
 
@@ -383,7 +449,7 @@ Field_List    :
 ;
 
 fi_Identifier_List:
-  ident fi_Identifier_List_Aux      { add_type_FormalParameter(p, createTableEntry($1->node_value, NULL, passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,0,NULL));}    
+  ident { add_type_FormalParameter(p->last, createTableEntry($1->node_value, NULL, passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,NULL));}  fi_Identifier_List_Aux  
 ;
 
 fi_Identifier_List_Aux:
@@ -403,12 +469,40 @@ Proc_Decl     :
   PROCEDURE ident
   {
       insert_last(p,create_typeEntry(PROC_TYPE,NULL,NULL));
-      addSymbolTableEntry(&symbolTable, createTableEntry($2->node_value, p->last , VAL, PROC_NAME, 0, NULL, 0, ++scopeCount, NULL, 0, NULL));
+      tableEntry *cr = createTableEntry($2->node_value, p->last , VAL, PROC_NAME, 0, NULL, 0, ++scopeCount, NULL,own->last);
+      addSymbolTableEntry(&symbolTable, cr);
       currentScope = scopeCount;
+      tableEntry *n = own->first;
+      if (own->first == NULL){
+        own->first = cr;
+        own->last = cr;
+      }
+      else{
+        while (n->next_owner != NULL){
+          n=n->next_owner;
+        }
+        n->next_owner = cr;
+        own->last = cr;
+      }
   } 
   Formal_Pars SEMIC Decl_Seq Stat_Block END ident 
   {
-      currentScope = 0;
+      tableEntry *i = own->first;
+      if (i->next_owner == NULL){
+        own->first = NULL;
+        own->last = NULL;
+      }
+      else{
+        tableEntry *prev = own->first;
+        while (i->next_owner != NULL){
+          prev = i;
+          i=i->next_owner;
+        }
+        prev->next_owner = NULL;
+        own->last = prev;
+        free(i);
+      }
+      scopeCount--;
       remove_last(p);
   }
 ;
@@ -433,7 +527,7 @@ FP_section:
 ;
 
 fp_Identifier_List:
-  ident fp_Identifier_List_Aux                  { add_type_FormalParameter(p, createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,0,NULL));}
+  ident fp_Identifier_List_Aux                  { add_type_FormalParameter(p->last, createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,NULL));}
 ;
 
 fp_Identifier_List_Aux:
@@ -459,7 +553,7 @@ FP_section_Dec:
 ;
 
 fp_Identifier_List_Dec:
-  ident fp_Identifier_List_Aux_Dec      { add_type_FormalParameter(p, createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,0,NULL));}
+  ident fp_Identifier_List_Aux_Dec      { add_type_FormalParameter(p->last, createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,NULL));}
 ;
 
 fp_Identifier_List_Aux_Dec:
@@ -468,7 +562,7 @@ COMMA fp_Identifier_List_Dec
 ;
 
 Identifier_List:
-  ident Identifier_List_Aux         { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, VAL, IDENTIFIER, 0, NULL, currentScope, currentScope, NULL, 0, NULL)); }
+  ident { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, VAL, IDENTIFIER, 0, NULL, currentScope, currentScope, NULL,NULL)); } Identifier_List_Aux
 ;
 
 Identifier_List_Aux:
@@ -488,11 +582,14 @@ void yyerror(const char *s){
 
 int main()
 {
+  own = (owner_list*)malloc(sizeof(owner_list));
+  own->first = NULL;
+  own->last = NULL;
   createSymbolTable(&symbolTable);
-  p = create_typeEntry();
+  p = createtypeEntry();
   int res = yyparse();
   if (res==0)
     printf("Successful parse\n");
-  print_Symbol(&symbolTable);
+  //print_Symbol(&symbolTable);
   return 0;
 }

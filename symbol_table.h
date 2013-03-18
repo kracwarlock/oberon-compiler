@@ -32,6 +32,7 @@ typedef enum symbolType
 	VOID,// 12
 	ERROR,	// 13
 	NOTSET,// 14
+	NO,
 	NUM_SYMBOL_TYPES// 15
 } symbolType;
 char* getSymbolType(symbolType type);
@@ -58,7 +59,7 @@ typedef struct type_tableEntry {
 	int num; // for constant values
 	symbolType type; //INTEGER, REAL, BOOLEAN, CHAR, NULL
 	int num_params;
-	struct table_entry *formal_params;
+	struct tableEntry *formal_params;
 	struct type_tableEntry* tp;
 	struct type_tableEntry *next;
 } type_tableEntry;
@@ -71,8 +72,10 @@ typedef struct tableEntry {
 	type_ident t;
 	int order; //the order of a formal parameter (position in the declaration)
 	struct tableEntry* owner; //point to the owner of this identifier (formal parameter) – proc it is declared INTEGER
+	struct tableEntry *entry_owner;
 	int scope; //the scope level: 0, 1, 2, 3,....
 	int procScope; //for a proc_id, the scope number of the proc/func body
+	struct tableEntry *next_owner;
 	struct tableEntry* next; // point to next table entry in a linked-list structure
 } tableEntry;
 
@@ -86,6 +89,11 @@ typedef struct type_EntryTable {
 	type_tableEntry* last;
 } type_EntryTable;
 
+typedef struct owner_list {
+	tableEntry* first;
+	tableEntry* last;
+} owner_list;
+
 void createSymbolTable(SymbolTable* symbolTable);
 void destroySymbolTable(SymbolTable* symbolTable);
 
@@ -93,9 +101,9 @@ tableEntry* findEntry(SymbolTable* symbolTable, char* name, int scope);
 tableEntry* getOwner(tableEntry* entry);
 tableEntry* getScopeOwner(SymbolTable* symbolTable, int scope);
 
-int addSymbolTableEntry(SymbolTable* symbolTable, tableEntry* entry);
+void addSymbolTableEntry(SymbolTable* symbolTable, tableEntry* entry);
 void addFormalParameter(SymbolTable* symbolTable, tableEntry* entry);
-tableEntry* createTableEntry(char* name, type_tableEntry* type_st ,int passType, int mode,int order, tableEntry* owner, int scope, int procScope, tableEntry* formal_params,int num_params, tableEntry* next);
+tableEntry* createTableEntry(char* name, type_tableEntry* type_st ,int passType, int mode,int order, tableEntry* owner, int scope, int procScope, tableEntry* next,tableEntry *owner_func);
 
 void changeFormalParamType(tableEntry* owner, int type);
 void changeVariableType(SymbolTable* symbolTable,  type_tableEntry *ty,int type);

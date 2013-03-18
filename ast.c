@@ -33,3 +33,12 @@ AstNode* makeNode( int NodeType, char *NodeValue, symbolType type, symbolPassTyp
 	node_pointer->right = Right;
 	return node_pointer;
 }
+
+AstNode *make_new_node(AstNode *Left, AstNode *Right ){
+	if (Right == NULL)
+		return Left;
+	else{
+		Right -> left = Left;
+		return Right;
+	}
+}
