@@ -13,17 +13,16 @@ void createSymbolTable(SymbolTable* symbolTable)
 	tableEntry* owner;
 	tableEntry* param;
 	
-	// // This is a special case, since it's the first entry.
-	// symbolTable->first = createTableEntry("ORD",INTEGER,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL);
-	// symbolTable->last = symbolTable->first;	
-	// addFormalParameter(symbolTable, createTableEntry("_ORD",CHAR,VAL,IDENTIFIER,0,NULL,NULL,NULL,NULL,0,NULL));
-	
+	// This is a special case, since it's the first entry.
+	symbolTable->first = createTableEntry("ORD",NULL,VAL,FUNC_NAME,0,NULL,NULL,++scope,0,NULL);
+	symbolTable->last = symbolTable->first;	
+	// addFormalParameter(symbolTable, createTableEntry("_ORD",NULL,VAL,IDENTIFIER,0,NULL,NULL,NULL,0,NULL));
 	// // This is how it should normally be, with the optional addition of formal parameters.
-	// addSymbolTableEntry(symbolTable, createTableEntry("CHR",CHAR,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL));	
-	// addFormalParameter(symbolTable, createTableEntry("_CHR",INTEGER,VAL,IDENTIFIER,0,NULL,NULL,NULL,NULL,0,NULL));
+	// addSymbolTableEntry(symbolTable, createTableEntry("CHR",NULL,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL));	
+	// addFormalParameter(symbolTable, createTableEntry("_CHR",NULL,VAL,IDENTIFIER,0,NULL,NULL,NULL,NULL,0,NULL));
 	
-	// addSymbolTableEntry(symbolTable, createTableEntry("TOINT",INTEGER,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL));
-	// addFormalParameter(symbolTable, createTableEntry("_TOINT",REAL,VAL,IDENTIFIER,0,NULL,NULL,NULL,NULL,0,NULL));
+	// addSymbolTableEntry(symbolTable, createTableEntry("TOINT",NULL,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL));
+	// addFormalParameter(symbolTable, createTableEntry("_TOINT",NULL,VAL,IDENTIFIER,0,NULL,NULL,NULL,NULL,0,NULL));
 	
 	// addSymbolTableEntry(symbolTable, createTableEntry("TRUE",BOOLEAN,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL));
 	
@@ -43,7 +42,7 @@ void destroySymbolTable(SymbolTable* symbolTable)
 	}	
 }
 
-int addSymbolTableEntry(SymbolTable* symbolTable, tableEntry* entry)
+void addSymbolTableEntry(SymbolTable* symbolTable, tableEntry* entry)
 {
 	if (findEntry(symbolTable, entry->name, entry->scope) != NULL)
 	{
@@ -56,13 +55,13 @@ int addSymbolTableEntry(SymbolTable* symbolTable, tableEntry* entry)
 			printf("******  Identifier Redeclared ******** \n");
 		}
 		free(entry);
-		return 0;
+		return;
 	}
 	else
 	{
 		symbolTable->last->next = entry;
 		symbolTable->last = symbolTable->last->next;
-		return 1;
+		return;
 	}
 }
 
@@ -95,27 +94,27 @@ void changeVariableType(SymbolTable* symbolTable, type_tableEntry *ty,int type)
 	}
 }
 
-tableEntry* createTableEntry(char* name, type_tableEntry *type, int passType, int mode, int order,
-							tableEntry* owner, int scope, int procScope, tableEntry* formal_params,
-							int num_params, tableEntry* next)
+tableEntry* createTableEntry(char* name, type_tableEntry *type_st, int passType, int mode, int order,
+							tableEntry* owner, int scope, int procScope,tableEntry* next , tableEntry *owner_func)
 {
 	tableEntry* te = (tableEntry*)malloc(sizeof(tableEntry));
 	if (te == NULL) return NULL;
 	
 	te->name = name;
-	te->type = type;
+	te->type = type_st;
 	te->passType = passType;
 	te->mode = mode;
 	te->order = order;
 	te->owner = owner;
 	te->scope = scope;
 	te->procScope = procScope;
-	te->next = next;
+	te->next = NULL;
+	te->entry_owner = owner_func;
 	
 	return te;
 }
 
-type_tableEntry* createtypeEntry(int type, type_tableEntry* tp,type_tableEntry* formal)
+type_tableEntry* create_typeEntry(int type, type_tableEntry* tp, tableEntry* formal)
 {
 	type_tableEntry* te = (type_tableEntry*)malloc(sizeof(type_tableEntry));
 	if (te == NULL) return NULL;
@@ -157,11 +156,12 @@ tableEntry* getScopeOwner(SymbolTable* symbolTable, int scope)
 
 void add_type_FormalParameter(type_tableEntry *p,tableEntry *t){
 	if (p->formal_params == NULL){
+		printf("dddddd");
 		p->formal_params = t;
 		t->next = NULL;
 	}
 	else{
-		struct tableEntry *k;
+		tableEntry *k;
 		k = p->formal_params;
 		while (k->next != NULL){
 			k=k->next;
@@ -170,26 +170,31 @@ void add_type_FormalParameter(type_tableEntry *p,tableEntry *t){
 	}
 }
 
-void change_type_FormalParamType (type_EntryTable *p , type_EntryTable *t){
+void change_type_FormalParamType (type_EntryTable *p , type_tableEntry *t){
 	type_tableEntry *k = p->last;
 	tableEntry  *u = k->formal_params;
 	while (u->next != NULL){
+		printf("dddddddmmm\n");
 		if (u->type != NULL){
 			u->type = t;
 		}
+		u=u->next;
 	}
 }
 
-type_EntryTable *create_typeEntry(){
+type_EntryTable *createtypeEntry(){
 	type_EntryTable *p = (type_EntryTable*)malloc(sizeof(type_EntryTable));
-	p->first = NULL;
-	p->last = NULL;
+	p->first = create_typeEntry(INTEGER,NULL,NULL);
+	p->last = p->first;
 	return p;
 }
 
 void insert_last(type_EntryTable *t,type_tableEntry *p){
-	if (t->first == NULL)
+	printf("aaaaaaa");
+	if (t->first == NULL){
 		t->first = p;
+		t->last = p;
+	}
 	else{
 		type_tableEntry *k = t->first;
 		while(k->next != NULL){
@@ -201,12 +206,13 @@ void insert_last(type_EntryTable *t,type_tableEntry *p){
 }
 
 void remove_last(type_EntryTable *t){
+	printf("aaaaaaabbbbbb");
 	if (t->first == NULL)
 		return;
 	if (t->first->next == NULL){
 		free(t->first);
 		t->first = NULL;
-		t->last = NULL;
+		t->first = t->last ;
 	}
 	else{
 		type_tableEntry *k = t->first;
