@@ -27,7 +27,7 @@
 #include "symbol_table.h"
 #include "ast.c"
 
-AstNode *head_ast;
+AstNode *ast_head;
 
 SymbolTable symbolTable;
 
@@ -125,8 +125,8 @@ Import:
     ;
 
 Stat_Block:
-    BEG Statement_Sequence     { head_ast = makeNode(OPR, "BEG", NOTSET, VAL, NULL, $2);}
-    |                          { $$ = NULL;}
+    BEG Statement_Sequence     { ast_head = makeNode(OPR, "BEG", NOTSET, VAL, NULL, $2);}
+    |                          { ast_head = NULL;}
     ;
 
 Statement_Sequence:
@@ -226,7 +226,7 @@ Factor       :
 ;
 
 Designator   : 
-  ident {printf("dddddddddddddddd %s",own->last->name);} optSuffix     { $$ = make_new_node($1,$3);}
+  ident optSuffix     { $$ = make_new_node($1,$2);}
 ;
 
 optSuffix :
