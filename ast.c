@@ -25,3 +25,11 @@ AstNode* makeNode( int NodeType, char *NodeValue, symbolType type, symbolPassTyp
 	node_pointer->right = Right;
 	return node_pointer;
 }
+
+void postOrder(AstNode* node)
+{
+	if(node == NULL) return;
+	postOrder(node->left);
+	postOrder(node->right);
+	printf("%s\n", node->node_value);
+}

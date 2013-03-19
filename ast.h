@@ -18,5 +18,5 @@ typedef struct AstNode {
 //===================================================================
 
 AstNode* makeNode( int NodeType, char *NodeValue, symbolType type, symbolPassType passType, AstNode *Left, AstNode *Right );
-
+void postOrder(AstNode* root);
 #endif
