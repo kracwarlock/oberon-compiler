@@ -23,7 +23,6 @@
 #include <string.h>
 #include "ast.h"
 #include "symbol_table.h"
-#include "ast.c"
 
 SymbolTable symbolTable;
 

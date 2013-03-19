@@ -1,1 +1,5 @@
 Phases_Zip/
+*.yy.c
+*.tab.c
+*.tab.h
+*.out

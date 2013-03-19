@@ -4,14 +4,6 @@
 #include "ast.h"
 #include "symbol_table.h"
 
-char *make_str_copy( char *astring)
-{
-	char *news;
-	news = (char *)(malloc(strlen(astring)+1));
-	strcpy( news, astring);
-	return news;
-}
-
 AstNode* makeNode( int NodeType, char *NodeValue, symbolType type, symbolPassType passType, AstNode *Left, AstNode *Right )
 {
 	AstNode* node_pointer;
@@ -21,7 +13,7 @@ AstNode* makeNode( int NodeType, char *NodeValue, symbolType type, symbolPassTyp
 	
 	if( NodeValue != NULL )
 	{
-		node_pointer->node_value = make_str_copy(NodeValue);
+		node_pointer->node_value = strdup(NodeValue);
 	}
 	else
 	{
