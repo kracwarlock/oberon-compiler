@@ -33,3 +33,12 @@ void postOrder(AstNode* node)
 	postOrder(node->right);
 	printf("%s\n", node->node_value);
 }
+
+AstNode *make_new_node(AstNode *Left, AstNode *Right ){
+	if (Right == NULL)
+		return Left;
+	else{
+		Right -> left = Left;
+		return Right;
+	}
+}
