@@ -4,6 +4,8 @@
 #include "ast.h"
 #include "symbol_table.h"
 
+int varT = 0, lineL = 0;
+
 AstNode* makeNode( int NodeType, char *NodeValue, symbolType type, symbolPassType passType, AstNode *Left, AstNode *Right )
 {
 	AstNode* node_pointer;
@@ -26,12 +28,75 @@ AstNode* makeNode( int NodeType, char *NodeValue, symbolType type, symbolPassTyp
 	return node_pointer;
 }
 
-void postOrder(AstNode* node)
+int tac(AstNode* node)
 {
-	if(node == NULL) return;
-	postOrder(node->left);
-	postOrder(node->right);
-	printf("%s\n", node->node_value);
+	if (!strcmp(node->node_value, "IF")) {
+		int t1 = tac(node->left);
+		printf("IF t%d==0 goto L%d\n", t1-1, lineL);
+		postOrder(node->right->left);
+		printf("L%d:\n", lineL++);
+		postOrder(node->right->right);
+	}
+	else if (!strcmp(node->node_value, "WHILE")) {
+		printf("L%d:\n", lineL);
+		int l1 = lineL++;
+		int t1 = tac(node->left);
+		printf("IF t%d==0 goto L%d\n", t1-1, lineL);
+		int l2 = lineL++;
+		postOrder(node->right);
+		printf("goto L%d\nL%d:\n", l1, l2);
+	}
+	else if (!strcmp(node->node_value, "[]"))
+	{
+		printf("t%d = &%s\n", varT++, node->left->node_value);
+		int t1 = varT;
+		if (node->right->node_type == 342) {
+			int t2 = tac(node->right);
+			printf("t%d = t%d + t%d\n", varT, t1-1, t2-1);
+		}
+		else printf("t%d = t%d + %s\n", varT, varT-1, node->right->node_value);
+		return ++varT;
+	}
+	else if (!strcmp(node->node_value,":=")) {
+		if (node->right->node_type == 342 && node->left->node_type == 342) {
+			int t1 = tac(node->left);
+			int t2 = tac(node->right);
+			//if (!strcmp(node->left->node_value,"[]")) printf("*");
+			printf("t%d = t%d\n", t1-1, t2-1);
+		}
+		else if (node->right->node_type == 342) {
+			int t1 = tac(node->right);
+			printf("%s = t%d\n", node->left->node_value, t1-1 );
+		}
+		else if (node->left->node_type == 342) {
+			int t1 = tac(node->left);
+			//if (!strcmp(node->left->node_value,"[]")) printf("*");
+			printf("t%d = %s\n", t1-1, node->right->node_value);
+		}
+		else {
+			printf("%s=%s\n", node->left->node_value, node->right->node_value);
+		}
+	}
+	/*handling all other operations */
+	else {
+		if (node->right->node_type == 342 && node->left->node_type == 342) {
+			int t1 = tac(node->left);
+			int t2 = tac(node->right);
+			printf("t%d = t%d %s t%d\n", varT, t1-1, node->node_value, t2-1);
+		}
+		else if (node->left->node_type == 342) {
+			int t1 = tac(node->left);
+			printf("t%d = t%d %s %s\n", varT, t1-1, node->node_value, node->right->node_value);
+		}
+		else if (node->right->node_type == 342) {
+			int t2 = tac(node->right);
+			printf("t%d = %s %s t%d\n", varT, node->left->node_value, node->node_value, t2-1);
+		}
+		else printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
+
+		return ++varT;
+	}
+	return -1;
 }
 
 AstNode *make_new_node(AstNode *Left, AstNode *Right ){
@@ -41,4 +106,22 @@ AstNode *make_new_node(AstNode *Left, AstNode *Right ){
 		Right -> left = Left;
 		return Right;
 	}
+}
+
+int isOper(AstNode* node)
+{
+	if (node->node_type != 342) return 0;
+	char *s = strdup(node->node_value);
+	if (!(strcmp(s, ":=") && strcmp(s, "*") && strcmp(s, "+") && strcmp(s, "-") && strcmp(s, "/") && strcmp(s, "[]")
+		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, ".")))
+		return 1;
+	return 0;
+}
+void postOrder(AstNode* node)
+{
+	if (node == NULL)
+		return;
+	//printf("%s %d\n", node->node_value, node->node_type);
+	if (node->left && isOper(node->left)) tac(node->left);	else postOrder(node->left);
+	if (node->right && isOper(node->right)) tac(node->right);	else postOrder(node->right);
 }

@@ -3,3 +3,5 @@ Phases_Zip/
 *.tab.c
 *.tab.h
 *.out
+*.o
+oberon

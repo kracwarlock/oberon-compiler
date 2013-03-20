@@ -588,7 +588,8 @@ int main()
   p = createtypeEntry();
   int res = yyparse();
   if (res==0)
-    printf("Successful parse\n");
+    printf("Successful parse\n\n\n");
   //print_Symbol(&symbolTable);
+  postOrder(ast_head);
   return 0;
 }
