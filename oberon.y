@@ -27,13 +27,14 @@
 #include "symbol_table.h"
 #include "ast.c"
 
-AstNode *ast_head;
-
 SymbolTable symbolTable;
 
 owner_list *own;
 
+type_tableEntry *current_type;
 tableEntry *owner_func;
+
+tableEntry *current_ident;
 
 type_EntryTable *p;
 
@@ -120,13 +121,13 @@ Import_Modules_List:
     ;
 
 Import:
-    ident ASSIGN ident { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, NULL, IDENTIFIER, 0, NULL, 0,0,NULL,NULL)); }
+    ident ASSIGN ident { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, NULL, IDENTIFIER, 0, NULL, 0,0,NULL,own->last)); }
     | ident
     ;
 
 Stat_Block:
-    BEG Statement_Sequence     { ast_head = makeNode(OPR, "BEG", NOTSET, VAL, NULL, $2);}
-    |                          { ast_head = NULL;}
+    BEG Statement_Sequence     { $$ = makeNode(OPR, "BEG", NOTSET, VAL, NULL, $2);}
+    |                          { $$ = NULL;}
     ;
 
 Statement_Sequence:
@@ -192,8 +193,20 @@ $$ = makeNode(OPR, "ASSIGN_FOR", NOTSET, VAL, $2 , makeNode(OPR, "TO_FOR", NOTSE
 
 Expr         : 
 /* Relations */
-  Expr EQ_COMP Expr       { $$ = makeNode(OPR, "=", NOTSET, VAL, $1, $3); }
-| Expr UNEQ Expr          { $$ = makeNode(OPR, "#", NOTSET, VAL, $1, $3); }
+  Expr EQ_COMP Expr       
+  { 
+    // if (compatible_types($1->type,$2>type))
+    // {
+    //   $$ = makeNode(OPR, "=", BOOL , VAL, $1, $3); 
+    // }
+    // else
+    //   printf("ERROR");
+  }
+| Expr UNEQ Expr         
+  { 
+    // if (compatible_types($1->type,$2>type))
+    //   $$ = makeNode(OPR, "#", BOOL, VAL, $1, $3); 
+  }
 | Expr LT Expr            { $$ = makeNode(OPR, "<", NOTSET, VAL, $1, $3); }
 | Expr LE Expr            { $$ = makeNode(OPR, "<=", NOTSET, VAL, $1, $3); }
 | Expr GT Expr            { $$ = makeNode(OPR, ">", NOTSET, VAL, $1, $3); }
@@ -226,15 +239,36 @@ Factor       :
 ;
 
 Designator   : 
-  ident optSuffix     { $$ = make_new_node($1,$2);}
+  ident 
+  {
+    tableEntry *m = findEntry(&symbolTable, $1->node_value ,own->first);
+    current_type = m->type;
+  } 
+  optSuffix     { $$ = make_new_node($1,$3);}
 ;
 
 optSuffix :
-  DOTSYM ident optSuffix  { $$ = makeNode(OPR, ".", NOTSET, VAL, NULL, make_new_node($2,$3));}
+  DOTSYM ident optSuffix  { printf("maa chuda\n");$$ = makeNode(OPR, ".", NOTSET, VAL, NULL, make_new_node($2,$3));}
 | LSQBR Expr_List RSQBR  optSuffix  { $$ = makeNode(OPR, "[]", NOTSET, VAL, NULL, make_new_node($2,$4));}
-| CARR  optSuffix    { $$ = makeNode(OPR, "^", NOTSET, VAL, NULL, $2);}
+| CARR
+{
+  if (current_type->type == POINTER_TYPE){
+    current_type = current_type->tp;
+  }
+  else{
+    printf("error_pointer\n");
+  }
+} 
+ optSuffix    
+{ 
+  $$ = makeNode(OPR, "^", NOTSET, VAL, NULL, $2);
+}
 | LEFTBRAC Expr_List RIGHTBRAC optSuffix   { $$ = makeNode(OPR, "()", NOTSET, VAL, NULL, make_new_node($2,$4));}
-|   { $$ = NULL;}
+|   
+{ 
+  current_type = current_type;
+  $$ = NULL;
+}
 ;
 
 Expr_List     : 
@@ -243,7 +277,7 @@ Expr_List     :
 ;              
 
 Set          : 
-  LCBR Element_List RCBR                        { $$ = $2; }
+  LCBR Element_List RCBR                        { $$ = makeNode(OPR, ",", NOTSET, VAL, $2 , NULL); }
 ;
 
 Element_List :
@@ -301,7 +335,6 @@ Data_List:
 | {printf("Data_List_Nothing\n");}
 ;
 
-
 // In this region we are declaring various types of declaration namely "const declaration,var decaration and type declaration"
 
 Const_List :
@@ -318,7 +351,6 @@ Var_List  :
   Identifier_List COLON Type                        {changeVariableType(&symbolTable, $3,VAR_VALUE); } SEMIC Var_List
 |                                                   {printf("Var_List_Nothing\n");}
 ;
-
 
 Type: 
 Qualident                           
@@ -433,11 +465,11 @@ Const_Expr    :
 Const_Expr_List :
   Const_Expr COMMA Const_Expr_List    
   { 
-    {add_type_FormalParameter(p->last , createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,NULL));}    
+    {add_type_FormalParameter(p->last , createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,own->last));}    
   }
 | Const_Expr 
   { 
-    {add_type_FormalParameter(p->last, createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,NULL));}    
+    {add_type_FormalParameter(p->last, createTableEntry($1, NULL, passType, NUMBER, order,NULL,NULL,NULL,NULL,own->last));}    
   }
 ;
 
@@ -449,7 +481,7 @@ Field_List    :
 ;
 
 fi_Identifier_List:
-  ident { add_type_FormalParameter(p->last, createTableEntry($1->node_value, NULL, passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,NULL));}  fi_Identifier_List_Aux  
+  ident { add_type_FormalParameter(p->last, createTableEntry($1->node_value, NULL, passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,own->last));}  fi_Identifier_List_Aux  
 ;
 
 fi_Identifier_List_Aux:
@@ -473,17 +505,12 @@ Proc_Decl     :
       addSymbolTableEntry(&symbolTable, cr);
       currentScope = scopeCount;
       tableEntry *n = own->first;
-      if (own->first == NULL){
-        own->first = cr;
-        own->last = cr;
-      }
-      else{
         while (n->next_owner != NULL){
           n=n->next_owner;
         }
         n->next_owner = cr;
         own->last = cr;
-      }
+      printf(" mera_owner_%s_%s",own->first->name,own->last->name);
   } 
   Formal_Pars SEMIC Decl_Seq Stat_Block END ident 
   {
@@ -500,7 +527,7 @@ Proc_Decl     :
         }
         prev->next_owner = NULL;
         own->last = prev;
-        free(i);
+        //free(i);
       }
       scopeCount--;
       remove_last(p);
@@ -527,7 +554,10 @@ FP_section:
 ;
 
 fp_Identifier_List:
-  ident fp_Identifier_List_Aux                  { add_type_FormalParameter(p->last, createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,NULL));}
+  ident fp_Identifier_List_Aux                  
+  { 
+    add_type_FormalParameter(p->last,createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,own->last));
+  }
 ;
 
 fp_Identifier_List_Aux:
@@ -553,7 +583,7 @@ FP_section_Dec:
 ;
 
 fp_Identifier_List_Dec:
-  ident fp_Identifier_List_Aux_Dec      { add_type_FormalParameter(p->last, createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,NULL));}
+  ident fp_Identifier_List_Aux_Dec      { add_type_FormalParameter(p->last, createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,own->last));}
 ;
 
 fp_Identifier_List_Aux_Dec:
@@ -562,7 +592,7 @@ COMMA fp_Identifier_List_Dec
 ;
 
 Identifier_List:
-  ident { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, VAL, IDENTIFIER, 0, NULL, currentScope, currentScope, NULL,NULL)); } Identifier_List_Aux
+  ident { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, VAL, IDENTIFIER, 0, NULL, currentScope, currentScope, NULL,own->last)); } Identifier_List_Aux
 ;
 
 Identifier_List_Aux:
@@ -571,7 +601,10 @@ COMMA Identifier_List               {printf("IDENT COMMA Identifier_List\n");}
 ;
 
 ident:
-  IDENT {$$ = makeNode(IDENT, yytext, NOTSET, REF, NULL, NULL); }
+  IDENT
+  {
+    $$ = makeNode(IDENT, yytext, NOTSET, REF, NULL, NULL); 
+  }
 ;
 
 %%
@@ -583,13 +616,14 @@ void yyerror(const char *s){
 int main()
 {
   own = (owner_list*)malloc(sizeof(owner_list));
-  own->first = NULL;
-  own->last = NULL;
+  own->first = createTableEntry("mera__hain_main", VOID ,NULL, NULL , 0, NULL, 0, 0, NULL, NULL);
+  own->last = own->first;
   createSymbolTable(&symbolTable);
   p = createtypeEntry();
   int res = yyparse();
   if (res==0)
     printf("Successful parse\n");
+  type_printf(&symbolTable);
   //print_Symbol(&symbolTable);
   return 0;
 }
