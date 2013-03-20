@@ -156,7 +156,6 @@ tableEntry* getScopeOwner(SymbolTable* symbolTable, int scope)
 
 void add_type_FormalParameter(type_tableEntry *p,tableEntry *t){
 	if (p->formal_params == NULL){
-		printf("dddddd");
 		p->formal_params = t;
 		t->next = NULL;
 	}
@@ -173,8 +172,7 @@ void add_type_FormalParameter(type_tableEntry *p,tableEntry *t){
 void change_type_FormalParamType (type_EntryTable *p , type_tableEntry *t){
 	type_tableEntry *k = p->last;
 	tableEntry  *u = k->formal_params;
-	while (u->next != NULL){
-		printf("dddddddmmm\n");
+	while (u->next != NULL){\
 		if (u->type != NULL){
 			u->type = t;
 		}
@@ -190,7 +188,6 @@ type_EntryTable *createtypeEntry(){
 }
 
 void insert_last(type_EntryTable *t,type_tableEntry *p){
-	printf("aaaaaaa");
 	if (t->first == NULL){
 		t->first = p;
 		t->last = p;
@@ -206,7 +203,6 @@ void insert_last(type_EntryTable *t,type_tableEntry *p){
 }
 
 void remove_last(type_EntryTable *t){
-	printf("aaaaaaabbbbbb");
 	if (t->first == NULL)
 		return;
 	if (t->first->next == NULL){
