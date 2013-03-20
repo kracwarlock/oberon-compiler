@@ -1,7 +1,7 @@
 all : clean oberon
 
 oberon :	y.tab.o lex.yy.o
-	gcc -g -o oberon symbol_table.c y.tab.o lex.yy.o  -ly -ll
+	gcc -o oberon ast.c symbol_table.c y.tab.o lex.yy.o  -ly -ll
 
 y.tab.o : 	y.tab.c
 	gcc -c y.tab.c
