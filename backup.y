@@ -33,8 +33,6 @@ owner_list *own;
 type_tableEntry *current_type;
 type_tableEntry *current_type2;
 type_tableEntry *current_type3;
-type_tableEntry *current_type4;
-type_tableEntry *current_type5;
 
 tableEntry *owner_func;
 
@@ -140,18 +138,7 @@ Statement_Sequence:
     ;
 
 Statement    : 
-  Designator 
-  {
-    current_type4 = current_type;
-  }
-   ASSIGN Expr  {
-    printf("it_is_here_%s_%s_%d_%d",$1->node_value,$4->node_value,current_type->type,current_type4->type);
-    printf("print_%s %d",$1->node_value,current_type->type);
-    if (current_type4 ->type != current_type->type){
-      printf("type_error in designation\n");
-    }
-    $$ = makeNode(OPR, "=", NOTSET, VAL, $1, $4); 
-  }
+  Designator ASSIGN Expr  { $$ = makeNode(OPR, ":=", NOTSET, VAL, $1 , $3);}
 | Designator              { $$ = $1;}
 | IF_COND Expr THEN Statement_Sequence Else_If_Block Else END
   { 
@@ -220,7 +207,7 @@ Expr         :
   } 
   EQ_COMP Expr       
   { 
-    printf("new_mridul_type %d_%s\n",current_type->type,$4->node_value);
+    printf("new_mridul_type%d_%s\n",current_type->type,$4->node_value);
     if (current_type->type == BOOLEAN){
       current_type3 = current_type;
     }
@@ -237,7 +224,7 @@ Expr         :
       current_type2 = current_type;
     }
     else{
-      printf("type_error3\n");  
+      printf("type_error3\n");
     }
   } UNEQ Expr         
   { 
@@ -261,30 +248,7 @@ Expr         :
 | Expr IS Expr            { $$ = makeNode(OPR, "IS", NOTSET, VAL, $1, $3); }
 // | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
 // | MINUS_SYM Expr %prec UMINUS
-| Expr
-{
-    if (current_type->type == INTEGER || current_type->type == REAL){
-      current_type5 = current_type;
-      printf("printing ....%d",current_type->type);
-    }
-    else{
-      printf("type_error1\n");
-    }
-} PLUS_SYM Expr           
-{
-    printf("new_mridul_type%d_%s_%d_%d\n",current_type->type,$4->node_value,current_type5->type,current_type->type);
-    if (current_type5->type == INTEGER && current_type->type == INTEGER){
-      printf("printing2 ....%d",current_type5->type);
-        current_type = create_typeEntry(INTEGER,NULL,NULL);
-      }
-    else if ((current_type5->type == INTEGER || current_type5->type == REAL) && ( current_type->type == REAL || current_type->type == INTEGER)){
-        printf("popopopop");
-        current_type = create_typeEntry(REAL,NULL,NULL);
-    }
-    else
-        printf("type_error");
- $$ = makeNode(OPR, "+", NOTSET, VAL, $1, $4);
-}
+| Expr PLUS_SYM Expr           { $$ = makeNode(OPR, "+", NOTSET, VAL, $1, $3); }
 | Expr MINUS_SYM Expr          { $$ = makeNode(OPR, "-", NOTSET, VAL, $1, $3); }
 | Expr OR Expr                 { $$ = makeNode(OPR, "OR", NOTSET, VAL, $1, $3); }
 | Expr MULTIPLY_SYM Expr       { $$ = makeNode(OPR, "*", NOTSET, VAL, $1, $3); }
@@ -312,8 +276,6 @@ Designator   :
   {
     tableEntry *m = findEntry(&symbolTable, $1->node_value ,own->first);
     current_type = m->type;
-    if (m->type == NULL)
-      printf("l_ho_gaya");
     printf("all_ident");
   } 
   optSuffix     { $$ = make_new_node($1,$3);}
@@ -322,20 +284,13 @@ Designator   :
 optSuffix :
   DOTSYM ident 
   {
-         //  printf("done\n");
-         // if (current_type->type == RECORD_TYPE){
-         //  if (current_type->formal_params != NULL)
-         //      printf("ghkll %d\n",current_type->formal_params->type->type);
-         //   tableEntry *ip2 = find_formal_entry($2->node_value,current_type->formal_params);
-         //   if (ip2 == NULL)
-         //      printf("klklklkl");
-         //   //current_type = ip2->type;
-         //   //printf("\n current_type->type is %d",current_type->type);
-         //   printf("all_record\n");
-         //}
+        if (current_type->type == RECORD_TYPE){
+          current_type = current_type->tp;
+          printf("all_record\n");
+        }
 
   }
-  optSuffix  { $$ = makeNode(OPR, ".", NOTSET, VAL, NULL, make_new_node($2,$4));}
+  optSuffix  { printf("maapopopo\n");$$ = makeNode(OPR, ".", NOTSET, VAL, NULL, make_new_node($2,$4));}
 | LSQBR Expr_List RSQBR
 {
         if (current_type->type == ARRAY_TYPE){
@@ -452,7 +407,7 @@ Qualident
 { 
   if (p->first == NULL)
     printf("first_null1\n");
- insert_last(p,$1);
+ insert_last(p,create_typeEntry(QUALIDENT_TYPE,NULL,NULL));
  $$ = p->last;
  remove_last(p);
 }
@@ -504,7 +459,6 @@ Qualident
   } 
   OF Type 
   {
-    p->last->tp=$4;
     $$ = p->last;
     remove_last(p);
   }
@@ -516,7 +470,6 @@ Qualident
    } 
    Const_Expr_List OF Type    
    { 
-      p->last->tp=$5;
       $$ = p->last;
       remove_last(p);
    }
@@ -539,7 +492,6 @@ Qualident
   }
   TO Type                   
   { 
-    p->last->tp=$4;
     $$ = p->last;
     remove_last(p);
   }

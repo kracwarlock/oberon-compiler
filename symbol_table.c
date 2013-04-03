@@ -55,7 +55,7 @@ void addSymbolTableEntry(SymbolTable* symbolTable, tableEntry* entry)
 		{
 			printf("******  Identifier Redeclared ******** %s \n",entry->name);
 		}
-		free(entry);
+		//free(entry);
 		return;
 	}
 	else
@@ -184,7 +184,6 @@ tableEntry* getScopeOwner(SymbolTable* symbolTable, int scope)
 
 void add_type_FormalParameter(type_tableEntry *p,tableEntry *t){
 	if (p->formal_params == NULL){
-		printf("dddddd");
 		p->formal_params = t;
 		t->next = NULL;
 	}
@@ -213,14 +212,14 @@ void change_type_FormalParamType (type_EntryTable *p , type_tableEntry *t){
 
 type_EntryTable *createtypeEntry(){
 	type_EntryTable *p = (type_EntryTable*)malloc(sizeof(type_EntryTable));
-	p->first = create_typeEntry(INTEGER,NULL,NULL);
+	p->first = NULL;
 	p->last = p->first;
 	return p;
 }
 
 void insert_last(type_EntryTable *t,type_tableEntry *p){
-	printf("aaaaaaa");
 	if (t->first == NULL){
+		printf("ho_gaya");
 		t->first = p;
 		t->last = p;
 	}
@@ -229,19 +228,20 @@ void insert_last(type_EntryTable *t,type_tableEntry *p){
 		while(k->next != NULL){
 			k=k->next;
 		}
+		printf("insert_%d_%d",t->last->type,p->type);
 		k->next = p;
 		t->last = p;
 	}
 }
 
 void remove_last(type_EntryTable *t){
-	printf("aaaaaaabbbbbb");
 	if (t->first == NULL)
 		return;
 	if (t->first->next == NULL){
-		free(t->first);
+		printf("nahi_ho_gaya");
+		//free(t->first);
 		t->first = NULL;
-		t->first = t->last ;
+		t->last = t->first ;
 	}
 	else{
 		type_tableEntry *k = t->first;
@@ -290,11 +290,35 @@ void print_Symbol(SymbolTable* symbolTable){
 	}
 }
 
+tableEntry *find_formal_entry(char *name,tableEntry *t){
+	tableEntry *p = t;
+	while (p!=NULL){
+		printf("checking... %s",name);
+		if (strcmp(t->name,name) == 0){
+			return t;
+		}
+		p=p->next;
+	}
+	return NULL;
+}
+
 void type_printf(SymbolTable* symbolTable){
 	tableEntry *te = symbolTable -> first;
 	while (te!=NULL){
-		if (te->type->type != NULL)
-			printf("%s %d \n",te->name,te->type->type);
+		if (te->type->type != NULL || te->type != NULL){
+			// if (te->type->type == RECORD_TYPE){
+			// 	tableEntry *l = te->type->formal_params;
+			// 	while  (l != NULL){
+			// 		if (l->type->type == 5 && l->type->next != NULL)
+			// 			printf("new_namne_%s_%d",l->name,l->type->next->type);
+			// 		printf("name_ident_%s %d\n",l->name,l->type->type);
+			// 		l=l->next;
+			// 	}
+			// }
+			if (te->type->type==6 && te->type->formal_params!=NULL)
+				printf("popl_%d",te->type->formal_params->type->tp->tp->type);
+			printf("type_pr_%s %d \n",te->name,te->type->type);
+		}
 		te=te->next;
 	}
 }

@@ -3,11 +3,6 @@
 
 #include "symbol_table.h"
 
-//place all your definitions here that are needed by various source files.
-
-// a basic node definition which could easily be improved.
-// Only a C-struct definition shown, easily converted to a C++ class if needed.
-
 //===========================================================
 
 typedef struct AstNode {
@@ -20,7 +15,9 @@ typedef struct AstNode {
 	struct AstNode* left;       // pointer to left child
 	struct AstNode* right;      // pointer to right child
 } AstNode;
-
 //===================================================================
 
+AstNode* makeNode( int NodeType, char *NodeValue, symbolType type, symbolPassType passType, AstNode *Left, AstNode *Right );
+AstNode *make_new_node(AstNode *Left, AstNode *Right );
+void postOrder(AstNode* root);
 #endif
