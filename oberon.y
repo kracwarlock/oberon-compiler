@@ -148,13 +148,16 @@ Statement    :
     $1->type=current_type;
   }
    ASSIGN Expr  {
-    printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
+    printf("finally_tim_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
     //printf("it_is_here_%s_%s_%d_%d",$1->node_value,$3->node_value,current_type->type,current_type4->type);
     //printf("print_%s %d",$1->node_value,current_type->type);
     if (type_check($1->type,$4->type)){
+      printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
+      $$ = makeNode(OPR, "=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
+    }
+    else{
       printf("type_error in designation\n");
     }
-    $$ = makeNode(OPR, "=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
   }
 | Designator              { $$ = $1;}
 | IF_COND Expr THEN Statement_Sequence Else_If_Block Else END
