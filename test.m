@@ -15,6 +15,7 @@ TYPE
   l = ARRAY OF INTEGER;
   rc = RECORD a, b, c: POINTER TO ARRAY OF INTEGER; d: ARRAY OF INTEGER; e:POINTER TO INTEGER END;
   rc1 = RECORD a, b, c: POINTER TO ARRAY OF INTEGER; d: POINTER TO ARRAY OF INTEGER; END;
+  pi = POINTER TO ARRAY OF INTEGER;
   f = SET;
   fn = PROCEDURE ( a, b: INTEGER; c, d: POINTER TO ARRAY OF INTEGER ) : rc;
 
@@ -25,12 +26,13 @@ VAR
   o9,o8,o11:f;
   o4 : m;
   o5 : rc;
+  o12 : pi;
   o6 : CHAR;
   o7 : REAL;
 
 BEGIN
   (* Read in the numbers *)
-  o8 := {1,2,3,TRUE};
+  o8 := {1,2,3,4};
   o1 := ol;
   o3 := o1 IS m;
   o5.a := TRUE;
@@ -39,6 +41,7 @@ BEGIN
   o7 := 20.3;
   o7 := o7+o6;
   o6 := o1+o5.e;
+  o5.a := o12;
   o2 := o3 = 10;
   o2 := o3 = TRUE;
   o2 := o4 # 20;

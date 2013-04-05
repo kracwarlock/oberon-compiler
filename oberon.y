@@ -151,8 +151,8 @@ Statement    :
     printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
     //printf("it_is_here_%s_%s_%d_%d",$1->node_value,$3->node_value,current_type->type,current_type4->type);
     //printf("print_%s %d",$1->node_value,current_type->type);
-    if (current_type4 ->type != current_type->type){
-      //printf("type_error in designation\n");
+    if (type_check($1->type,$4->type)){
+      printf("type_error in designation\n");
     }
     $$ = makeNode(OPR, "=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
   }
@@ -418,7 +418,7 @@ Expr         :
       printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
     }
 }
-| Factor                       { $$ = $1;printf("checkin_%s_%d",$1->node_value,$1->type->type);}
+| Factor                       { $$ = $1;printf("checkin_%s_%d_",$1->node_value,$1->type->type);}
 ;
 
 Factor       : 
@@ -434,7 +434,7 @@ Factor       :
 | CHAR_VAL      { $$ = makeNode(NUM, yytext, create_typeEntry(CHAR,NULL,NULL), VAL, NULL, NULL); }
 | INTEGER_VAL   { $$ = makeNode(NUM, yytext, create_typeEntry(INTEGER,NULL,NULL), VAL, NULL, NULL); }
 | NIL           { $$ = makeNode(NUM, yytext, create_typeEntry(NO,NULL,NULL), VAL, NULL, NULL); }
-| Set           { $$ = $1; }      
+| Set           { $$ = makeNode(NUM, yytext, create_typeEntry(SET_TYPE,NULL,NULL), VAL, NULL, $1); }      
 | LEFTBRAC Expr RIGHTBRAC   { $$ = makeNode(OPR, "()", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL , $2); }
 | TILDA Factor  { $$ = makeNode(OPR, "~", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL , $2); }
 ;

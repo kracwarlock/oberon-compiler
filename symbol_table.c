@@ -302,6 +302,47 @@ tableEntry *find_formal_entry(char *name,tableEntry *t){
 	return NULL;
 }
 
+int type_check(type_tableEntry *first,type_tableEntry *second){
+	tableEntry *f1;
+	tableEntry *f2;
+	printf("in_here_too_%d_%d_",first->type,second->type);
+	while (first->tp!=NULL && second->tp!=NULL){
+		printf("in_here");
+		if (first->type==second->type){
+			if (type_check(first->tp,second->tp)){
+				if (first->formal_params != NULL && second->formal_params != NULL){
+					f1=first->formal_params;
+					f2=second->formal_params;
+					while(f1 !=NULL && f2 !=NULL){
+						if (!type_check(f1->type,f2->type))
+							return 0;
+						f1=f1->next;
+						f2=f2->next;
+					}
+				}
+				else{
+					if (first->formal_params == NULL && second->formal_params == NULL)
+						return 1;
+					else
+						return 0;
+				}
+			}
+			else
+				return 0;
+		}
+		else
+			return 0;
+		first=first->tp;
+		second=second->tp;
+	}
+	if (second->tp==NULL && first->type==second->type){
+		printf("new_idea");
+		return 1;
+	}
+	else
+		return 0;
+}
+
 void type_printf(SymbolTable* symbolTable){
 	tableEntry *te = symbolTable -> first;
 	while (te!=NULL){
