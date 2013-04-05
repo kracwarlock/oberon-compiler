@@ -32,7 +32,7 @@ BEGIN
   (* Read in the numbers *)
   o8 := {1,2,3,TRUE};
   o1 := ol;
-  o3 := o1 IS y;
+  o3 := o1 IS m;
   o5.a := TRUE;
   o9 := o8 + o1;
   o1 := 10;
