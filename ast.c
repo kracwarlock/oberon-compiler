@@ -6,7 +6,7 @@
 
 int varT = 0, lineL = 0;
 
-AstNode* makeNode( int NodeType, char *NodeValue, symbolType type, symbolPassType passType, AstNode *Left, AstNode *Right )
+AstNode* makeNode( int NodeType, char *NodeValue, type_tableEntry *type, symbolPassType passType, AstNode *Left, AstNode *Right )
 {
 	AstNode* node_pointer;
 
