@@ -20,6 +20,7 @@ TYPE
 
 VAR 
   o1,o2 : y;
+  ol:INTEGER;
   o3 : m;
   o9,o8,o11:f;
   o4 : m;
@@ -30,7 +31,8 @@ VAR
 BEGIN
   (* Read in the numbers *)
   o8 := {1,2,3,TRUE};
-  o1 := 0;
+  o1 := ol;
+  o3 := o1 IS y;
   o5.a := TRUE;
   o9 := o8 + o1;
   o1 := 10;

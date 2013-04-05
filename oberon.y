@@ -304,7 +304,22 @@ Expr         :
       printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
   }
 }
-| Expr IS Expr            { $$ = makeNode(OPR, "IS", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
+| Expr IS Expr            
+{ 
+  printf("lopo%s",$3->node_value);
+  type_tableEntry *lk = type_lookup(&symbolTable,$3->node_value,currentScope);
+  //printf("lopo%d",lk->type);
+  if (($1->type==lk)){
+        printf("andar_hain");
+        // value is TRUE
+        $$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
+  }
+  else{
+      // value is FALSE
+      $$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
 // | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
 // | MINUS_SYM Expr %prec UMINUS
 | Expr PLUS_SYM Expr           
