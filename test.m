@@ -13,13 +13,15 @@ TYPE
   m = BOOLEAN;
   N = INTEGER;
   l = ARRAY OF INTEGER;
-  rc = RECORD a, b, c: POINTER TO ARRAY OF INTEGER; d: ARRAY OF INTEGER; END;
+  rc = RECORD a, b, c: POINTER TO ARRAY OF INTEGER; d: ARRAY OF INTEGER; e:POINTER TO INTEGER END;
   rc1 = RECORD a, b, c: POINTER TO ARRAY OF INTEGER; d: POINTER TO ARRAY OF INTEGER; END;
+  f = SET;
   fn = PROCEDURE ( a, b: INTEGER; c, d: POINTER TO ARRAY OF INTEGER ) : rc;
 
 VAR 
   o1,o2 : y;
   o3 : m;
+  o9,o8,o11:f;
   o4 : m;
   o5 : rc;
   o6 : CHAR;
@@ -27,12 +29,14 @@ VAR
 
 BEGIN
   (* Read in the numbers *)
+  o8 := {1,2,3,TRUE};
   o1 := 0;
   o5.a := TRUE;
+  o9 := o8 + o1;
   o1 := 10;
   o7 := 20.3;
-  o7 := o7+o1;
-  o6 := o1+o1;
+  o7 := o7+o6;
+  o6 := o1+o5.e;
   o2 := o3 = 10;
   o2 := o3 = TRUE;
   o2 := o4 # 20;

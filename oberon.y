@@ -41,6 +41,9 @@ tableEntry *owner_func;
 tableEntry *current_ident;
 
 type_EntryTable *p;
+type_EntryTable *p_check;
+
+char *name_p;
 
 int currentScope = 0;
 int scopeCount = 5;
@@ -130,64 +133,65 @@ Import:
     ;
 
 Stat_Block:
-    BEG Statement_Sequence     { $$ = makeNode(OPR, "BEG", NOTSET, VAL, NULL, $2);}
+    BEG Statement_Sequence     { $$ = makeNode(OPR, "BEG", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $2);}
     |                          { $$ = NULL;}
     ;
 
 Statement_Sequence:
-    Statement SEMIC Statement_Sequence  { $$ = makeNode(OPR, ";", NOTSET, VAL, $1, $3);}
-    | Statement SEMIC                   { $$ = makeNode(OPR, ";", NOTSET, VAL, NULL, $1);}
+    Statement SEMIC Statement_Sequence  { $$ = makeNode(OPR, ";", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3);}
+    | Statement SEMIC                   { $$ = makeNode(OPR, ";", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $1);}
     ;
 
 Statement    : 
-  Designator 
+  Designator
   {
-    current_type4 = current_type;
+    $1->type=current_type;
   }
    ASSIGN Expr  {
-    printf("it_is_here_%s_%s_%d_%d",$1->node_value,$4->node_value,current_type->type,current_type4->type);
-    printf("print_%s %d",$1->node_value,current_type->type);
+    printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
+    //printf("it_is_here_%s_%s_%d_%d",$1->node_value,$3->node_value,current_type->type,current_type4->type);
+    //printf("print_%s %d",$1->node_value,current_type->type);
     if (current_type4 ->type != current_type->type){
-      printf("type_error in designation\n");
+      //printf("type_error in designation\n");
     }
-    $$ = makeNode(OPR, "=", NOTSET, VAL, $1, $4); 
+    $$ = makeNode(OPR, "=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
   }
 | Designator              { $$ = $1;}
 | IF_COND Expr THEN Statement_Sequence Else_If_Block Else END
   { 
-    $$ = makeNode(OPR, "IF", NOTSET, VAL, $2 , makeNode(OPR, "THEN", NOTSET, VAL, $4 , makeNode(OPR, "REM_ELSE", NOTSET, VAL, $5 , $6) ));
+    $$ = makeNode(OPR, "IF", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "THEN", create_typeEntry(NOTSET,NULL,NULL), VAL, $4 , makeNode(OPR, "REM_ELSE", create_typeEntry(NOTSET,NULL,NULL), VAL, $5 , $6) ));
   }
 | CASE_COND Expr OF Case_Parameters Else END 
 {
-  $$ = makeNode(OPR, "CASE", NOTSET, VAL, $2 , makeNode(OPR, "CASE_PARAMS", NOTSET, VAL, $4, makeNode(OPR, "ELSE", NOTSET, VAL, NULL, $5))); 
+  $$ = makeNode(OPR, "CASE", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "CASE_PARAMS", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "ELSE", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $5))); 
 }
 | WHILE Expr DOCASE Statement_Sequence END      
 {
-  $$ = makeNode(OPR, "WHILE", NOTSET, VAL, $2 , makeNode(OPR, "DOCASE_WHILE", NOTSET, VAL, NULL, $4));
+  $$ = makeNode(OPR, "WHILE", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "DOCASE_WHILE", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $4));
 }
 | REPEAT Statement_Sequence UNTIL Expr 
 {
-  $$ = makeNode(OPR, "REPEAT", NOTSET, VAL, $2 , makeNode(OPR, "UNTIL_REPEAT", NOTSET, VAL, NULL, $4)); 
+  $$ = makeNode(OPR, "REPEAT", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "UNTIL_REPEAT", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $4)); 
 }
 | FOR ident Statement_Aux             
 { 
-  $$ = makeNode(OPR, "FOR", NOTSET, VAL, $2 , $3);
+  $$ = makeNode(OPR, "FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , $3);
 }
 | LOOP Statement_Sequence END         
 {
- $$ = makeNode(OPR, "LOOP", NOTSET, VAL, NULL, $2);
+ $$ = makeNode(OPR, "LOOP", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $2);
 }
 | EXIT                                
 {
- $$ = makeNode(OPR, "EXIT", NOTSET, VAL, NULL, NULL); 
+ $$ = makeNode(OPR, "EXIT", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, NULL); 
 }
 | RETURN Expr                         
 { 
-  $$ = makeNode(OPR, "RETURN", NOTSET, VAL, NULL, $2);
+  $$ = makeNode(OPR, "RETURN", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $2);
 }
 | RETURN                              
 { 
-  $$ = makeNode(OPR, "RETURN", NOTSET, VAL, NULL, NULL);
+  $$ = makeNode(OPR, "RETURN", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, NULL);
 }
 |                                     
 { 
@@ -198,120 +202,235 @@ Statement    :
 Statement_Aux :
 ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END  
 {
- $$ = makeNode(OPR, "ASSIGN_FOR", NOTSET, VAL, $2 , makeNode(OPR, "TO_FOR", NOTSET, VAL, $4, makeNode(OPR, "BY_FOR", NOTSET, VAL, $6, makeNode(OPR, "DO_FOR", NOTSET, VAL, $8, NULL ) ) )); 
+ $$ = makeNode(OPR, "ASSIGN_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "TO_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "BY_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $6, makeNode(OPR, "DO_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $8, NULL ) ) )); 
 } 
 | ASSIGN Expr TO Expr DOCASE Statement_Sequence END     
 {
-$$ = makeNode(OPR, "ASSIGN_FOR", NOTSET, VAL, $2 , makeNode(OPR, "TO_FOR", NOTSET, VAL, $4, makeNode(OPR, "DO_FOR", NOTSET, VAL, $6 , NULL ))); 
+$$ = makeNode(OPR, "ASSIGN_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "TO_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "DO_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $6 , NULL ))); 
 }
 ;
 
 Expr         : 
 /* Relations */
-  Expr 
-  {
-    printf("mridul_type %d\n",current_type->type);
-    if (current_type->type == BOOLEAN){
-      current_type2 = current_type;
-    }
-    else{
-      printf("type_error1\n");
-    }
-  } 
-  EQ_COMP Expr       
+  Expr EQ_COMP Expr       
   { 
-    printf("new_mridul_type %d_%s\n",current_type->type,$4->node_value);
-    if (current_type->type == BOOLEAN){
-      current_type3 = current_type;
+    // printf("new_mridul_type %d_%s\n",current_type->type,$3->node_value);
+    // // if (current_type->type == BOOLEAN){
+    // //   current_type3 = current_type;
+    // // }
+    // // else{
+    // //   printf("type_error2\n");
+    // // }
+    // // current_type = create_typeEntry(BOOLEAN,NULL,NULL);
+    if ($1->type->type==$3->type->type && $1->type->type==BOOLEAN){
+      $$ = makeNode(OPR, "=", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
     }
     else{
-      printf("type_error2\n");
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
     }
-    current_type = create_typeEntry(BOOLEAN,NULL,NULL);
-    $$ = makeNode(OPR, "=", NOTSET, VAL, $1, $4);
+    printf("finally_times_%d_%d_%s",$1->type->type,$3->type->type,$1->node_value);
   }
-| Expr
-  {
-    printf("mridul_type %d\n",current_type->type);
-    if (current_type->type == BOOLEAN){
-      current_type2 = current_type;
-    }
-    else{
-      printf("type_error3\n");  
-    }
-  } UNEQ Expr         
+| Expr UNEQ Expr         
   { 
-    printf("new_mridul_type%d_%s\n",current_type->type,$4->node_value);
-    if (current_type->type == BOOLEAN){
-      current_type3 = current_type;
+    // printf("new_mridul_type%d_%s\n",current_type->type,$4->node_value);
+    // if (current_type->type == BOOLEAN){
+    //   current_type3 = current_type;
+    // }
+    // else{
+    //   printf("type_error4\n");
+    // }
+    // current_type = create_typeEntry(BOOLEAN,NULL,NULL);
+    if ($1->type->type==$3->type->type && $1->type->type==BOOLEAN){
+      $$ = makeNode(OPR, "=", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
     }
     else{
-      printf("type_error4\n");
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
     }
-    current_type = create_typeEntry(BOOLEAN,NULL,NULL);
-    $$ = makeNode(OPR, "=", NOTSET, VAL, $1, $4);
   }
-| Expr LT Expr            {
- $$ = makeNode(OPR, "<", NOTSET, VAL, $1, $3); 
+| Expr LT Expr            
+{
+  if (($1->type->type==INTEGER || $1->type->type==REAL) && ($3->type->type==INTEGER || $3->type->type==REAL)){
+      if ($1->type->type==INTEGER && $3->type->type==INTEGER)
+        $$ = makeNode(OPR, "<", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+      else
+        $$ = makeNode(OPR, "<", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
 }
-| Expr LE Expr            { $$ = makeNode(OPR, "<=", NOTSET, VAL, $1, $3); }
-| Expr GT Expr            { $$ = makeNode(OPR, ">", NOTSET, VAL, $1, $3); }
-| Expr GE Expr            { $$ = makeNode(OPR, ">=", NOTSET, VAL, $1, $3); }
-| Expr IN Expr            { $$ = makeNode(OPR, "IN", NOTSET, VAL, $1, $3); }
-| Expr IS Expr            { $$ = makeNode(OPR, "IS", NOTSET, VAL, $1, $3); }
+| Expr LE Expr            
+{ 
+    if (($1->type->type==INTEGER || $1->type->type==REAL) && ($3->type->type==INTEGER || $3->type->type==REAL)){
+      if ($1->type->type==INTEGER && $3->type->type==INTEGER)
+        $$ = makeNode(OPR, "<=", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+      else
+        $$ = makeNode(OPR, "<=", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
+| Expr GT Expr            
+{
+  if (($1->type->type==INTEGER || $1->type->type==REAL) && ($3->type->type==INTEGER || $3->type->type==REAL)){
+      if ($1->type->type==INTEGER && $3->type->type==INTEGER)
+        $$ = makeNode(OPR, ">", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+      else
+        $$ = makeNode(OPR, ">", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
+| Expr GE Expr            
+{ 
+    if (($1->type->type==INTEGER || $1->type->type==REAL) && ($3->type->type==INTEGER || $3->type->type==REAL)){
+      if ($1->type->type==INTEGER && $3->type->type==INTEGER)
+        $$ = makeNode(OPR, ">=", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+      else
+        $$ = makeNode(OPR, ">=", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
+| Expr IN Expr            
+{
+  if (($1->type->type==INTEGER || $1->type->type==SET)){
+        $$ = makeNode(OPR, "IN", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
+| Expr IS Expr            { $$ = makeNode(OPR, "IS", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
 // | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
 // | MINUS_SYM Expr %prec UMINUS
-| Expr
+| Expr PLUS_SYM Expr           
 {
-    if (current_type->type == INTEGER || current_type->type == REAL){
-      current_type5 = current_type;
-      printf("printing ....%d",current_type->type);
+  if (($1->type->type==INTEGER || $1->type->type==REAL) && ($3->type->type==INTEGER || $3->type->type==REAL)){
+      if ($1->type->type==INTEGER && $3->type->type==INTEGER)
+        $$ = makeNode(OPR, "+", create_typeEntry(INTEGER,NULL,NULL), VAL, $1, $3);
+      else
+        $$ = makeNode(OPR, "+", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
+  }
+  else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
+      $$ = makeNode(OPR, "+", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+      printf("Error in type checking : Incompatible type%s,%s,%d,%d",$1->node_value,$3->node_value,$1->type->type,$3->type->type);
+  }
+}
+| Expr MINUS_SYM Expr          
+{ 
+    if (($1->type->type==INTEGER || $1->type->type==REAL) && ($3->type->type==INTEGER || $3->type->type==REAL)){
+      if ($1->type->type==INTEGER && $3->type->type==INTEGER)
+        $$ = makeNode(OPR, "-", create_typeEntry(INTEGER,NULL,NULL), VAL, $1, $3);
+      else
+        $$ = makeNode(OPR, "-", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
+  }
+  else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
+      $$ = makeNode(OPR, "-", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
+| Expr OR Expr                 
+{ 
+    if ($1->type->type==$3->type->type && $1->type->type==BOOLEAN){
+      $$ = makeNode(OPR, "=", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
     }
     else{
-      printf("type_error1\n");
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
     }
-} PLUS_SYM Expr           
-{
-    printf("new_mridul_type%d_%s_%d_%d\n",current_type->type,$4->node_value,current_type5->type,current_type->type);
-    if (current_type5->type == INTEGER && current_type->type == INTEGER){
-      printf("printing2 ....%d",current_type5->type);
-        current_type = create_typeEntry(INTEGER,NULL,NULL);
-      }
-    else if ((current_type5->type == INTEGER || current_type5->type == REAL) && ( current_type->type == REAL || current_type->type == INTEGER)){
-        printf("popopopop");
-        current_type = create_typeEntry(REAL,NULL,NULL);
-    }
-    else
-        printf("type_error");
- $$ = makeNode(OPR, "+", NOTSET, VAL, $1, $4);
 }
-| Expr MINUS_SYM Expr          { $$ = makeNode(OPR, "-", NOTSET, VAL, $1, $3); }
-| Expr OR Expr                 { $$ = makeNode(OPR, "OR", NOTSET, VAL, $1, $3); }
-| Expr MULTIPLY_SYM Expr       { $$ = makeNode(OPR, "*", NOTSET, VAL, $1, $3); }
-| Expr DIVIDE_SYM Expr         { $$ = makeNode(OPR, "/", NOTSET, VAL, $1, $3); }
-| Expr DIV Expr                { $$ = makeNode(OPR, "DIV", NOTSET, VAL, $1, $3); }
-| Expr MOD Expr                { $$ = makeNode(OPR, "MOD", NOTSET, VAL, $1, $3); }
-| Expr AND_SYM Expr            { $$ = makeNode(OPR, "&", NOTSET, VAL, $1, $3); }
-| Factor                       { $$ = $1;}
+| Expr MULTIPLY_SYM Expr       
+{ 
+  if (($1->type->type==INTEGER || $1->type->type==REAL) && ($3->type->type==INTEGER || $3->type->type==REAL)){
+      if ($1->type->type==INTEGER && $3->type->type==INTEGER)
+        $$ = makeNode(OPR, "*", create_typeEntry(INTEGER,NULL,NULL), VAL, $1, $3);
+      else
+        $$ = makeNode(OPR, "*", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
+  }
+  else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
+      $$ = makeNode(OPR, "*", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
+| Expr DIVIDE_SYM Expr         
+{ 
+  if (($1->type->type==INTEGER || $1->type->type==REAL) && ($3->type->type==INTEGER || $3->type->type==REAL)){
+      if ($1->type->type==INTEGER && $3->type->type==INTEGER)
+        $$ = makeNode(OPR, "/", create_typeEntry(INTEGER,NULL,NULL), VAL, $1, $3);
+      else
+        $$ = makeNode(OPR, "/", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
+  }
+  else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
+      $$ = makeNode(OPR, "/", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
+| Expr DIV Expr                
+{ 
+  if ($1->type->type==$3->type->type && $1->type->type==INTEGER){
+    $$ = makeNode(OPR, "DIV", create_typeEntry(INTEGER,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+    printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
+| Expr MOD Expr                
+{
+  if ($1->type->type==$3->type->type && $1->type->type==INTEGER){
+    $$ = makeNode(OPR, "MOD", create_typeEntry(INTEGER,NULL,NULL), VAL, $1, $3);
+  }
+  else{
+    printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+  }
+}
+| Expr AND_SYM Expr            
+{ 
+    if ($1->type->type==$3->type->type && $1->type->type==BOOLEAN){
+      $$ = makeNode(OPR, "AND", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+    }
+    else{
+      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+    }
+}
+| Factor                       { $$ = $1;printf("checkin_%s_%d",$1->node_value,$1->type->type);}
 ;
 
 Factor       : 
-  Designator    {printf("Designator\n");}
-| BOOLEAN_VAL   { current_type = create_typeEntry(BOOLEAN,NULL,NULL); $$ = makeNode(NUM, yytext, BOOLEAN, VAL, NULL, NULL); }
-| REAL_VAL      { current_type = create_typeEntry(REAL,NULL,NULL);$$ = makeNode(NUM, yytext, REAL, VAL, NULL, NULL); }
-| CHAR_VAL      { current_type = create_typeEntry(CHAR,NULL,NULL);$$ = makeNode(NUM, yytext, CHAR, VAL, NULL, NULL); }
-| INTEGER_VAL   { current_type = create_typeEntry(INTEGER,NULL,NULL);$$ = makeNode(NUM, yytext, INTEGER, VAL, NULL, NULL); }
-| NIL           { current_type = create_typeEntry(NO,NULL,NULL);$$ = makeNode(NUM, yytext, NO, VAL, NULL, NULL); }
-| Set           { current_type = create_typeEntry(SET,NULL,NULL);$$ = $1; }      
-| LEFTBRAC Expr RIGHTBRAC   { $$ = makeNode(OPR, "()", NOTSET, VAL, NULL , $2); }
-| TILDA Factor  { $$ = makeNode(OPR, "~", NOTSET, VAL, NULL , $2); }
+  Designator    
+  { 
+    printf("current_is_my %d_%s",current_type->type,$1->node_value);
+    $1->type=current_type;
+    $$=$1;
+    printf("kop_%d",$1->type->type);
+  }
+| BOOLEAN_VAL   { $$ = makeNode(NUM, yytext, create_typeEntry(BOOLEAN,NULL,NULL), VAL, NULL, NULL); }
+| REAL_VAL      { $$ = makeNode(NUM, yytext, create_typeEntry(REAL,NULL,NULL), VAL, NULL, NULL); }
+| CHAR_VAL      { $$ = makeNode(NUM, yytext, create_typeEntry(CHAR,NULL,NULL), VAL, NULL, NULL); }
+| INTEGER_VAL   { $$ = makeNode(NUM, yytext, create_typeEntry(INTEGER,NULL,NULL), VAL, NULL, NULL); }
+| NIL           { $$ = makeNode(NUM, yytext, create_typeEntry(NO,NULL,NULL), VAL, NULL, NULL); }
+| Set           { $$ = $1; }      
+| LEFTBRAC Expr RIGHTBRAC   { $$ = makeNode(OPR, "()", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL , $2); }
+| TILDA Factor  { $$ = makeNode(OPR, "~", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL , $2); }
 ;
 
 Designator   : 
   ident 
   {
     tableEntry *m = findEntry(&symbolTable, $1->node_value ,own->first);
+
     current_type = m->type;
+    printf("pop_%s_%d",$1->node_value,m->type->type);
     if (m->type == NULL)
       printf("l_ho_gaya");
     printf("all_ident");
@@ -322,28 +441,29 @@ Designator   :
 optSuffix :
   DOTSYM ident 
   {
-         //  printf("done\n");
-         // if (current_type->type == RECORD_TYPE){
-         //  if (current_type->formal_params != NULL)
-         //      printf("ghkll %d\n",current_type->formal_params->type->type);
-         //   tableEntry *ip2 = find_formal_entry($2->node_value,current_type->formal_params);
-         //   if (ip2 == NULL)
-         //      printf("klklklkl");
-         //   //current_type = ip2->type;
-         //   //printf("\n current_type->type is %d",current_type->type);
-         //   printf("all_record\n");
-         //}
+          printf("done\n");
+         if (current_type->type == RECORD_TYPE){
+          if (current_type->formal_params != NULL)
+              printf("ghkll %d\n",current_type->formal_params->type->type);
+           tableEntry *ip2 = find_formal_entry($2->node_value,current_type->formal_params);
+           if (ip2 == NULL)
+              printf("klklklkl");
+          else
+             current_type = ip2->type;
+           printf("current_type->type is %d",current_type->type);
+           printf("all_record\n");
+         }
 
   }
-  optSuffix  { $$ = makeNode(OPR, ".", NOTSET, VAL, NULL, make_new_node($2,$4));}
+  optSuffix  { $$ = makeNode(OPR, ".", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, make_new_node($2,$4));}
 | LSQBR Expr_List RSQBR
 {
         if (current_type->type == ARRAY_TYPE){
-          //current_type = current_type->tp;
+          current_type = current_type->tp;
           printf("all_array\n");
         }
 }
-  optSuffix  { $$ = makeNode(OPR, "[]", NOTSET, VAL, NULL, make_new_node($2,$5));}
+  optSuffix  { $$ = makeNode(OPR, "[]", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, make_new_node($2,$5));}
 | CARR
 {
   if (current_type->type == POINTER_TYPE){
@@ -356,9 +476,9 @@ optSuffix :
 } 
  optSuffix    
 { 
-  $$ = makeNode(OPR, "^", NOTSET, VAL, NULL, $3);
+  $$ = makeNode(OPR, "^", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $3);
 }
-| LEFTBRAC Expr_List RIGHTBRAC optSuffix   { $$ = makeNode(OPR, "()", NOTSET, VAL, NULL, make_new_node($2,$4));}
+| LEFTBRAC Expr_List RIGHTBRAC optSuffix   { $$ = makeNode(OPR, "()", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, make_new_node($2,$4));}
 |   
 { 
   current_type = current_type;
@@ -368,51 +488,63 @@ optSuffix :
 
 Expr_List     : 
   Expr                                          { $$ = $1; }
-| Expr COMMA Expr_List                          { $$ = makeNode(OPR, ",", NOTSET, VAL, $1, $3); }
+| Expr COMMA Expr_List                          { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
 ;              
 
 Set          : 
-  LCBR Element_List RCBR                        { $$ = makeNode(OPR, ",", NOTSET, VAL, $2 , NULL); }
+  LCBR Element_List RCBR                        { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , NULL); }
 ;
 
 Element_List :
-  Element COMMA Element_List                    { $$ = makeNode(OPR, ",", NOTSET, VAL, $1, $3); }
+  Element COMMA Element_List                    { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
 | Element                                       { $$ = $1; }
 ;
 
 Element      : 
-  Expr                                          { $$ = $1; }
-| Expr DOTDOT Expr                              { $$ = makeNode(OPR, "..", NOTSET, VAL, $1, $3); }
+  Expr                                          
+  { 
+    if ($1->type->type==INTEGER)
+      $$ = $1; 
+    else
+      printf("Error in type checking : Incompatible type : Only Integer Allowed,%s",$1->node_value);
+  }
+| Expr DOTDOT Expr                              
+{ 
+    if ($1->type->type==INTEGER && $1->type->type==INTEGER)
+      $$ = makeNode(OPR, "..", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); 
+    else
+      printf("Error in type checking : Incompatible type : Only Integer Allowed,%s",$1->node_value);
+}
 ;
 
 Else_If_Block:
-  ELSEIF Expr THEN Statement_Sequence Else_If_Block     { $$ = makeNode(OPR, "ELSEIF", NOTSET, VAL, $2 , makeNode(OPR, "ELSEIF_AUX", NOTSET, VAL, $4 , $5)); }
+  ELSEIF Expr THEN Statement_Sequence Else_If_Block     { $$ = makeNode(OPR, "ELSEIF", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "ELSEIF_AUX", create_typeEntry(NOTSET,NULL,NULL), VAL, $4 , $5)); }
 |                                                       { $$ = NULL; }
 ;
 
 Else:
-  ELSE Statement_Sequence                        { $$ = makeNode(OPR, "ELSE", NOTSET, VAL, NULL, $2);}
+  ELSE Statement_Sequence                        { $$ = makeNode(OPR, "ELSE", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $2);}
 |                                                { $$ = NULL; }
 ;
 
 Case_Parameters:
   Case_Single                                     { $$ = $1; }
-| Case_Single OR_SYM Case_Parameters              { $$ = makeNode(OPR, "OR", NOTSET, VAL, $1 , $3);}
+| Case_Single OR_SYM Case_Parameters              { $$ = makeNode(OPR, "OR", create_typeEntry(NOTSET,NULL,NULL), VAL, $1 , $3);}
 ;
 
 Case_Single: 
-  Case_Expression_List COLON Statement_Sequence   { $$ = makeNode(OPR, ";", NOTSET, VAL, $1, $3); }
+  Case_Expression_List COLON Statement_Sequence   { $$ = makeNode(OPR, ";", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
 |                                                 { $$ = NULL;}
 ;
 
 Case_Expression_List:                // Case label list beacuse of the expression matching could be to a integer but also to a list of integers or list of expressions
   Case_Expression                                 { $$ = $1; }
-| Case_Expression COMMA Case_Expression_List      { $$ = makeNode(OPR, ",", NOTSET, VAL, $1 , $3);}
+| Case_Expression COMMA Case_Expression_List      { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $1 , $3);}
 ;
 
 Case_Expression: 
   Expr                                            { $$ = $1; }
-| Expr DOTDOT Expr                                { $$ = makeNode(OPR, "..", NOTSET, VAL, $1 , $3);}
+| Expr DOTDOT Expr                                { $$ = makeNode(OPR, "..", create_typeEntry(NOTSET,NULL,NULL), VAL, $1 , $3);}
 ;
 
 
@@ -726,7 +858,7 @@ COMMA Identifier_List               {printf("IDENT COMMA Identifier_List\n");}
 ident:
   IDENT
   {
-    $$ = makeNode(IDENT, yytext, NOTSET, REF, NULL, NULL); 
+    $$ = makeNode(IDENT, yytext, create_typeEntry(NOTSET,NULL,NULL), REF, NULL, NULL); 
   }
 ;
 
@@ -743,6 +875,7 @@ int main()
   own->last = own->first;
   createSymbolTable(&symbolTable);
   p = createtypeEntry();
+  p_check = createtypeEntry();
   int res = yyparse();
   if (res==0)
     printf("Successful parse\n");
