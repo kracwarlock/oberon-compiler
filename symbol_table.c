@@ -256,17 +256,31 @@ void remove_last(type_EntryTable *t){
 	}
 }
 
-type_tableEntry *type_lookup(SymbolTable *sym,char *look,int scope){
-	tableEntry* te = sym->first;
-	while (te != NULL)
-	{
-		if (strcmp(te->name,look) == 0 && te->scope == scope && te->t == TYPE_VALUE)
+type_tableEntry *type_lookup(SymbolTable *sym,char *name, tableEntry *owner_func){
+	type_tableEntry *ret = NULL;
+	while (owner_func != NULL){
+		tableEntry* te = sym->first;
+		while (te != NULL)
 		{
-			return te->type;
-		}		
-		te = te->next;
-	}	
-	return NULL;
+					if (strcmp(te->name,name) == 0 && te->entry_owner == owner_func && te->t == TYPE_VALUE)
+					{		
+							ret = te->type;
+					}
+					te = te->next;
+		}	
+		owner_func = owner_func->next_owner;
+	}
+	return ret;
+	// return ret;
+	// while (te != NULL)
+	// {
+	// 	if (strcmp(te->name,look) == 0 && te->scope == scope && te->t == TYPE_VALUE)
+	// 	{
+	// 		return te->type;
+	// 	}		
+	// 	te = te->next;
+	// }	
+	// return NULL;
 }
 
 int module_lookup_bool(SymbolTable *sym,char *look){

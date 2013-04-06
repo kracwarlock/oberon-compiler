@@ -718,7 +718,7 @@ Qualident    :
   ident DOTDOT ident 
 {
   if (module_lookup_bool(&symbolTable,$1->node_value)){
-    $$ = type_lookup(&symbolTable,$3->node_value,currentScope);
+    $$ = type_lookup(&symbolTable,$3->node_value,own->last);
   }
   else{
     printf("module lookup failed");
@@ -727,7 +727,7 @@ Qualident    :
 | ident 
 {
   printf("correp_%s",$1->node_value);
-  $$ = type_lookup(&symbolTable,$1->node_value,currentScope);
+  $$ = type_lookup(&symbolTable,$1->node_value,own->last);
 }                 
 ;
 
