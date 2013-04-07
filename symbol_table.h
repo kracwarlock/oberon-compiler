@@ -97,7 +97,7 @@ typedef struct owner_list {
 void createSymbolTable(SymbolTable* symbolTable);
 void destroySymbolTable(SymbolTable* symbolTable);
 
-tableEntry* findEntry(SymbolTable* symbolTable, char* name, int scope);
+tableEntry* findEntry(SymbolTable* symbolTable, char* name, tableEntry *owner_func);
 tableEntry* getOwner(tableEntry* entry);
 tableEntry* getScopeOwner(SymbolTable* symbolTable, int scope);
 
