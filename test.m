@@ -41,6 +41,9 @@ BEGIN
   IF m = TRUE THEN
    o3 := o1 IS m; 
   END;
+  WHILE m # TRUE DO
+    o3 := o3 + 10;
+  END;
   ol := mk + o1;
   o1 := 10;
   o7 := 20.3;

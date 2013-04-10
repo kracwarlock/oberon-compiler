@@ -251,7 +251,7 @@ Expr         :
     // }
     // current_type = create_typeEntry(BOOLEAN,NULL,NULL);
     if ($1->type->type==$3->type->type && $1->type->type==BOOLEAN){
-      $$ = makeNode(OPR, "=", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
+      $$ = makeNode(OPR, "#", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
     }
     else{
       printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
