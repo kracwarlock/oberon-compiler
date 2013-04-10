@@ -37,6 +37,10 @@ int tac(AstNode* node)
 		printf("L%d:\n", lineL++);
 		postOrder(node->right->right);
 	}
+	else if(!strcmp(node->node_value,"CASE")){
+		int t1 = tac(node->left);
+		printf("Next%d:\n", lineL++);
+	}
 	else if (!strcmp(node->node_value, "WHILE")) {
 		printf("L%d:\n", lineL);
 		int l1 = lineL++;
@@ -58,22 +62,28 @@ int tac(AstNode* node)
 		return ++varT;
 	}
 	else if (!strcmp(node->node_value,":=")) {
+		//printf("lplp");
 		if (node->right->node_type == 342 && node->left->node_type == 342) {
+			//printf("lplpl2222");
 			int t1 = tac(node->left);
+			//varT++;
 			int t2 = tac(node->right);
 			//if (!strcmp(node->left->node_value,"[]")) printf("*");
 			printf("t%d = t%d\n", t1-1, t2-1);
 		}
 		else if (node->right->node_type == 342) {
+			//varT++;
 			int t1 = tac(node->right);
 			printf("%s = t%d\n", node->left->node_value, t1-1 );
 		}
 		else if (node->left->node_type == 342) {
+			//varT++;
 			int t1 = tac(node->left);
 			//if (!strcmp(node->left->node_value,"[]")) printf("*");
 			printf("t%d = %s\n", t1-1, node->right->node_value);
 		}
 		else {
+			//printf("popoppppp");
 			printf("%s=%s\n", node->left->node_value, node->right->node_value);
 		}
 	}
@@ -119,9 +129,13 @@ int isOper(AstNode* node)
 }
 void postOrder(AstNode* node)
 {
+	//printf("hiiamm");
 	if (node == NULL)
 		return;
 	//printf("%s %d\n", node->node_value, node->node_type);
-	if (node->left && isOper(node->left)) tac(node->left);	else postOrder(node->left);
-	if (node->right && isOper(node->right)) tac(node->right);	else postOrder(node->right);
+	//printf(" %s ",node->node_value);
+	//if (node->left) postOrder(node->left);
+	//if (node->right) postOrder(node->right);
+	 if (node->left && isOper(node->left)) tac(node->left);	else postOrder(node->left);
+	 if (node->right && isOper(node->right)) tac(node->right);	else postOrder(node->right);
 }

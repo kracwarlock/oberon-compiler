@@ -30,6 +30,8 @@ SymbolTable symbolTable;
 
 owner_list *own;
 
+AstNode *ast_head;
+
 type_tableEntry *current_type;
 type_tableEntry *current_type2;
 type_tableEntry *current_type3;
@@ -114,7 +116,7 @@ cast_away:
     ;
 
 Main_Block:
-       Import_Modules Decl_Seq Stat_Block   {printf("Import_Modules Decl_Seq Stat_Block\n");}
+       Import_Modules Decl_Seq Stat_Block   {printf("Import_Modules Decl_Seq Stat_Block\n"); ast_head = $3;}
     ;
 
 Import_Modules: 
@@ -133,8 +135,13 @@ Import:
     ;
 
 Stat_Block:
-    BEG Statement_Sequence     { $$ = makeNode(OPR, "BEG", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $2);}
-    |                          { $$ = NULL;}
+    BEG Statement_Sequence     
+    { 
+      printf("fop");
+      $$ = makeNode(OPR, "BEG", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $2);
+    }
+
+    |                          { printf("fop2");$$ = NULL;}
     ;
 
 Statement_Sequence:
@@ -153,7 +160,7 @@ Statement    :
     //printf("print_%s %d",$1->node_value,current_type->type);
     if (type_check($1->type,$4->type)){
       printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
-      $$ = makeNode(OPR, "=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
+      $$ = makeNode(OPR, ":=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
     }
     else{
       printf("type_error in designation\n");
@@ -557,12 +564,12 @@ Case_Single:
 
 Case_Expression_List:                // Case label list beacuse of the expression matching could be to a integer but also to a list of integers or list of expressions
   Case_Expression                                 { $$ = $1; }
-| Case_Expression COMMA Case_Expression_List      { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $1 , $3);}
+//| Case_Expression COMMA Case_Expression_List      { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $1 , $3);}
 ;
 
 Case_Expression: 
   Expr                                            { $$ = $1; }
-| Expr DOTDOT Expr                                { $$ = makeNode(OPR, "..", create_typeEntry(NOTSET,NULL,NULL), VAL, $1 , $3);}
+// | Expr DOTDOT Expr                                { $$ = makeNode(OPR, "..", create_typeEntry(NOTSET,NULL,NULL), VAL, $1 , $3);}
 ;
 
 
@@ -897,6 +904,10 @@ int main()
   int res = yyparse();
   if (res==0)
     printf("Successful parse\n");
-  type_printf(&symbolTable);
+  //type_printf(&symbolTable);
+
+  if (ast_head==NULL)
+      printf("itisnull");
+  postOrder(ast_head);
   return 0;
 }
