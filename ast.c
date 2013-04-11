@@ -39,20 +39,47 @@ int tac(AstNode* node)
 	}
 	else if(!strcmp(node->node_value,"CASE")){
 		//printf("asas%s",node->left->node_value);
-	    int t1 = tac(node->left);
+		int t1 = 0;
+		if (node->left->node_type==342)
+			t1 = tac(node->left);
 	    AstNode *cases = node->right->left;
 	     while (!strcmp(cases->node_value,"CASE_OR")){
 	     	int t2;
 	     	if (cases->left == NULL){
-	     		t2 = tac(cases->right->left);
-	       		printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, lineL);
+	     		//printf("qwww$_%s",cases->right->left->node_value);
+	     		if (node->left->node_type==342 && cases->right->left->node_type==342){
+	     			t2 = tac(cases->right->left);
+	       			printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, lineL);
+	       		}
+	       		else if(node->left->node_type==342){
+	       			printf("IF t%d != %s goto L%d\n", t1-1,cases->right->left->node_value, lineL);
+	       		}
+	       		else if(cases->right->left->node_type==342){
+	     			t2 = tac(cases->right->left);
+	       			printf("IF %s != t%d goto L%d\n", node->left->node_value,t2-1, lineL);
+	       		}
+	       		else{
+	       			printf("IF %s != %s goto L%d\n", node->left->node_value,cases->right->left->node_value, lineL);	
+	       		}
 	       		postOrder(cases->right->right);
 	       		printf("goto Next\n");
 	       		printf("L%d:\n", lineL++);
 	     	}
 	     	else {
-	       		t2 = tac(cases->left->left);
-	       		printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, lineL);
+	       	 	if (node->left->node_type==342 && cases->left->left->node_type==342){
+	     			 t2 = tac(cases->left->left);
+	       	 		printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, lineL);
+	       	 	}
+	       	 	else if(node->left->node_type==342){
+	       	 		printf("IF t%d != %s goto L%d\n", t1-1,cases->left->left->node_value, lineL);
+	       	 	}
+	       	 	else if(cases->left->left->node_type==342){
+	     			t2 = tac(cases->left->left);
+	       	 		printf("IF %s != t%d goto L%d\n", node->left->node_value,t2-1, lineL);
+	       	 	}
+	       	 	else{
+	       	 		printf("IF %s != %s goto L%d\n", node->left->node_value,cases->left->left->node_value, lineL);	
+	       	 	}
 	       		postOrder(cases->left->right);
 	       		printf("goto Next\n");
 	       		printf("L%d:\n", lineL++);
