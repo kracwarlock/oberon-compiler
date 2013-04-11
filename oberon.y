@@ -553,12 +553,12 @@ Else:
 ;
 
 Case_Parameters:
-  Case_Single                                     { $$ = $1; }
-| Case_Single OR_SYM Case_Parameters              { $$ = makeNode(OPR, "OR", create_typeEntry(NOTSET,NULL,NULL), VAL, $1 , $3);}
+  Case_Single                                     { $$ = makeNode(OPR, "CASE_OR", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL , $1);}
+| Case_Single AND_SYM Case_Parameters              { $$ = makeNode(OPR, "CASE_OR", create_typeEntry(NOTSET,NULL,NULL), VAL, $1 , $3);}
 ;
 
 Case_Single: 
-  Case_Expression_List COLON Statement_Sequence   { $$ = makeNode(OPR, ";", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
+  Case_Expression_List COLON Statement_Sequence   { $$ = makeNode(OPR, ":", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
 |                                                 { $$ = NULL;}
 ;
 

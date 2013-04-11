@@ -38,9 +38,31 @@ int tac(AstNode* node)
 		postOrder(node->right->right);
 	}
 	else if(!strcmp(node->node_value,"CASE")){
-		int t1 = tac(node->left);
-		printf("Next%d:\n", lineL++);
-	}
+		//printf("asas%s",node->left->node_value);
+	    int t1 = tac(node->left);
+	    AstNode *cases = node->right->left;
+	     while (!strcmp(cases->node_value,"CASE_OR")){
+	     	int t2;
+	     	if (cases->left == NULL){
+	     		t2 = tac(cases->right->left);
+	       		printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, lineL);
+	       		postOrder(cases->right->right);
+	       		printf("goto Next\n");
+	       		printf("L%d:\n", lineL++);
+	     	}
+	     	else {
+	       		t2 = tac(cases->left->left);
+	       		printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, lineL);
+	       		postOrder(cases->left->right);
+	       		printf("goto Next\n");
+	       		printf("L%d:\n", lineL++);
+	       	}
+	       cases=cases->right;
+	    }
+	    lineL++;
+	    postOrder(node->right->right);
+	    printf("Next:\n", lineL++);
+	 }
 	else if(!strcmp(node->node_value, "REPEAT")){
 		printf("L%d:\n", lineL);
 		//printf("mayaya3 %s",node->left->node_value);
@@ -136,7 +158,7 @@ int isOper(AstNode* node)
 	if (node->node_type != 342) return 0;
 	char *s = strdup(node->node_value);
 	if (!(strcmp(s, ":=") && strcmp(s, "*") && strcmp(s, "+") && strcmp(s, "-") && strcmp(s, "/") && strcmp(s, "[]")
-		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, ".")))
+		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, "CASE") && strcmp(s, ".")))
 		return 1;
 	return 0;
 }

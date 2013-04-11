@@ -40,9 +40,17 @@ BEGIN
   o1 := ol;
   mp[ol] := 10;
   IF plm = TRUE THEN
-   o3 := o1 IS m; 
+    IF plm = TRUE THEN
+      o3 := o1 IS m; 
+    END;
+    IF plm # TRUE THEN
+      o1 := mk +ol; 
+    END;
   END;
   WHILE plm # TRUE DO
+    IF plm = TRUE THEN
+      o3 := o1 IS m; 
+    END;
     o1 := o1 + 10;
   END;
   ol := mk + o1;
@@ -51,6 +59,12 @@ BEGIN
   UNTIL plm # TRUE;
   o1 := 10;
   o7 := 20.3;
+  CASE o1 + o7 OF
+    ol + ol : o7 := 312.45;
+    & ol + o1 : o7 := 312.45;
+  ELSE
+    o7 := 23.3;
+  END;
   o5.a := o12;
   o2 := o3 = TRUE;
   o2 := o3 = TRUE;
