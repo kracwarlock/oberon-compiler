@@ -5,6 +5,26 @@
 #include "symbol_table.h"
 
 int varT = 0, lineL = 0;
+int arr[1000];
+int first = 1;
+int last = 0;
+label_list *main;
+
+void init(){
+	int i;
+	for (i=0;i<1000;i++)
+		arr[i]=-1;
+}
+
+void insert(int t){
+	last++;
+	arr[last] = t;
+}
+
+void pop(){
+	arr[last]=-1;
+	last--;
+}
 
 AstNode* makeNode( int NodeType, char *NodeValue, type_tableEntry *type, symbolPassType passType, AstNode *Left, AstNode *Right )
 {
@@ -32,9 +52,13 @@ int tac(AstNode* node)
 {
 	if (!strcmp(node->node_value, "IF")) {
 		int t1 = tac(node->left);
-		printf("IF t%d==0 goto L%d\n", t1-1, lineL);
+		insert(lineL);
+		printf("IF t%d==0 goto L%d\n", t1-1, arr[last]);
+		lineL++;
 		postOrder(node->right->left);
-		printf("L%d:\n", lineL++);
+		printf("L%d:\n", arr[last]);
+		lineL++;
+		pop();
 		postOrder(node->right->right);
 	}
 	else if(!strcmp(node->node_value,"CASE")){
@@ -47,48 +71,54 @@ int tac(AstNode* node)
 	     	int t2;
 	     	if (cases->left == NULL){
 	     		//printf("qwww$_%s",cases->right->left->node_value);
+	     		insert(lineL);
 	     		if (node->left->node_type==342 && cases->right->left->node_type==342){
 	     			t2 = tac(cases->right->left);
-	       			printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, lineL);
+	       			printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, arr[last]);
 	       		}
 	       		else if(node->left->node_type==342){
-	       			printf("IF t%d != %s goto L%d\n", t1-1,cases->right->left->node_value, lineL);
+	       			printf("IF t%d != %s goto L%d\n", t1-1,cases->right->left->node_value, arr[last]);
 	       		}
 	       		else if(cases->right->left->node_type==342){
 	     			t2 = tac(cases->right->left);
-	       			printf("IF %s != t%d goto L%d\n", node->left->node_value,t2-1, lineL);
+	       			printf("IF %s != t%d goto L%d\n", node->left->node_value,t2-1, arr[last]);
 	       		}
 	       		else{
-	       			printf("IF %s != %s goto L%d\n", node->left->node_value,cases->right->left->node_value, lineL);	
+	       			printf("IF %s != %s goto L%d\n", node->left->node_value,cases->right->left->node_value, arr[last]);	
 	       		}
 	       		postOrder(cases->right->right);
 	       		printf("goto Next\n");
-	       		printf("L%d:\n", lineL++);
+	       		printf("L%d:\n", arr[last]);
+	       		lineL++;
+	       		pop();
 	     	}
 	     	else {
+	     		insert(lineL);
 	       	 	if (node->left->node_type==342 && cases->left->left->node_type==342){
 	     			 t2 = tac(cases->left->left);
-	       	 		printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, lineL);
+	       	 		printf("IF t%d != t%d goto L%d\n", t1-1,t2-1, arr[last]);
 	       	 	}
 	       	 	else if(node->left->node_type==342){
-	       	 		printf("IF t%d != %s goto L%d\n", t1-1,cases->left->left->node_value, lineL);
+	       	 		printf("IF t%d != %s goto L%d\n", t1-1,cases->left->left->node_value, arr[last]);
 	       	 	}
 	       	 	else if(cases->left->left->node_type==342){
 	     			t2 = tac(cases->left->left);
-	       	 		printf("IF %s != t%d goto L%d\n", node->left->node_value,t2-1, lineL);
+	       	 		printf("IF %s != t%d goto L%d\n", node->left->node_value,t2-1, arr[last]);
 	       	 	}
 	       	 	else{
-	       	 		printf("IF %s != %s goto L%d\n", node->left->node_value,cases->left->left->node_value, lineL);	
+	       	 		printf("IF %s != %s goto L%d\n", node->left->node_value,cases->left->left->node_value, arr[last]);	
 	       	 	}
 	       		postOrder(cases->left->right);
 	       		printf("goto Next\n");
-	       		printf("L%d:\n", lineL++);
+	       		printf("L%d:\n", arr[last]);
+	       		lineL++;
+	       		pop();
 	       	}
 	       cases=cases->right;
 	    }
 	    lineL++;
 	    postOrder(node->right->right);
-	    printf("Next:\n", lineL++);
+	    printf("Next:\n");
 	 }
 	else if(!strcmp(node->node_value, "REPEAT")){
 		printf("L%d:\n", lineL);

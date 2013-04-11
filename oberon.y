@@ -908,6 +908,7 @@ int main()
 
   if (ast_head==NULL)
       printf("itisnull");
+  init();
   postOrder(ast_head);
   return 0;
 }
