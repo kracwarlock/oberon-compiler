@@ -29,6 +29,7 @@ VAR
   o90 : rc1;
   o12 : pi;
   mp : pli;
+  plm : m;
   o6 : CHAR;
   o7 : REAL;
 
@@ -38,13 +39,16 @@ BEGIN
   o8 := {1,2,3,4};
   o1 := ol;
   mp[ol] := 10;
-  IF m = TRUE THEN
+  IF plm = TRUE THEN
    o3 := o1 IS m; 
   END;
-  WHILE m # TRUE DO
-    o3 := o3 + 10;
+  WHILE plm # TRUE DO
+    o1 := o1 + 10;
   END;
   ol := mk + o1;
+  REPEAT
+    o1 := o1 + 10;
+  UNTIL plm # TRUE;
   o1 := 10;
   o7 := 20.3;
   o5.a := o12;

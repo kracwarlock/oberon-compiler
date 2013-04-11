@@ -146,7 +146,7 @@ Stat_Block:
 
 Statement_Sequence:
     Statement SEMIC Statement_Sequence  { $$ = makeNode(OPR, ";", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3);}
-    | Statement SEMIC                   { $$ = makeNode(OPR, ";", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $1);}
+    | Statement SEMIC                   { $$ = makeNode(OPR, ";", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL,$1);}
     ;
 
 Statement    : 
@@ -179,7 +179,7 @@ Statement    :
 {
   $$ = makeNode(OPR, "WHILE", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "DOCASE_WHILE", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $4));
 }
-| REPEAT Statement_Sequence UNTIL Expr 
+| REPEAT Statement_Sequence UNTIL Expr
 {
   $$ = makeNode(OPR, "REPEAT", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "UNTIL_REPEAT", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $4)); 
 }

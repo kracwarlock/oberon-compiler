@@ -41,7 +41,20 @@ int tac(AstNode* node)
 		int t1 = tac(node->left);
 		printf("Next%d:\n", lineL++);
 	}
+	else if(!strcmp(node->node_value, "REPEAT")){
+		printf("L%d:\n", lineL);
+		//printf("mayaya3 %s",node->left->node_value);
+		postOrder(node->left);
+		//int l2 = lineL++;
+		//printf("mayaya2");
+		int t2 = tac(node->right->right);
+		//printf("mayaya");
+		printf("IF t%d==1 goto L%d\n", t2-1, lineL);
+		lineL++;
+		//printf("goto L%d\nL%d:\n", l1, l2);
+	}
 	else if (!strcmp(node->node_value, "WHILE")) {
+		//printf("itisrepeat2");
 		printf("L%d:\n", lineL);
 		int l1 = lineL++;
 		int t1 = tac(node->left);
@@ -123,7 +136,7 @@ int isOper(AstNode* node)
 	if (node->node_type != 342) return 0;
 	char *s = strdup(node->node_value);
 	if (!(strcmp(s, ":=") && strcmp(s, "*") && strcmp(s, "+") && strcmp(s, "-") && strcmp(s, "/") && strcmp(s, "[]")
-		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, ".")))
+		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, ".")))
 		return 1;
 	return 0;
 }
