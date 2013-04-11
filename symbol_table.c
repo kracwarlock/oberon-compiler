@@ -79,6 +79,7 @@ tableEntry* findEntry(SymbolTable* symbolTable, char* name, tableEntry *owner_fu
 			else
 				printf("asasasasasas %s %d\n",te->name,te->mode);
 			printf("dddddddddd");
+
 			if (te->mode == PROC_NAME && te == owner_func){
 				printf("maa me\n");
 				tableEntry *goi = te->type->formal_params;
@@ -94,8 +95,10 @@ tableEntry* findEntry(SymbolTable* symbolTable, char* name, tableEntry *owner_fu
 			}
 			else if (strcmp(te->name,name) == 0 && te->entry_owner == owner_func)
 			{
-				printf("rerererere %s\n",name);
-				ret = te;
+				printf("andarhain");
+				int arm = te->t;
+					printf("rerererere_%s_%d\n",name,arm);
+					ret = te; 
 			}		
 			te = te->next;
 		}	

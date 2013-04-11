@@ -12,7 +12,7 @@ MODULE S2searchwords;
 
 IMPORT In, Out;
 
-TYPE Tree = POINTER TO Node;
+TYPE Tree = POINTER TO INTEGER;
   Node = RECORD
       word: ARRAY 20 OF CHAR; 
       count: INTEGER; 
