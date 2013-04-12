@@ -38,7 +38,7 @@ BEGIN
   o5 := o90;
   o8 := {1,2,3,4};
   o1 := ol;
-  mp[ol] := 10;
+  mp[ol] := 10 + 20*203 + 384 - 303;
   IF plm = TRUE THEN
     IF plm = TRUE THEN
       o3 := o1 IS m; 

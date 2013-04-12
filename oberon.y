@@ -910,5 +910,6 @@ int main()
       printf("itisnull");
   init();
   postOrder(ast_head);
+  print_elem();
   return 0;
 }

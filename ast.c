@@ -8,12 +8,47 @@ int varT = 0, lineL = 0;
 int arr[1000];
 int first = 1;
 int last = 0;
-label_list *main;
+
+stack_elem elem_list[1000];
+
+void print_elem(){
+	int i;
+	for (i=0;i<1000;i++){
+		if (elem_list[i].off==-1){
+			break;
+		}
+		//printf("print %s\n",elem_list[i].label);
+	}
+	return ;
+}
+
+int search_elem(char *str){
+	int i;
+	for (i=0;i<1000;i++){
+		if (!strcmp(elem_list[i].label,str)){
+		//	printf("search_complete %d\n",elem_list[i].off);
+			return elem_list[i].off;
+		}
+	}
+}
+
+void insert_elem(int val,char *str){
+	int i;
+	for (i=0;i<1000;i++){
+		if (elem_list[i].off==-1){
+			elem_list[i].off=val;
+			elem_list[i].label=str;
+			return;
+		}
+	}
+}
 
 void init(){
 	int i;
-	for (i=0;i<1000;i++)
+	for (i=0;i<1000;i++){
 		arr[i]=-1;
+		elem_list[i].off=-1;
+	}
 }
 
 void insert(int t){
@@ -148,9 +183,15 @@ int tac(AstNode* node)
 		int t1 = varT;
 		if (node->right->node_type == 342) {
 			int t2 = tac(node->right);
+			insert_elem(varT,"t1");
+			search_elem("t1");
 			printf("t%d = t%d + t%d\n", varT, t1-1, t2-1);
 		}
-		else printf("t%d = t%d + %s\n", varT, varT-1, node->right->node_value);
+		else {
+			insert_elem(varT,"t2");
+			search_elem("t2");
+			printf("t%d = t%d + %s\n", varT, varT-1, node->right->node_value);
+		}
 		return ++varT;
 	}
 	else if (!strcmp(node->node_value,":=")) {
@@ -161,21 +202,29 @@ int tac(AstNode* node)
 			//varT++;
 			int t2 = tac(node->right);
 			//if (!strcmp(node->left->node_value,"[]")) printf("*");
+			insert_elem(t1-1,"t3");
+			search_elem("t3");
 			printf("t%d = t%d\n", t1-1, t2-1);
 		}
 		else if (node->right->node_type == 342) {
 			//varT++;
 			int t1 = tac(node->right);
+			insert_elem(t1-1,node->left->node_value);
+			search_elem(node->left->node_value);
 			printf("%s = t%d\n", node->left->node_value, t1-1 );
 		}
 		else if (node->left->node_type == 342) {
 			//varT++;
 			int t1 = tac(node->left);
+			insert_elem(t1-1,node->right->node_value);
+			search_elem(node->right->node_value);
 			//if (!strcmp(node->left->node_value,"[]")) printf("*");
 			printf("t%d = %s\n", t1-1, node->right->node_value);
 		}
 		else {
 			//printf("popoppppp");
+			insert_elem(100,node->left->node_value);
+			search_elem(node->left->node_value);
 			printf("%s=%s\n", node->left->node_value, node->right->node_value);
 		}
 	}
@@ -184,17 +233,27 @@ int tac(AstNode* node)
 		if (node->right->node_type == 342 && node->left->node_type == 342) {
 			int t1 = tac(node->left);
 			int t2 = tac(node->right);
+			insert_elem(varT,"t4");
+			search_elem("t4");
 			printf("t%d = t%d %s t%d\n", varT, t1-1, node->node_value, t2-1);
 		}
 		else if (node->left->node_type == 342) {
 			int t1 = tac(node->left);
+			insert_elem(t1-1,"t5");
+			search_elem("t5");
 			printf("t%d = t%d %s %s\n", varT, t1-1, node->node_value, node->right->node_value);
 		}
 		else if (node->right->node_type == 342) {
 			int t2 = tac(node->right);
+			insert_elem(t2-1,"t7");
+			search_elem("t7");
 			printf("t%d = %s %s t%d\n", varT, node->left->node_value, node->node_value, t2-1);
 		}
-		else printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
+		else {
+			insert_elem(varT,"t8");
+			search_elem("t8");
+			printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
+		}
 
 		return ++varT;
 	}
