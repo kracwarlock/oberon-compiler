@@ -391,15 +391,24 @@ int isOper(AstNode* node)
 }
 
 void stack_main(AstNode *node,int p,char *tex){
-	printf("subu $sp, $sp, %d\n",p*4);
+	printf("addui $sp, $sp, -%d\n",p*4);
 	int i;
 	for (i=0;i<p-1;i++){
-		printf("lw $t%d, %d($sp)\n",varT,i*4);
-		varT++;
+		printf("sw $a%d, %d($sp)\n",i,i*4);
+		//varT++;
 	}
-	insert_elem2(retT,tex);
-	//print_elem2();
-	retT++;
+	printf("sw $ra, %d($sp)\n",i*4);
+	return ;
+}
+
+void stack_main_2(AstNode *node,int p,char *tex){
+	int i = p-1;
+	printf("lw $ra, %d($sp)\n",i*4);
+	for (i=p-2;i>=0;i--){
+		printf("lw $a%d, %d($sp)\n",i,i*4);
+		//varT++;
+	}
+	printf("addui $sp, $sp, %d\n",p*4);
 	return ;
 }
 
@@ -429,9 +438,8 @@ void proc_call(AstNode *node){
 			formal = count_formal(node->left->right->left);
 			//printf("total_args_%d",formal);
 			stack_main(node,formal+1,node->left->left->node_value);
-			print_elem2();
 			postOrder(node->left->right->right->right);
-			printf("jr $ra\n");
+			stack_main_2(node,formal+1,node->left->left->node_value);
 			postOrder(node->left->right->right->left);
 			node = node->right;
 		}

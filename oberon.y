@@ -45,6 +45,8 @@ tableEntry *current_ident;
 type_EntryTable *p;
 type_EntryTable *p_check;
 
+type_tableEntry *ret_type;
+
 char *name_p;
 
 int currentScope = 0;
@@ -462,6 +464,51 @@ Factor       :
 | Set           { $$ = makeNode(NUM, "SET", create_typeEntry(SET_TYPE,NULL,NULL), VAL, NULL, $1); }      
 | LEFTBRAC Expr RIGHTBRAC   { $$ = makeNode(OPR, "()", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL , $2); }
 | TILDA Factor  { $$ = makeNode(OPR, "~", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL , $2); }
+| ident LEFTBRAC Expr_List RIGHTBRAC 
+  {
+      printf("hello_it_is_india");
+      tableEntry *m = findEntry_proc(&symbolTable, $1->node_value ,own->first);
+      if (m==NULL)
+          printf("wrong_declaration of the procedure");
+      else{
+        $$ = makeNode(OPR, "PROC_CALL", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3);
+        $$->type = m->type;
+        printf("chchhc%d",m->type->ret_t->type);
+        tableEntry *pl = m->type->formal_params;
+        AstNode *temp = $3;
+        AstNode *tmp2;
+
+        while (pl!=NULL){
+          if (!strcmp(temp->node_value,"EXPR")){
+            tmp2 = temp->left;
+            temp = temp->right;
+            if (type_check(tmp2->type,pl->type)){
+              printf("eop_%s_%d_%d",tmp2->node_value,tmp2->type->type,pl->type->type);
+            }
+            else{
+              printf("result_fail");
+              break;
+            }
+              pl = pl->next;
+          }
+          else{
+            tmp2 = temp;
+            printf("eop_%s_%d",tmp2->node_value,tmp2->type->type);
+            if (pl->next!=NULL){
+              printf("Error_in_formals_");
+            }
+            if (type_check(tmp2->type,pl->type)){
+              printf("eop_%s_%d_%d",tmp2->node_value,tmp2->type->type,pl->type->type);
+            }
+            else{
+              printf("result_fail");
+              break;
+            }
+              pl = pl->next;
+          }
+        }
+      }
+  }
 ;
 
 Designator   : 
@@ -518,7 +565,6 @@ optSuffix :
 { 
   $$ = makeNode(OPR, "^", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $3);
 }
-| LEFTBRAC Expr_List RIGHTBRAC optSuffix   { $$ = makeNode(OPR, "()", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, make_new_node($2,$4));}
 |   
 { 
   current_type = current_type;
@@ -528,7 +574,7 @@ optSuffix :
 
 Expr_List     : 
   Expr                                          { $$ = $1; }
-| Expr COMMA Expr_List                          { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
+| Expr COMMA Expr_List                          { $$ = makeNode(OPR, "EXPR", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
 ;              
 
 Set          : 
@@ -822,7 +868,7 @@ Proc_Decl     :
            tableEntry *n1 = cr;
            own->last = cr;
       // printf(" mera_owner_%s_%s",own->first->name,own->last->name);
-  } 
+  }
   Formal_Pars SEMIC Decl_Seq Stat_Block END ident 
   {
       if (!strcmp($2->node_value,$9->node_value)){
@@ -837,8 +883,10 @@ Proc_Decl     :
          //free(i);
       printf("khtam");
       //scopeCount--;
+      p->last->ret_t = ret_type;
       remove_last(p);
       $$ = makeNode(OPR, "PROC_MAIN", create_typeEntry(NOTSET,NULL,NULL), VAL, $2, makeNode(OPR, "FORMAL", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "PROC_STAT", create_typeEntry(NOTSET,NULL,NULL), VAL, $6, $7)));
+      //printf("type_is_%d",$$->type->type);
       }
       else{
         printf("change in the name of the procedure in the initial and the end\n");
@@ -850,10 +898,10 @@ Proc_Decl     :
 // In this part we are writing the grammar for the FORMAL PARMAMETERS of the procedure dclarartion in data_list
 
 Formal_Pars: 
-  LEFTBRAC FP_section_List RIGHTBRAC COLON Type { $$ = $2; }
-| LEFTBRAC FP_section_List RIGHTBRAC {$$ = $2; printf("LEFTBRAC FP_section_List RIGHTBRAC\n");}
-|  LEFTBRAC RIGHTBRAC  { $$ = NULL; printf("LEFTBRAC RIGHTBRAC\n");}
-|  { $$ = NULL;printf("Formal_Pars_nothing\n");}
+  LEFTBRAC FP_section_List RIGHTBRAC COLON Type { $$ = $2; ret_type = $5;}
+| LEFTBRAC FP_section_List RIGHTBRAC {$$ = $2; ret_type = create_typeEntry(NOTSET,NULL,NULL); printf("LEFTBRAC FP_section_List RIGHTBRAC\n");}
+|  LEFTBRAC RIGHTBRAC  { $$ = NULL; ret_type = create_typeEntry(NOTSET,NULL,NULL);printf("LEFTBRAC RIGHTBRAC\n");}
+|  { $$ = NULL; ret_type = create_typeEntry(NOTSET,NULL,NULL);printf("Formal_Pars_nothing\n");}
 ;
 
 FP_section_List:

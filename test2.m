@@ -34,7 +34,7 @@ VAR
   o7 : REAL;
   root: y;
 
-PROCEDURE Main22(ro : y ; olp : INTEGER);
+PROCEDURE Main22(ro : y ; olp : INTEGER) : INTEGER ;
 VAR root : y;
 BEGIN
       ro := 10;
@@ -79,6 +79,7 @@ BEGIN
     o7 := 23.3;
   END;
   o5.a := o12;
+  ol := Main22(ol,o1);
   o2 := o3 = TRUE;
   o2 := o3 = TRUE;
   o2 := o4 # FALSE;
