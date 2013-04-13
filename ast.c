@@ -440,13 +440,14 @@ void proc_call(AstNode *node){
 
 void set_call(AstNode *node){
 	printf("sets_%s",node->left->node_value);
-	char str[10];
+	char str[3];
 	if (!strcmp(node->right->node_value,"+")){
 		printf("Union Happenning");
 		search_insert(node->right->left->node_value,node->left->node_value);
 		search_insert(node->right->right->node_value,node->left->node_value);
 	}
 	else if (!strcmp(node->right->node_value,"-")){
+		
 	}
 	else if (!strcmp(node->right->node_value,"*")){
 
@@ -454,8 +455,8 @@ void set_call(AstNode *node){
 	else if (!strcmp(node->right->node_value,"/")){
 
 	}
-	else if (node->right->node_type==342){
-
+	else if (node->right->node_type==340){
+		search_insert(node->right->node_value,node->left->node_value);
 	}
 	else{
 		AstNode *temp = node->right->right;
@@ -464,8 +465,10 @@ void set_call(AstNode *node){
 			if (isOper(temp->left)){
 				printf("SEEE%s",temp->left->node_value);
 				int t1 = tac(temp->left);
-				sprintf(str, "t%d", t1-1);
-				insert_new(str,node->left->node_value);
+				char *s = (char*)malloc(sizeof(char));
+				sprintf(s, "t%d", t1-1);
+				printf("mrea_%s",s);
+				insert_new(s,node->left->node_value);
 				// one problem with the char [] to char * conversion
 			}
 			else{

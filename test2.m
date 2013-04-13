@@ -50,7 +50,7 @@ BEGIN
   o5 := o90;
   o8 := {1,2,3,4};
   o9 := {ol + o1,420};
-  o11 := o9 + o8;
+  o11 := o8;
   mp[ol] := 10 + 20*203 + 384 - 303;
   IF plm = TRUE THEN
     IF plm = TRUE THEN
