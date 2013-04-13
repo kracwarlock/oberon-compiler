@@ -79,7 +79,7 @@ BEGIN
     o7 := 23.3;
   END;
   o5.a := o12;
-  ol := Main22(ol,o1);
+  ol := Main22(ol+o1,o1+ol);
   o2 := o3 = TRUE;
   o2 := o3 = TRUE;
   o2 := o4 # FALSE;

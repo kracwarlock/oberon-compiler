@@ -304,6 +304,9 @@ int tac(AstNode* node)
 		if (node->left->type->type == SET_TYPE){
 			set_call(node);
 		}
+		else if (node->right->type->type == PROC_TYPE){
+			proc_call_def(node);
+		}
 		else{
 		if (node->right->node_type == 342 && node->left->node_type == 342) {
 			//printf("lplpl2222");
@@ -360,7 +363,6 @@ int tac(AstNode* node)
 			printf("t%d = %s %s t%d\n", varT, node->left->node_value, node->node_value, t2-1);
 		}
 		else {
-			printf("andar aao");
 			insert_elem(varT,"t8");
 			search_elem("t8");
 			printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
@@ -444,6 +446,33 @@ void proc_call(AstNode *node){
 			node = node->right;
 		}
 	}
+}
+
+void proc_call_def(AstNode *node){
+	int formal = 0;
+	int t1;
+	//printf("0aaaaaa_%s ",node->left->node_value);
+	AstNode *temp = node->right->right;
+	while (!strcmp(temp->node_value,"EXPR")){
+		if (temp->left->node_type==340){
+			printf("move $a%d, %s \n",formal,temp->left->node_value);
+			temp = temp->right;
+		}
+		else{
+			t1 = tac(temp->left);
+			printf("move $a%d, t%d \n",formal,t1-1);
+			temp = temp->right;
+		}
+		formal++;
+	}
+	if (temp->node_type==340){
+		printf("move $a%d, %s \n",formal,temp->node_value);
+	}
+	else{
+		t1 = tac(temp);
+		printf("move $a%d, t%d \n",formal,t1-1);
+	}
+	printf("jalr %s\n",node->right->left->node_value);
 }
 
 void set_call(AstNode *node){
