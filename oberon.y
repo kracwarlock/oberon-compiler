@@ -90,6 +90,15 @@ extern char * yytext;
 %type <node> Case_Single
 %type <node> Case_Expression
 %type <node> Case_Expression_List
+%type <node> Formal_Pars
+%type <node> FP_section_List
+%type <node> Proc_List
+%type <node> FP_section
+%type <node> fp_Identifier_List
+%type <node> fp_Identifier_List_Aux
+%type <node> Main_Block
+%type <node> Decl_Seq
+%type <node> Proc_Decl
 
 %type <type_value> Type;
 %type <str_value> Const_Expr;
@@ -105,6 +114,7 @@ Module:
       if (strcmp($1->node_value,$4->node_value) != 0) {
         printf("Different Names Used in ident in begin and end",$1->node_value);
       }
+      ast_head = $2;
     }
     ;
 
@@ -116,7 +126,12 @@ cast_away:
     ;
 
 Main_Block:
-       Import_Modules Decl_Seq Stat_Block   {printf("Import_Modules Decl_Seq Stat_Block\n"); ast_head = $3;}
+       Import_Modules Decl_Seq Stat_Block   
+       {
+        printf("Import_Modules Decl_Seq Stat_Block\n"); 
+        $$ = makeNode(OPR, "MAIN", create_typeEntry(NOTSET,NULL,NULL), VAL,makeNode(OPR, "MAIN_AUX", create_typeEntry(NOTSET,NULL,NULL), VAL,NULL, $3), $2);
+        //ast_head = $3; 
+       }
     ;
 
 Import_Modules: 
@@ -341,7 +356,7 @@ Expr         :
         $$ = makeNode(OPR, "+", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
   }
   else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
-      $$ = makeNode(OPR, "+", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+      $$ = makeNode(OPR, "+", create_typeEntry(SET_TYPE,NULL,NULL), VAL, $1, $3);
   }
   else{
       printf("Error in type checking : Incompatible type%s,%s,%d,%d",$1->node_value,$3->node_value,$1->type->type,$3->type->type);
@@ -356,7 +371,7 @@ Expr         :
         $$ = makeNode(OPR, "-", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
   }
   else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
-      $$ = makeNode(OPR, "-", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+      $$ = makeNode(OPR, "-", create_typeEntry(SET_TYPE,NULL,NULL), VAL, $1, $3);
   }
   else{
       printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
@@ -380,7 +395,7 @@ Expr         :
         $$ = makeNode(OPR, "*", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
   }
   else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
-      $$ = makeNode(OPR, "*", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+      $$ = makeNode(OPR, "*", create_typeEntry(SET_TYPE,NULL,NULL), VAL, $1, $3);
   }
   else{
       printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
@@ -395,7 +410,7 @@ Expr         :
         $$ = makeNode(OPR, "/", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
   }
   else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
-      $$ = makeNode(OPR, "/", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+      $$ = makeNode(OPR, "/", create_typeEntry(SET_TYPE,NULL,NULL), VAL, $1, $3);
   }
   else{
       printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
@@ -444,7 +459,7 @@ Factor       :
 | CHAR_VAL      { $$ = makeNode(NUM, yytext, create_typeEntry(CHAR,NULL,NULL), VAL, NULL, NULL); }
 | INTEGER_VAL   { $$ = makeNode(NUM, yytext, create_typeEntry(INTEGER,NULL,NULL), VAL, NULL, NULL); }
 | NIL           { $$ = makeNode(NUM, yytext, create_typeEntry(NO,NULL,NULL), VAL, NULL, NULL); }
-| Set           { $$ = makeNode(NUM, yytext, create_typeEntry(SET_TYPE,NULL,NULL), VAL, NULL, $1); }      
+| Set           { $$ = makeNode(NUM, "SET", create_typeEntry(SET_TYPE,NULL,NULL), VAL, NULL, $1); }      
 | LEFTBRAC Expr RIGHTBRAC   { $$ = makeNode(OPR, "()", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL , $2); }
 | TILDA Factor  { $$ = makeNode(OPR, "~", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL , $2); }
 ;
@@ -517,11 +532,11 @@ Expr_List     :
 ;              
 
 Set          : 
-  LCBR Element_List RCBR                        { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , NULL); }
+  LCBR Element_List RCBR                        { $$ = $2; }
 ;
 
 Element_List :
-  Element COMMA Element_List                    { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
+  Element COMMA Element_List                    { $$ = makeNode(OPR, "SET_ELEM", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
 | Element                                       { $$ = $1; }
 ;
 
@@ -577,7 +592,11 @@ Case_Expression:
 // In this part there are two types of sections namely:  Data declation list and procedure declaration list.
 
 Decl_Seq: 
-  Data_List Proc_List  {printf("Data_List Proc_List\n");}
+  Data_List Proc_List  
+  {
+    printf("Data_List Proc_List\n");
+    $$ = makeNode(OPR, "PROC_MAIN", create_typeEntry(REAL,NULL,NULL), VAL, NULL, $2);
+  }
 ;
 
 Data_List:
@@ -600,7 +619,7 @@ Type_List :
 ;
 
 Var_List  : 
-  Identifier_List COLON Type                        {changeVariableType(&symbolTable, $3,VAR_VALUE); } SEMIC Var_List
+  Identifier_List COLON Type                        {printf("bringthe change");changeVariableType(&symbolTable, $3,VAR_VALUE); } SEMIC Var_List
 |                                                   {printf("Var_List_Nothing\n");}
 ;
 
@@ -724,17 +743,19 @@ Formal_Pars_Dec
 Qualident    :             
   ident DOTDOT ident 
 {
-  if (module_lookup_bool(&symbolTable,$1->node_value)){
-    $$ = type_lookup(&symbolTable,$3->node_value,own->last);
-  }
-  else{
-    printf("module lookup failed");
-  }
+  printf("arguement1");
 }
 | ident 
 {
-  printf("correp_%s",$1->node_value);
-  $$ = type_lookup(&symbolTable,$1->node_value,own->last);
+  printf("correppopo_%s_%s",$1->node_value,own->last->name);
+  //$$ = create_typeEntry(INTEGER,NULL,NULL);
+  if (type_lookup(&symbolTable,$1->node_value,own->first) == NULL){
+    printf("NULL_FOUND_TYPE_%s",$1->node_value);
+  }
+  else{
+    $$ = type_lookup(&symbolTable,$1->node_value,own->first);
+  }
+  //printf("ruthe_%d",i->type);
 }                 
 ;
 
@@ -773,76 +794,89 @@ COMMA fi_Identifier_List
 // Now it is th part where we would be declaring the procedures...
 
 Proc_List     :
-  Proc_Decl SEMIC Proc_List     {printf("Proc_Decl SEMIC Proc_List\n");}
-|                               {printf("Proc_Decl_Nothing\n");}
+  Proc_Decl SEMIC Proc_List     
+  {
+    printf("Proc_Decl SEMIC Proc_List\n");
+    $$ = makeNode(OPR, "PROC", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3);
+  }
+|                               
+{
+  printf("Proc_Decl_Nothing\n");
+  $$ = NULL;
+}
 ;
 
 Proc_Decl     : 
   PROCEDURE ident
   {
-      insert_last(p,create_typeEntry(PROC_TYPE,NULL,NULL));
-      tableEntry *cr = createTableEntry($2->node_value, p->last , VAL, PROC_NAME, 0, NULL, 0, ++scopeCount, NULL,own->last);
-      addSymbolTableEntry(&symbolTable, cr);
-      currentScope = scopeCount;
-      tableEntry *n = own->first;
-        while (n->next_owner != NULL){
-          n=n->next_owner;
-        }
-        n->next_owner = cr;
-        own->last = cr;
-      printf(" mera_owner_%s_%s",own->first->name,own->last->name);
+       insert_last(p,create_typeEntry(PROC_TYPE,NULL,NULL));
+        tableEntry *cr = createTableEntry($2->node_value, p->last , VAL, PROC_NAME, 0, NULL, 0, ++scopeCount, NULL,own->last);
+        addSymbolTableEntry(&symbolTable, cr);
+        //currentScope = scopeCount;
+        printf("nameis_%s",own->last->name);
+        tableEntry *n = own->first;
+           while (n->next_owner != NULL){
+             n=n->next_owner;
+           }
+           n->next_owner = cr;
+           tableEntry *n1 = cr;
+           own->last = cr;
+      // printf(" mera_owner_%s_%s",own->first->name,own->last->name);
   } 
   Formal_Pars SEMIC Decl_Seq Stat_Block END ident 
   {
-      tableEntry *i = own->first;
-      if (i->next_owner == NULL){
-        own->first = NULL;
-        own->last = NULL;
+      if (!strcmp($2->node_value,$9->node_value)){
+       tableEntry *i = own->first;
+         tableEntry *prev = own->first;
+         while (i->next_owner != NULL){
+           prev = i;
+           i=i->next_owner;
+         }
+         prev->next_owner = NULL;
+         own->last = prev;
+         //free(i);
+      printf("khtam");
+      //scopeCount--;
+      remove_last(p);
+      $$ = makeNode(OPR, "PROC_MAIN", create_typeEntry(NOTSET,NULL,NULL), VAL, $2, makeNode(OPR, "FORMAL", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "PROC_STAT", create_typeEntry(NOTSET,NULL,NULL), VAL, $6, $7)));
       }
       else{
-        tableEntry *prev = own->first;
-        while (i->next_owner != NULL){
-          prev = i;
-          i=i->next_owner;
-        }
-        prev->next_owner = NULL;
-        own->last = prev;
-        //free(i);
+        printf("change in the name of the procedure in the initial and the end\n");
       }
-      scopeCount--;
-      remove_last(p);
+
   }
 ;
 
 // In this part we are writing the grammar for the FORMAL PARMAMETERS of the procedure dclarartion in data_list
 
 Formal_Pars: 
-  LEFTBRAC FP_section_List RIGHTBRAC COLON Type
-| LEFTBRAC FP_section_List RIGHTBRAC {printf("LEFTBRAC FP_section_List RIGHTBRAC\n");}
-|  LEFTBRAC RIGHTBRAC  {printf("LEFTBRAC RIGHTBRAC\n");}
-|  {printf("Formal_Pars_nothing\n");}
+  LEFTBRAC FP_section_List RIGHTBRAC COLON Type { $$ = $2; }
+| LEFTBRAC FP_section_List RIGHTBRAC {$$ = $2; printf("LEFTBRAC FP_section_List RIGHTBRAC\n");}
+|  LEFTBRAC RIGHTBRAC  { $$ = NULL; printf("LEFTBRAC RIGHTBRAC\n");}
+|  { $$ = NULL;printf("Formal_Pars_nothing\n");}
 ;
 
 FP_section_List:
-  FP_section SEMIC FP_section_List    {printf("FP_section SEMIC FP_section_List");}
-| FP_section   {printf("FP_section");}
+  FP_section SEMIC FP_section_List    { $$ = makeNode(OPR, "FORMAL_PARAMS_SECTION", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3);printf("FP_section SEMIC FP_section_List");}
+| FP_section   {$$ = $1;printf("FP_section");}
 ;
 
 FP_section:
-  fp_Identifier_List COLON Type                 { change_type_FormalParamType(p, $3); }
-| VAR fp_Identifier_List COLON Type             { change_type_FormalParamType(p, $4); }
+  fp_Identifier_List COLON Type                 { $$ = $1;change_type_FormalParamType(p, $3); }
+| VAR fp_Identifier_List COLON Type             { $$ = $2;change_type_FormalParamType(p, $4); }
 ;
 
 fp_Identifier_List:
   ident fp_Identifier_List_Aux                  
   { 
+    $$ = makeNode(OPR, "FORMAL_PARAMS", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $2);
     add_type_FormalParameter(p->last,createTableEntry($1->node_value, NULL , passType, IDENTIFIER, order,NULL,NULL,NULL,NULL,own->last));
   }
 ;
 
 fp_Identifier_List_Aux:
-COMMA fp_Identifier_List              
-|
+COMMA fp_Identifier_List        { $$ = $2;}      
+| { $$ = NULL; }
 ;
 
 Formal_Pars_Dec: 
@@ -872,7 +906,7 @@ COMMA fp_Identifier_List_Dec
 ;
 
 Identifier_List:
-  ident { addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, VAL, IDENTIFIER, 0, NULL, currentScope, currentScope, NULL,own->last)); } Identifier_List_Aux
+  ident { printf("print_ident%s",$1->node_value);addSymbolTableEntry(&symbolTable, createTableEntry($1->node_value, NULL, VAL, IDENTIFIER, 0, NULL, currentScope, currentScope, NULL,own->last)); } Identifier_List_Aux
 ;
 
 Identifier_List_Aux:
@@ -883,7 +917,9 @@ COMMA Identifier_List               {printf("IDENT COMMA Identifier_List\n");}
 ident:
   IDENT
   {
-    $$ = makeNode(IDENT, yytext, create_typeEntry(NOTSET,NULL,NULL), REF, NULL, NULL); 
+    printf("0000");
+    $$ = makeNode(IDENT,yytext, create_typeEntry(NOTSET,NULL,NULL), VAL, NULL,NULL);
+    printf("again");
   }
 ;
 
@@ -899,6 +935,7 @@ int main()
   own->first = createTableEntry("mera__hain_main", VOID ,NULL, NULL , 0, NULL, 0, 0, NULL, NULL);
   own->last = own->first;
   createSymbolTable(&symbolTable);
+  addSymbolTableEntry(&symbolTable,own->first);
   p = createtypeEntry();
   p_check = createtypeEntry();
   int res = yyparse();
@@ -910,5 +947,6 @@ int main()
       printf("itisnull");
   init();
   postOrder(ast_head);
+  print_elem();
   return 0;
 }

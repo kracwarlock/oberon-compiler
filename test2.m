@@ -23,7 +23,7 @@ VAR
   o2: m;
   ol,mk :INTEGER;
   o3 : m;
-  o9,o8,o11:f;
+  o8,o9,o11 :f;
   o4 : m;
   o5 : rc;
   o90 : rc1;
@@ -34,37 +34,23 @@ VAR
   o7 : REAL;
   root: y;
 
-PROCEDURE Main22(ro : y);
+PROCEDURE Main22(ro : y ; olp : INTEGER);
 VAR root : y;
-    ro : y;
-  PROCEDURE Hain22;
-      TYPE lkk = INTEGER;
-      VAR rootssppp : lkk;
-    BEGIN
-        rootssppp := 10;
-  END Hain22;
-  PROCEDURE Main22lpp;
-    VAR rootmi : y;
-    BEGIN
-        rootmi := 10;
-  END Main22lpp;
-
 BEGIN
       ro := 10;
+      olp := 1;
+      ro := ro + olp;
       root := 10 + ro;
 END Main22;
 
-PROCEDURE Main22m;
-VAR rootm : y;
-BEGIN
-      rootm := 10;
-END Main22m;
-
 BEGIN
   (* Read in the numbers *)
+  ol := 1;
+  o1 := ol;
   o5 := o90;
   o8 := {1,2,3,4};
-  o1 := ol;
+  o9 := {ol + o1,420};
+  o11 := o9 + o8;
   mp[ol] := 10 + 20*203 + 384 - 303;
   IF plm = TRUE THEN
     IF plm = TRUE THEN

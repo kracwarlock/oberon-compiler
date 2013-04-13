@@ -4,16 +4,156 @@
 #include "ast.h"
 #include "symbol_table.h"
 
-int varT = 0, lineL = 0;
+int varT = 0, lineL = 0 , retT = 0;
 int arr[1000];
 int first = 1;
 int last = 0;
-label_list *main;
+
+stack_elem elem_list[1000];
+stack_elem elem_list2[1000];
+
+set_elem set_nota[1000];
+
+void print_set(){
+	int i;
+	int check=0;
+	set_label *l;
+	for (i=0;i<1000;i++){
+		check=0;
+		if (set_nota[i].fill==-1){
+			break;
+		}
+		else{
+			printf("-- %s ",set_nota[i].var);
+			set_label *lo = set_nota[i].lab;
+			while (lo!=NULL){
+				printf(" %s ",lo->label);
+				lo=lo->next;
+			}
+		}
+		printf("\n");
+	}
+}
+
+void search_insert(char *laba,char *new){
+	int i;
+	int check=0;
+	printf("newww%s",new);
+	set_label* lp;
+	for (i=0;i<1000;i++){
+		check=0;
+		if (set_nota[i].fill==-1){
+			break;
+		}
+		else{
+			set_label *lo = set_nota[i].lab;
+			set_label *prev = lo;
+			while (lo!=NULL){
+				//printf("inside_%s_%s",laba,new);
+				if (!strcmp(lo->label,laba)){
+						lp= (set_label*)malloc(sizeof(set_label));
+						lp->label = new;
+						lp->next = NULL;
+						check=1;
+				}
+				prev = lo;
+				lo=lo->next;
+			}
+			if (check==1)
+				prev->next = lp;
+		}
+	}
+}
+
+void insert_new(char *value,char *labels){
+	int i;
+	for (i=0;i<1000;i++){
+		if (set_nota[i].fill==-1){
+			set_nota[i].fill =1;
+			set_nota[i].var = value;
+			set_label *l = (set_label*)(malloc(sizeof(set_label)));
+			l->label = labels;
+			l->next=NULL;
+			set_nota[i].lab = l;
+			break;
+		}
+	}
+	return;
+}
+
+void print_elem2(){
+	int i;
+	for (i=0;i<1000;i++){
+		if (elem_list2[i].off==-1){
+			break;
+		}
+		//breakprintf("print2_%s\n",elem_list2[i].label);
+	}
+	return ;
+}
+
+int search_elem2(char *str){
+	int i;
+	for (i=0;i<1000;i++){
+		if (!strcmp(elem_list2[i].label,str)){
+		//	printf("search_complete %d\n",elem_list[i].off);
+			return elem_list2[i].off;
+		}
+	}
+}
+
+void insert_elem2(int val,char *str){
+	int i;
+	for (i=0;i<1000;i++){
+		if (elem_list2[i].off==-1){
+			elem_list2[i].off=val;
+			elem_list2[i].label=str;
+			return;
+		}
+	}
+}
+
+void print_elem(){
+	int i;
+	for (i=0;i<1000;i++){
+		if (elem_list[i].off==-1){
+			break;
+		}
+		//printf("print %s\n",elem_list[i].label);
+	}
+	return ;
+}
+
+int search_elem(char *str){
+	int i;
+	for (i=0;i<1000;i++){
+		if (!strcmp(elem_list[i].label,str)){
+		//	printf("search_complete %d\n",elem_list[i].off);
+			return elem_list[i].off;
+		}
+	}
+}
+
+void insert_elem(int val,char *str){
+	int i;
+	for (i=0;i<1000;i++){
+		if (elem_list[i].off==-1){
+			elem_list[i].off=val;
+			elem_list[i].label=str;
+			return;
+		}
+	}
+}
 
 void init(){
 	int i;
-	for (i=0;i<1000;i++)
+	for (i=0;i<1000;i++){
 		arr[i]=-1;
+		elem_list[i].off=-1;
+		elem_list2[i].off=-1;
+		set_nota[i].fill = -1;
+		set_nota[i].lab = NULL;
+	}
 }
 
 void insert(int t){
@@ -148,53 +288,83 @@ int tac(AstNode* node)
 		int t1 = varT;
 		if (node->right->node_type == 342) {
 			int t2 = tac(node->right);
+			insert_elem(varT,"t1");
+			search_elem("t1");
 			printf("t%d = t%d + t%d\n", varT, t1-1, t2-1);
 		}
-		else printf("t%d = t%d + %s\n", varT, varT-1, node->right->node_value);
+		else {
+			insert_elem(varT,"t2");
+			search_elem("t2");
+			printf("t%d = t%d + %s\n", varT, varT-1, node->right->node_value);
+		}
 		return ++varT;
 	}
 	else if (!strcmp(node->node_value,":=")) {
 		//printf("lplp");
+		if (node->left->type->type == SET_TYPE){
+			set_call(node);
+		}
+		else{
 		if (node->right->node_type == 342 && node->left->node_type == 342) {
 			//printf("lplpl2222");
 			int t1 = tac(node->left);
 			//varT++;
 			int t2 = tac(node->right);
 			//if (!strcmp(node->left->node_value,"[]")) printf("*");
+			insert_elem(t1-1,"t3");
+			search_elem("t3");
 			printf("t%d = t%d\n", t1-1, t2-1);
 		}
 		else if (node->right->node_type == 342) {
 			//varT++;
 			int t1 = tac(node->right);
+			insert_elem(t1-1,node->left->node_value);
+			search_elem(node->left->node_value);
 			printf("%s = t%d\n", node->left->node_value, t1-1 );
 		}
 		else if (node->left->node_type == 342) {
 			//varT++;
 			int t1 = tac(node->left);
+			insert_elem(t1-1,node->right->node_value);
+			search_elem(node->right->node_value);
 			//if (!strcmp(node->left->node_value,"[]")) printf("*");
 			printf("t%d = %s\n", t1-1, node->right->node_value);
 		}
 		else {
 			//printf("popoppppp");
+			insert_elem(100,node->left->node_value);
+			search_elem(node->left->node_value);
 			printf("%s=%s\n", node->left->node_value, node->right->node_value);
 		}
+	}
 	}
 	/*handling all other operations */
 	else {
 		if (node->right->node_type == 342 && node->left->node_type == 342) {
 			int t1 = tac(node->left);
 			int t2 = tac(node->right);
+			insert_elem(varT,"t4");
+			search_elem("t4");
 			printf("t%d = t%d %s t%d\n", varT, t1-1, node->node_value, t2-1);
 		}
 		else if (node->left->node_type == 342) {
 			int t1 = tac(node->left);
+			insert_elem(t1-1,"t5");
+			search_elem("t5");
 			printf("t%d = t%d %s %s\n", varT, t1-1, node->node_value, node->right->node_value);
 		}
 		else if (node->right->node_type == 342) {
 			int t2 = tac(node->right);
+			insert_elem(t2-1,"t7");
+			search_elem("t7");
 			printf("t%d = %s %s t%d\n", varT, node->left->node_value, node->node_value, t2-1);
 		}
-		else printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
+		else {
+			printf("andar aao");
+			insert_elem(varT,"t8");
+			search_elem("t8");
+			printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
+		}
 
 		return ++varT;
 	}
@@ -219,15 +389,116 @@ int isOper(AstNode* node)
 		return 1;
 	return 0;
 }
+
+void stack_main(AstNode *node,int p,char *tex){
+	printf("subu $sp, $sp, %d\n",p*4);
+	int i;
+	for (i=0;i<p-1;i++){
+		printf("lw $t%d, %d($sp)\n",varT,i*4);
+		varT++;
+	}
+	insert_elem2(retT,tex);
+	//print_elem2();
+	retT++;
+	return ;
+}
+
+int count_formal(AstNode *node){
+	int total = 0;
+	int total2 =0; 
+	if (node == NULL)
+		return 0;
+	else{
+		if (!strcmp(node->node_value,"FORMAL_PARAMS")){
+				total = 1 + count_formal(node->right) + count_formal(node->left);
+				return total;
+		}
+		else{
+				total = count_formal(node->right) + count_formal(node->left);
+				return total;	
+		}
+	}
+}
+
+void proc_call(AstNode *node){
+	int formal = 0;
+	if(!strcmp(node->node_value, "PROC")){
+		//printf("i am in a procedure\n");
+		while (node != NULL){
+			printf("%s:\n",node->left->left->node_value);
+			formal = count_formal(node->left->right->left);
+			//printf("total_args_%d",formal);
+			stack_main(node,formal+1,node->left->left->node_value);
+			print_elem2();
+			postOrder(node->left->right->right->right);
+			printf("jr $ra\n");
+			postOrder(node->left->right->right->left);
+			node = node->right;
+		}
+	}
+}
+
+void set_call(AstNode *node){
+	printf("sets_%s",node->left->node_value);
+	char str[10];
+	if (!strcmp(node->right->node_value,"+")){
+		printf("Union Happenning");
+		search_insert(node->right->left->node_value,node->left->node_value);
+		search_insert(node->right->right->node_value,node->left->node_value);
+	}
+	else if (!strcmp(node->right->node_value,"-")){
+	}
+	else if (!strcmp(node->right->node_value,"*")){
+
+	}
+	else if (!strcmp(node->right->node_value,"/")){
+
+	}
+	else if (node->right->node_type==342){
+
+	}
+	else{
+		AstNode *temp = node->right->right;
+		AstNode *temp2 = node->right->right;
+		while (!strcmp(temp->node_value,"SET_ELEM")){
+			if (isOper(temp->left)){
+				printf("SEEE%s",temp->left->node_value);
+				int t1 = tac(temp->left);
+				sprintf(str, "t%d", t1-1);
+				insert_new(str,node->left->node_value);
+				// one problem with the char [] to char * conversion
+			}
+			else{
+				insert_new(temp->left->node_value,node->left->node_value);
+			}
+			temp2 = temp;
+			temp = temp->right;
+		}
+		insert_new(temp2->right->node_value,node->left->node_value);
+	}
+	print_set();
+	return ;
+}
+
 void postOrder(AstNode* node)
 {
 	//printf("hiiamm");
 	if (node == NULL)
 		return;
 	//printf("%s %d\n", node->node_value, node->node_type);
+
+	if (!strcmp(node->node_value,"MAIN_AUX")){
+		printf("MAIN:");
+	}
+	if (!strcmp(node->node_value,"PROC")){
+		//printf("proccc_%s",node->node_value);
+		proc_call(node);
+	}
+	else{
 	//printf(" %s ",node->node_value);
 	//if (node->left) postOrder(node->left);
 	//if (node->right) postOrder(node->right);
 	 if (node->left && isOper(node->left)) tac(node->left);	else postOrder(node->left);
 	 if (node->right && isOper(node->right)) tac(node->right);	else postOrder(node->right);
+	}
 }
