@@ -18,18 +18,25 @@ typedef struct AstNode {
 } AstNode;
 //===================================================================
 
-typedef struct label {
-	int val;
-	struct label *next;
-} label;
+typedef struct stack_elem{
+	int off;
+	char *label;
+} stack_elem;
 
-typedef struct label_list {
-	label* first;
-	label* last;
-} label_list;
+typedef struct set_label{
+	char *label;
+	struct set_label *next;
+} set_label;
+
+typedef struct set_elem{
+	int fill;
+	char *var;
+	struct set_label *lab;
+} set_elem;
 
 AstNode* makeNode( int NodeType, char *NodeValue,type_tableEntry *type, symbolPassType passType, AstNode *Left, AstNode *Right );
 AstNode *make_new_node(AstNode *Left, AstNode *Right );
 void postOrder(AstNode* root);
+void print_elem();
 void init();
 #endif
