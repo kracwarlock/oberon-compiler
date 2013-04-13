@@ -12,13 +12,82 @@ int last = 0;
 stack_elem elem_list[1000];
 stack_elem elem_list2[1000];
 
+set_elem set_nota[1000];
+
+void print_set(){
+	int i;
+	int check=0;
+	set_label *l;
+	for (i=0;i<1000;i++){
+		check=0;
+		if (set_nota[i].fill==-1){
+			break;
+		}
+		else{
+			printf("-- %s ",set_nota[i].var);
+			set_label *lo = set_nota[i].lab;
+			while (lo!=NULL){
+				printf(" %s ",lo->label);
+				lo=lo->next;
+			}
+		}
+		printf("\n");
+	}
+}
+
+void search_insert(char *laba,char *new){
+	int i;
+	int check=0;
+	printf("newww%s",new);
+	set_label* lp;
+	for (i=0;i<1000;i++){
+		check=0;
+		if (set_nota[i].fill==-1){
+			break;
+		}
+		else{
+			set_label *lo = set_nota[i].lab;
+			set_label *prev = lo;
+			while (lo!=NULL){
+				//printf("inside_%s_%s",laba,new);
+				if (!strcmp(lo->label,laba)){
+						lp= (set_label*)malloc(sizeof(set_label));
+						lp->label = new;
+						lp->next = NULL;
+						check=1;
+				}
+				prev = lo;
+				lo=lo->next;
+			}
+			if (check==1)
+				prev->next = lp;
+		}
+	}
+}
+
+void insert_new(char *value,char *labels){
+	int i;
+	for (i=0;i<1000;i++){
+		if (set_nota[i].fill==-1){
+			set_nota[i].fill =1;
+			set_nota[i].var = value;
+			set_label *l = (set_label*)(malloc(sizeof(set_label)));
+			l->label = labels;
+			l->next=NULL;
+			set_nota[i].lab = l;
+			break;
+		}
+	}
+	return;
+}
+
 void print_elem2(){
 	int i;
 	for (i=0;i<1000;i++){
 		if (elem_list2[i].off==-1){
 			break;
 		}
-		//printf("print2_%s\n",elem_list2[i].label);
+		//breakprintf("print2_%s\n",elem_list2[i].label);
 	}
 	return ;
 }
@@ -82,6 +151,8 @@ void init(){
 		arr[i]=-1;
 		elem_list[i].off=-1;
 		elem_list2[i].off=-1;
+		set_nota[i].fill = -1;
+		set_nota[i].lab = NULL;
 	}
 }
 
@@ -230,6 +301,10 @@ int tac(AstNode* node)
 	}
 	else if (!strcmp(node->node_value,":=")) {
 		//printf("lplp");
+		if (node->left->type->type == SET_TYPE){
+			set_call(node);
+		}
+		else{
 		if (node->right->node_type == 342 && node->left->node_type == 342) {
 			//printf("lplpl2222");
 			int t1 = tac(node->left);
@@ -262,6 +337,7 @@ int tac(AstNode* node)
 			printf("%s=%s\n", node->left->node_value, node->right->node_value);
 		}
 	}
+	}
 	/*handling all other operations */
 	else {
 		if (node->right->node_type == 342 && node->left->node_type == 342) {
@@ -284,6 +360,7 @@ int tac(AstNode* node)
 			printf("t%d = %s %s t%d\n", varT, node->left->node_value, node->node_value, t2-1);
 		}
 		else {
+			printf("andar aao");
 			insert_elem(varT,"t8");
 			search_elem("t8");
 			printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
@@ -317,12 +394,11 @@ void stack_main(AstNode *node,int p,char *tex){
 	printf("subu $sp, $sp, %d\n",p*4);
 	int i;
 	for (i=0;i<p-1;i++){
-		printf("sw $t%d, %d($sp)\n",varT,i*4);
+		printf("lw $t%d, %d($sp)\n",varT,i*4);
 		varT++;
 	}
-	printf("sw $ra%d, %d($sp)\n",retT,i*4);
 	insert_elem2(retT,tex);
-	print_elem2();
+	//print_elem2();
 	retT++;
 	return ;
 }
@@ -355,10 +431,53 @@ void proc_call(AstNode *node){
 			stack_main(node,formal+1,node->left->left->node_value);
 			print_elem2();
 			postOrder(node->left->right->right->right);
+			printf("jr $ra\n");
 			postOrder(node->left->right->right->left);
 			node = node->right;
 		}
 	}
+}
+
+void set_call(AstNode *node){
+	printf("sets_%s",node->left->node_value);
+	char str[10];
+	if (!strcmp(node->right->node_value,"+")){
+		printf("Union Happenning");
+		search_insert(node->right->left->node_value,node->left->node_value);
+		search_insert(node->right->right->node_value,node->left->node_value);
+	}
+	else if (!strcmp(node->right->node_value,"-")){
+	}
+	else if (!strcmp(node->right->node_value,"*")){
+
+	}
+	else if (!strcmp(node->right->node_value,"/")){
+
+	}
+	else if (node->right->node_type==342){
+
+	}
+	else{
+		AstNode *temp = node->right->right;
+		AstNode *temp2 = node->right->right;
+		while (!strcmp(temp->node_value,"SET_ELEM")){
+			if (isOper(temp->left)){
+				printf("SEEE%s",temp->left->node_value);
+				int t1 = tac(temp->left);
+				sprintf(str, "t%d", t1-1);
+				insert_new(str,node->left->node_value);
+				// one problem with the char [] to char * conversion
+			}
+			else{
+				insert_new(temp->left->node_value,node->left->node_value);
+			}
+			temp2 = temp;
+			temp = temp->right;
+		}
+		insert_new(temp2->right->node_value,node->left->node_value);
+	}
+	print_set();
+	return ;
 }
 
 void postOrder(AstNode* node)

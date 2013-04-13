@@ -356,7 +356,7 @@ Expr         :
         $$ = makeNode(OPR, "+", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
   }
   else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
-      $$ = makeNode(OPR, "+", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+      $$ = makeNode(OPR, "+", create_typeEntry(SET_TYPE,NULL,NULL), VAL, $1, $3);
   }
   else{
       printf("Error in type checking : Incompatible type%s,%s,%d,%d",$1->node_value,$3->node_value,$1->type->type,$3->type->type);
@@ -371,7 +371,7 @@ Expr         :
         $$ = makeNode(OPR, "-", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
   }
   else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
-      $$ = makeNode(OPR, "-", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+      $$ = makeNode(OPR, "-", create_typeEntry(SET_TYPE,NULL,NULL), VAL, $1, $3);
   }
   else{
       printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
@@ -395,7 +395,7 @@ Expr         :
         $$ = makeNode(OPR, "*", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
   }
   else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
-      $$ = makeNode(OPR, "*", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+      $$ = makeNode(OPR, "*", create_typeEntry(SET_TYPE,NULL,NULL), VAL, $1, $3);
   }
   else{
       printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
@@ -410,7 +410,7 @@ Expr         :
         $$ = makeNode(OPR, "/", create_typeEntry(REAL,NULL,NULL), VAL, $1, $3);
   }
   else if($1->type->type==SET_TYPE && $3->type->type==SET_TYPE){
-      $$ = makeNode(OPR, "/", create_typeEntry(SET,NULL,NULL), VAL, $1, $3);
+      $$ = makeNode(OPR, "/", create_typeEntry(SET_TYPE,NULL,NULL), VAL, $1, $3);
   }
   else{
       printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
@@ -536,7 +536,7 @@ Set          :
 ;
 
 Element_List :
-  Element COMMA Element_List                    { $$ = makeNode(OPR, ",", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
+  Element COMMA Element_List                    { $$ = makeNode(OPR, "SET_ELEM", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $3); }
 | Element                                       { $$ = $1; }
 ;
 

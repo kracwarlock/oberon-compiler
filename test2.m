@@ -23,7 +23,7 @@ VAR
   o2: m;
   ol,mk :INTEGER;
   o3 : m;
-  o9,o8,o11:f;
+  o8,o9,o11 :f;
   o4 : m;
   o5 : rc;
   o90 : rc1;
@@ -45,9 +45,12 @@ END Main22;
 
 BEGIN
   (* Read in the numbers *)
+  ol := 1;
+  o1 := ol;
   o5 := o90;
   o8 := {1,2,3,4};
-  o1 := ol;
+  o9 := {ol + o1,420};
+  o11 := o9 + o8;
   mp[ol] := 10 + 20*203 + 384 - 303;
   IF plm = TRUE THEN
     IF plm = TRUE THEN
