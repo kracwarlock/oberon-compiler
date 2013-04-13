@@ -4,12 +4,45 @@
 #include "ast.h"
 #include "symbol_table.h"
 
-int varT = 0, lineL = 0;
+int varT = 0, lineL = 0 , retT = 0;
 int arr[1000];
 int first = 1;
 int last = 0;
 
 stack_elem elem_list[1000];
+stack_elem elem_list2[1000];
+
+void print_elem2(){
+	int i;
+	for (i=0;i<1000;i++){
+		if (elem_list2[i].off==-1){
+			break;
+		}
+		//printf("print2_%s\n",elem_list2[i].label);
+	}
+	return ;
+}
+
+int search_elem2(char *str){
+	int i;
+	for (i=0;i<1000;i++){
+		if (!strcmp(elem_list2[i].label,str)){
+		//	printf("search_complete %d\n",elem_list[i].off);
+			return elem_list2[i].off;
+		}
+	}
+}
+
+void insert_elem2(int val,char *str){
+	int i;
+	for (i=0;i<1000;i++){
+		if (elem_list2[i].off==-1){
+			elem_list2[i].off=val;
+			elem_list2[i].label=str;
+			return;
+		}
+	}
+}
 
 void print_elem(){
 	int i;
@@ -48,6 +81,7 @@ void init(){
 	for (i=0;i<1000;i++){
 		arr[i]=-1;
 		elem_list[i].off=-1;
+		elem_list2[i].off=-1;
 	}
 }
 
@@ -279,11 +313,47 @@ int isOper(AstNode* node)
 	return 0;
 }
 
+void stack_main(AstNode *node,int p,char *tex){
+	printf("subu $sp, $sp, %d\n",p*4);
+	int i;
+	for (i=0;i<p-1;i++){
+		printf("sw $t%d, %d($sp)\n",varT,i*4);
+		varT++;
+	}
+	printf("sw $ra%d, %d($sp)\n",retT,i*4);
+	insert_elem2(retT,tex);
+	print_elem2();
+	retT++;
+	return ;
+}
+
+int count_formal(AstNode *node){
+	int total = 0;
+	int total2 =0; 
+	if (node == NULL)
+		return 0;
+	else{
+		if (!strcmp(node->node_value,"FORMAL_PARAMS")){
+				total = 1 + count_formal(node->right) + count_formal(node->left);
+				return total;
+		}
+		else{
+				total = count_formal(node->right) + count_formal(node->left);
+				return total;	
+		}
+	}
+}
+
 void proc_call(AstNode *node){
+	int formal = 0;
 	if(!strcmp(node->node_value, "PROC")){
 		//printf("i am in a procedure\n");
 		while (node != NULL){
 			printf("%s:\n",node->left->left->node_value);
+			formal = count_formal(node->left->right->left);
+			//printf("total_args_%d",formal);
+			stack_main(node,formal+1,node->left->left->node_value);
+			print_elem2();
 			postOrder(node->left->right->right->right);
 			postOrder(node->left->right->right->left);
 			node = node->right;
