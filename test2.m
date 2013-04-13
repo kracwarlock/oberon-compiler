@@ -34,7 +34,7 @@ VAR
   o7 : REAL;
   root: y;
 
-PROCEDURE Main22(ro : y ; olp : INTEGER);
+PROCEDURE Main22(ro : y ; olp : INTEGER) : INTEGER ;
 VAR root : y;
 BEGIN
       ro := 10;
@@ -50,7 +50,7 @@ BEGIN
   o5 := o90;
   o8 := {1,2,3,4};
   o9 := {ol + o1,420};
-  o11 := o9 + o8;
+  o11 := o8;
   mp[ol] := 10 + 20*203 + 384 - 303;
   IF plm = TRUE THEN
     IF plm = TRUE THEN
@@ -79,6 +79,7 @@ BEGIN
     o7 := 23.3;
   END;
   o5.a := o12;
+  ol := Main22(ol+o1,o1+ol);
   o2 := o3 = TRUE;
   o2 := o3 = TRUE;
   o2 := o4 # FALSE;
