@@ -168,7 +168,18 @@ int tac(AstNode* node)
 		//printf("goto L%d\nL%d:\n", l1, l2);
 	}
 	else if(!strcmp(node->node_value, "PROC")){
-		printf("i am in a procedure\n");
+		//printf("i am in a procedure\n");
+		printf("%s:\n",node->left->left->node_value);
+		postOrder(node->left->right->right->right);
+		postOrder(node->left->right->right->left);
+	}
+	else if(!strcmp(node->node_value, "MAIN")){
+		printf("i am in a main procedure\n");
+		//printf("main: %s\n",node->left->node_value);
+	}
+	else if(!strcmp(node->node_value, "MAIN_AUX")){
+		printf("i am in a main proceduiiiiire\n");
+		//printf("main: %s\n",node->left->node_value);
 	}
 	else if (!strcmp(node->node_value, "WHILE")) {
 		//printf("itisrepeat2");
@@ -287,6 +298,10 @@ void postOrder(AstNode* node)
 	if (node == NULL)
 		return;
 	//printf("%s %d\n", node->node_value, node->node_type);
+
+	if (!strcmp(node->node_value,"MAIN_AUX")){
+		printf("MAIN:");
+	}
 	//printf(" %s ",node->node_value);
 	//if (node->left) postOrder(node->left);
 	//if (node->right) postOrder(node->right);

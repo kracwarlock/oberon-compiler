@@ -36,6 +36,17 @@ VAR
 
 PROCEDURE Main22;
 VAR root : y;
+  PROCEDURE Hain22;
+      TYPE lkk = INTEGER;
+      VAR rootss : lkk;
+    BEGIN
+        rootss := 10;
+  END Hain22;
+  PROCEDURE Hain211;
+      VAR rootss : y;
+    BEGIN
+        rootss := 10;
+  END Hain22;
 BEGIN
       root := 10;
 END Main22;

@@ -129,8 +129,8 @@ Main_Block:
        Import_Modules Decl_Seq Stat_Block   
        {
         printf("Import_Modules Decl_Seq Stat_Block\n"); 
-        $$ = makeNode(OPR, "MAIN", create_typeEntry(NOTSET,NULL,NULL), VAL, $2, $3);
-        ast_head = $3;
+        $$ = makeNode(OPR, "MAIN", create_typeEntry(NOTSET,NULL,NULL), VAL,makeNode(OPR, "MAIN_AUX", create_typeEntry(NOTSET,NULL,NULL), VAL,NULL, $3), $2);
+        //ast_head = $3; 
        }
     ;
 
@@ -595,7 +595,7 @@ Decl_Seq:
   Data_List Proc_List  
   {
     printf("Data_List Proc_List\n");
-    $$ = makeNode(OPR, "MAIN", create_typeEntry(REAL,NULL,NULL), VAL, NULL, $2);
+    $$ = makeNode(OPR, "PROC_MAIN", create_typeEntry(REAL,NULL,NULL), VAL, NULL, $2);
   }
 ;
 
@@ -749,7 +749,12 @@ Qualident    :
 {
   printf("correppopo_%s_%s",$1->node_value,own->last->name);
   //$$ = create_typeEntry(INTEGER,NULL,NULL);
-  $$ = type_lookup(&symbolTable,$1->node_value,own->first);
+  if (type_lookup(&symbolTable,$1->node_value,own->first) == NULL){
+    printf("NULL_FOUND_TYPE_%s",$1->node_value);
+  }
+  else{
+    $$ = type_lookup(&symbolTable,$1->node_value,own->first);
+  }
   //printf("ruthe_%d",i->type);
 }                 
 ;
@@ -820,6 +825,7 @@ Proc_Decl     :
   } 
   Formal_Pars SEMIC Decl_Seq Stat_Block END ident 
   {
+      if (!strcmp($2->node_value,$9->node_value)){
        tableEntry *i = own->first;
          tableEntry *prev = own->first;
          while (i->next_owner != NULL){
@@ -832,7 +838,12 @@ Proc_Decl     :
       printf("khtam");
       //scopeCount--;
       remove_last(p);
-      //$$ = makeNode(OPR, "PROC_MAIN", create_typeEntry(NOTSET,NULL,NULL), VAL, $2, makeNode(OPR, "FORMAL", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "PROC_STAT", create_typeEntry(NOTSET,NULL,NULL), VAL, $7, $9)));
+      $$ = makeNode(OPR, "PROC_MAIN", create_typeEntry(NOTSET,NULL,NULL), VAL, $2, makeNode(OPR, "FORMAL", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "PROC_STAT", create_typeEntry(NOTSET,NULL,NULL), VAL, $6, $7)));
+      }
+      else{
+        printf("change in the name of the procedure in the initial and the end\n");
+      }
+
   }
 ;
 
