@@ -32,6 +32,13 @@ VAR
   plm : m;
   o6 : CHAR;
   o7 : REAL;
+  root: y;
+
+PROCEDURE Main22;
+VAR root : y;
+BEGIN
+      root := 10;
+END Main22;
 
 BEGIN
   (* Read in the numbers *)

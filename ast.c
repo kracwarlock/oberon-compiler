@@ -167,6 +167,9 @@ int tac(AstNode* node)
 		lineL++;
 		//printf("goto L%d\nL%d:\n", l1, l2);
 	}
+	else if(!strcmp(node->node_value, "PROC")){
+		printf("i am in a procedure\n");
+	}
 	else if (!strcmp(node->node_value, "WHILE")) {
 		//printf("itisrepeat2");
 		printf("L%d:\n", lineL);
@@ -274,7 +277,7 @@ int isOper(AstNode* node)
 	if (node->node_type != 342) return 0;
 	char *s = strdup(node->node_value);
 	if (!(strcmp(s, ":=") && strcmp(s, "*") && strcmp(s, "+") && strcmp(s, "-") && strcmp(s, "/") && strcmp(s, "[]")
-		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, "CASE") && strcmp(s, ".")))
+		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, "PROC") && strcmp(s, "CASE") && strcmp(s, ".")))
 		return 1;
 	return 0;
 }

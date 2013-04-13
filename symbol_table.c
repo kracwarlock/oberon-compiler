@@ -45,6 +45,8 @@ void destroySymbolTable(SymbolTable* symbolTable)
 void addSymbolTableEntry(SymbolTable* symbolTable, tableEntry* entry)
 {
 	printf("wwwwwwwwwwwwwwwwwwww %s\n",entry->name);
+	if (entry->entry_owner != NULL)
+		printf("wwwwwwwwwwwwwwwwwwww %s_%s\n",entry->name,entry->entry_owner->name);
 	if (findEntry(symbolTable, entry->name, entry->entry_owner) != NULL)
 	{
 		if (entry->mode == PROC_NAME || entry->mode == FUNC_NAME)
@@ -60,28 +62,35 @@ void addSymbolTableEntry(SymbolTable* symbolTable, tableEntry* entry)
 	}
 	else
 	{
+		printf("idharbhihain %s",entry->name);
 		symbolTable->last->next = entry;
 		symbolTable->last = symbolTable->last->next;
+		printf("idhar_bhi2 %s",symbolTable->last->name);
 		return;
 	}
-	printf("khtam\n");
+	printf("\nkhtam\n");
+}
+
+tableEntry *get_last(SymbolTable* symbolTable){
+	return symbolTable->last;
 }
 
 tableEntry* findEntry(SymbolTable* symbolTable, char* name, tableEntry *owner_func)
 {
+	//printf("gtpt %s %s\n",owner_func->name,name);
 	tableEntry *ret = NULL;
 	while (owner_func != NULL){
 		tableEntry* te = symbolTable->first;
 		while (te != NULL)
 		{
 			if (te->entry_owner != NULL)
-				printf("asasasasasasmm_%s_%s_%d_%s\n",te->name,name,te->mode,te->entry_owner->name);
+				printf("aa_ate_asasasasasasmm_%s_%s_%d_%s\n",te->name,name,te->mode,te->entry_owner->name);
 			else
 				printf("asasasasasas %s %d\n",te->name,te->mode);
 			printf("dddddddddd");
 
 			if (te->mode == PROC_NAME && te == owner_func){
-				printf("maa me\n");
+				printf("maa me_%s_%s\n",owner_func->name,name);
 				tableEntry *goi = te->type->formal_params;
 				while (goi != NULL)
 				{
@@ -92,6 +101,7 @@ tableEntry* findEntry(SymbolTable* symbolTable, char* name, tableEntry *owner_fu
 					}
 					goi = goi->next;
 				}
+				printf("pop");
 			}
 			else if (strcmp(te->name,name) == 0 && te->entry_owner == owner_func)
 			{
@@ -101,9 +111,12 @@ tableEntry* findEntry(SymbolTable* symbolTable, char* name, tableEntry *owner_fu
 					ret = te; 
 			}		
 			te = te->next;
+			printf("next");
 		}	
+		printf("pppppppppp0000");
 		owner_func = owner_func->next_owner;
 	}
+	printf("ppppp");
 	return ret;
 }
 
@@ -138,6 +151,7 @@ tableEntry* createTableEntry(char* name, type_tableEntry *type_st, int passType,
 	te->scope = scope;
 	te->procScope = procScope;
 	te->next = NULL;
+	te->next_owner = NULL;
 	te->entry_owner = owner_func;
 	
 	return te;
@@ -145,16 +159,15 @@ tableEntry* createTableEntry(char* name, type_tableEntry *type_st, int passType,
 
 type_tableEntry* create_typeEntry(int type, type_tableEntry* tp, tableEntry* formal)
 {
-	type_tableEntry* te = (type_tableEntry*)malloc(sizeof(type_tableEntry));
-	if (te == NULL) return NULL;
+	type_tableEntry* tpp = (type_tableEntry*)malloc(sizeof(type_tableEntry));
+	if (tpp == NULL) return NULL;
 	
-
-	printf("maa %d\n",type);
-	te->type = type;
-	te->tp = tp;
-	te->formal_params = formal;
-	
-	return te;
+	tpp->type = type;
+	tpp->tp = tp;
+	tpp->formal_params = formal;
+	if (tpp==NULL)
+		printf("NULL");
+	return tpp;
 }
 
 
@@ -260,19 +273,23 @@ void remove_last(type_EntryTable *t){
 }
 
 type_tableEntry *type_lookup(SymbolTable *sym,char *name, tableEntry *owner_func){
+	printf("idhar bhi jain");
 	type_tableEntry *ret = NULL;
 	while (owner_func != NULL){
+		printf("wert_%s_%s",name,owner_func->name);
 		tableEntry* te = sym->first;
 		while (te != NULL)
 		{
 					if (strcmp(te->name,name) == 0 && te->entry_owner == owner_func && te->t == TYPE_VALUE)
 					{		
+							printf("checkss_%s_%d_%s",te->entry_owner->name,te->t,name);
 							ret = te->type;
 					}
 					te = te->next;
 		}	
 		owner_func = owner_func->next_owner;
 	}
+	printf("kkkkkkkkk");
 	return ret;
 	// return ret;
 	// while (te != NULL)
