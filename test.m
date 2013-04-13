@@ -34,22 +34,31 @@ VAR
   o7 : REAL;
   root: y;
 
-PROCEDURE Main22;
+PROCEDURE Main22(ro : y);
 VAR root : y;
+    ro : y;
   PROCEDURE Hain22;
       TYPE lkk = INTEGER;
-      VAR rootss : lkk;
+      VAR rootssppp : lkk;
     BEGIN
-        rootss := 10;
+        rootssppp := 10;
   END Hain22;
-  PROCEDURE Hain211;
-      VAR rootss : y;
+  PROCEDURE Main22lpp;
+    VAR rootmi : y;
     BEGIN
-        rootss := 10;
-  END Hain22;
+        rootmi := 10;
+  END Main22lpp;
+
 BEGIN
-      root := 10;
+      ro := 10;
+      root := 10 + ro;
 END Main22;
+
+PROCEDURE Main22m;
+VAR rootm : y;
+BEGIN
+      rootm := 10;
+END Main22m;
 
 BEGIN
   (* Read in the numbers *)

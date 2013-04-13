@@ -167,20 +167,6 @@ int tac(AstNode* node)
 		lineL++;
 		//printf("goto L%d\nL%d:\n", l1, l2);
 	}
-	else if(!strcmp(node->node_value, "PROC")){
-		//printf("i am in a procedure\n");
-		printf("%s:\n",node->left->left->node_value);
-		postOrder(node->left->right->right->right);
-		postOrder(node->left->right->right->left);
-	}
-	else if(!strcmp(node->node_value, "MAIN")){
-		printf("i am in a main procedure\n");
-		//printf("main: %s\n",node->left->node_value);
-	}
-	else if(!strcmp(node->node_value, "MAIN_AUX")){
-		printf("i am in a main proceduiiiiire\n");
-		//printf("main: %s\n",node->left->node_value);
-	}
 	else if (!strcmp(node->node_value, "WHILE")) {
 		//printf("itisrepeat2");
 		printf("L%d:\n", lineL);
@@ -288,10 +274,23 @@ int isOper(AstNode* node)
 	if (node->node_type != 342) return 0;
 	char *s = strdup(node->node_value);
 	if (!(strcmp(s, ":=") && strcmp(s, "*") && strcmp(s, "+") && strcmp(s, "-") && strcmp(s, "/") && strcmp(s, "[]")
-		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, "PROC") && strcmp(s, "CASE") && strcmp(s, ".")))
+		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, "CASE") && strcmp(s, ".")))
 		return 1;
 	return 0;
 }
+
+void proc_call(AstNode *node){
+	if(!strcmp(node->node_value, "PROC")){
+		//printf("i am in a procedure\n");
+		while (node != NULL){
+			printf("%s:\n",node->left->left->node_value);
+			postOrder(node->left->right->right->right);
+			postOrder(node->left->right->right->left);
+			node = node->right;
+		}
+	}
+}
+
 void postOrder(AstNode* node)
 {
 	//printf("hiiamm");
@@ -302,9 +301,15 @@ void postOrder(AstNode* node)
 	if (!strcmp(node->node_value,"MAIN_AUX")){
 		printf("MAIN:");
 	}
+	if (!strcmp(node->node_value,"PROC")){
+		//printf("proccc_%s",node->node_value);
+		proc_call(node);
+	}
+	else{
 	//printf(" %s ",node->node_value);
 	//if (node->left) postOrder(node->left);
 	//if (node->right) postOrder(node->right);
 	 if (node->left && isOper(node->left)) tac(node->left);	else postOrder(node->left);
 	 if (node->right && isOper(node->right)) tac(node->right);	else postOrder(node->right);
+	}
 }
