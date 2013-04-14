@@ -50,11 +50,12 @@ BEGIN
   o5 := o90;
   o8 := {1,2,5,3,4,20};
   as := o8;
-  o9 := {1,2,5,4,10,ol+o1};
+  o9 := {1,2,5,4,10,ol};
   o11 := o8 + o9;
   ins := o8 * o9;
   dif := o8 - o9;
   sym := as / o9;
+  plm := ol IN sym;
   mp[ol] := 10 + 20*203 + 384 - 303;
   IF plm = TRUE THEN
     IF plm = TRUE THEN

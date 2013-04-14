@@ -332,7 +332,8 @@ Expr         :
 }
 | Expr IN Expr            
 {
-  if (($1->type->type==INTEGER || $1->type->type==SET)){
+  if (($1->type->type==INTEGER || $1->type->type==SET_TYPE)){
+        printf("in_is_here_%s_%s",$1->node_value,$3->node_value);
         $$ = makeNode(OPR, "IN", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
   }
   else{
@@ -347,12 +348,14 @@ Expr         :
   if (($1->type==lk)){
         printf("andar_hain");
         // value is TRUE
-        $$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
+        //$$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
+        $$ = makeNode(NUM,"TRUE", create_typeEntry(BOOLEAN,NULL,NULL), VAL, NULL, NULL);
   }
   else{
       // value is FALSE
-      $$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
-      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+      //$$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
+      $$ = makeNode(NUM, "FALSE", create_typeEntry(BOOLEAN,NULL,NULL), VAL, NULL, NULL);
+      //printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
   }
 }
 // | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
