@@ -31,7 +31,7 @@ typedef struct set_label{
 typedef struct set_elem{
 	int fill;
 	char *var;
-	struct set_label *lab;
+	char *label;
 } set_elem;
 
 AstNode* makeNode( int NodeType, char *NodeValue,type_tableEntry *type, symbolPassType passType, AstNode *Left, AstNode *Right );

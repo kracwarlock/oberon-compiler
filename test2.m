@@ -23,7 +23,7 @@ VAR
   o2: m;
   ol,mk :INTEGER;
   o3 : m;
-  o8,o9,o11 :f;
+  o8,o9,o11,dif,ins,sym,as :f;
   o4 : m;
   o5 : rc;
   o90 : rc1;
@@ -48,9 +48,13 @@ BEGIN
   ol := 1;
   o1 := ol;
   o5 := o90;
-  o8 := {1,2,3,4};
-  o9 := {ol + o1,420};
-  o11 := o8;
+  o8 := {1,2,5,3,4,20};
+  as := o8;
+  o9 := {1,2,5,4,10,ol+o1};
+  o11 := o8 + o9;
+  ins := o8 * o9;
+  dif := o8 - o9;
+  sym := as / o9;
   mp[ol] := 10 + 20*203 + 384 - 303;
   IF plm = TRUE THEN
     IF plm = TRUE THEN

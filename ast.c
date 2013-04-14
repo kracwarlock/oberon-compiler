@@ -25,42 +25,127 @@ void print_set(){
 		}
 		else{
 			printf("-- %s ",set_nota[i].var);
-			set_label *lo = set_nota[i].lab;
-			while (lo!=NULL){
-				printf(" %s ",lo->label);
-				lo=lo->next;
-			}
+			printf(" %s \n",set_nota[i].label);
 		}
-		printf("\n");
 	}
 }
 
-void search_insert(char *laba,char *new){
+void inter_new(char *label1,char *label2,char *label3){
 	int i;
+	int j;
 	int check=0;
-	printf("newww%s",new);
 	set_label* lp;
 	for (i=0;i<1000;i++){
-		check=0;
-		if (set_nota[i].fill==-1){
+		if (set_nota[i].fill == -1){
 			break;
 		}
-		else{
-			set_label *lo = set_nota[i].lab;
-			set_label *prev = lo;
-			while (lo!=NULL){
-				//printf("inside_%s_%s",laba,new);
-				if (!strcmp(lo->label,laba)){
-						lp= (set_label*)malloc(sizeof(set_label));
-						lp->label = new;
-						lp->next = NULL;
-						check=1;
-				}
-				prev = lo;
-				lo=lo->next;
+		for (j=0;j<1000;j++){
+			if (set_nota[j].fill == -1){
+				break;
 			}
-			if (check==1)
-				prev->next = lp;
+			printf("--%s %s ",set_nota[i].var,set_nota[j].var);
+			if (!strcmp(set_nota[i].label,label1) && !strcmp(set_nota[j].label,label2) && !strcmp(set_nota[i].var,set_nota[j].var)){
+				printf("ho gaya kya");
+				insert_new(set_nota[j].var,label3);
+			}
+		}
+	}
+}
+
+void as_new(char *label1,char *label3){
+	int i;
+	int j;
+	int check=0;
+	set_label* lp;
+	for (i=0;i<1000;i++){
+		if (set_nota[i].fill == -1){
+			break;
+		}
+		if (!strcmp(set_nota[i].label,label1)){
+			insert_new(set_nota[i].var,label3);
+		}
+	}
+}
+
+void diff_new(char *label1,char *label2,char *label3){
+	int i;
+	int j;
+	int check=0;
+	set_label* lp;
+	for (i=0;i<20;i++){
+		check = 0;
+		if (set_nota[i].fill == -1){
+			break;
+		}
+		for (j=0;j<1000;j++){
+			if (set_nota[j].fill == -1){
+				break;
+			}
+			else if (!strcmp(set_nota[i].label,label1) && !strcmp(set_nota[j].label,label2)){
+				if (!strcmp(set_nota[i].var,set_nota[j].var))
+					check =1;
+			}
+		}
+		if (check == 0 && !strcmp(set_nota[i].label,label1)){
+			insert_new(set_nota[i].var,label3);
+		}
+	}
+}
+
+void sym_new(char *label1,char *label2,char *label3){
+	int i;
+	int j;
+	int check=0;
+	set_label* lp;
+	for (i=0;i<20;i++){
+		check = 0;
+		if (set_nota[i].fill == -1){
+			break;
+		}
+		for (j=0;j<1000;j++){
+			if (set_nota[j].fill == -1){
+				break;
+			}
+			else if (!strcmp(set_nota[i].label,label1) && !strcmp(set_nota[j].label,label2)){
+				if (!strcmp(set_nota[i].var,set_nota[j].var))
+					check =1;
+			}
+		}
+		if (check == 0 && !strcmp(set_nota[i].label,label1)){
+			insert_new(set_nota[i].var,label3);
+		}
+	}
+}
+
+void union_new(char *label1,char *label2,char *label3){
+	int i;
+	int j;
+	int k;
+	int check=0;
+	set_label* lp;
+	for (i=0;i<1000;i++){
+		if (set_nota[i].fill == -1){
+			break;
+		}
+		if (!strcmp(set_nota[i].label,label1))
+			insert_new(set_nota[i].var,label3);
+	}
+	for (j=0;j<1000;j++){
+		check = 0;
+		if (set_nota[j].fill == -1){
+				break;
+		}
+		if (!strcmp(set_nota[j].label,label2)){
+			for (k=0;k<1000;k++){
+				if (set_nota[k].fill == -1){
+					break;
+				}
+				if (!strcmp(set_nota[k].label,label3) && !strcmp(set_nota[j].var,set_nota[k].var)){
+					check=1;
+				}
+			}
+			if (check!=1)
+				insert_new(set_nota[j].var,label3);
 		}
 	}
 }
@@ -71,10 +156,7 @@ void insert_new(char *value,char *labels){
 		if (set_nota[i].fill==-1){
 			set_nota[i].fill =1;
 			set_nota[i].var = value;
-			set_label *l = (set_label*)(malloc(sizeof(set_label)));
-			l->label = labels;
-			l->next=NULL;
-			set_nota[i].lab = l;
+			set_nota[i].label = labels;
 			break;
 		}
 	}
@@ -152,7 +234,6 @@ void init(){
 		elem_list[i].off=-1;
 		elem_list2[i].off=-1;
 		set_nota[i].fill = -1;
-		set_nota[i].lab = NULL;
 	}
 }
 
@@ -480,20 +561,22 @@ void set_call(AstNode *node){
 	char str[3];
 	if (!strcmp(node->right->node_value,"+")){
 		printf("Union Happenning");
-		search_insert(node->right->left->node_value,node->left->node_value);
-		search_insert(node->right->right->node_value,node->left->node_value);
+		union_new(node->right->left->node_value,node->right->right->node_value,node->left->node_value);
+		//search_insert(node->right->left->node_value,node->left->node_value);
+		//search_insert(node->right->right->node_value,node->left->node_value);
 	}
 	else if (!strcmp(node->right->node_value,"-")){
-		
+		diff_new(node->right->left->node_value,node->right->right->node_value,node->left->node_value);	
 	}
 	else if (!strcmp(node->right->node_value,"*")){
-
+		inter_new(node->right->left->node_value,node->right->right->node_value,node->left->node_value);
 	}
 	else if (!strcmp(node->right->node_value,"/")){
-
+		diff_new(node->right->left->node_value,node->right->right->node_value,node->left->node_value);
+		diff_new(node->right->right->node_value,node->right->left->node_value,node->left->node_value);
 	}
 	else if (node->right->node_type==340){
-		search_insert(node->right->node_value,node->left->node_value);
+		as_new(node->right->node_value,node->left->node_value);
 	}
 	else{
 		AstNode *temp = node->right->right;
@@ -514,7 +597,14 @@ void set_call(AstNode *node){
 			temp2 = temp;
 			temp = temp->right;
 		}
-		insert_new(temp2->right->node_value,node->left->node_value);
+		if (isOper(temp2->right)){
+			int t1 = tac(temp2->right);
+			char *s = (char*)malloc(sizeof(char));
+			sprintf(s, "t%d", t1-1);
+			insert_new(s,node->left->node_value);
+		}
+		else
+			insert_new(temp2->right->node_value,node->left->node_value);
 	}
 	print_set();
 	return ;
