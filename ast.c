@@ -193,13 +193,16 @@ int tac(AstNode* node)
 	if (!strcmp(node->node_value, "IF")) {
 		int t1 = tac(node->left);
 		insert(lineL);
-		printf("IF t%d==0 goto L%d\n", t1-1, arr[last]);
+		//printf("IF t%d==0 goto L%d\n", t1-1, arr[last]);
+		printf("beqz\t(find address for 't%d' from symbol table)$sp,L%d\n",t1-1,arr[last]);
 		lineL++;
 		postOrder(node->right->left);
-		printf("L%d:\n", arr[last]);
+		printf("b\tEnd%d\n", arr[last]);
+		printf("\nL%d:\n", arr[last]);
 		lineL++;
 		pop();
 		postOrder(node->right->right);
+		printf("\nEnd%d:\n", arr[last]+1);	//**************check if arr[last]+1 is correct
 	}
 	else if(!strcmp(node->node_value,"CASE")){
 		//printf("asas%s",node->left->node_value);
