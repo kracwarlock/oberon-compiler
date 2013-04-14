@@ -996,7 +996,7 @@ int main()
   p_check = createtypeEntry();
   int res = yyparse();
   if (res==0)
-    printf("Successful parse\n");
+    printf("Successful parse\n\n\n\n");
   //type_printf(&symbolTable);
 
   if (ast_head==NULL)
@@ -1004,5 +1004,6 @@ int main()
   init();
   postOrder(ast_head);
   print_elem();
+  printf("li\t$v0,10\nsyscall\n");
   return 0;
 }

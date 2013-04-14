@@ -14,6 +14,8 @@ stack_elem elem_list2[1000];
 
 set_elem set_nota[1000];
 
+int sp = 0, sp_offset = 12, used_t=0;
+
 void print_set(){
 	int i;
 	int check=0;
@@ -194,7 +196,11 @@ int tac(AstNode* node)
 		int t1 = tac(node->left);
 		insert(lineL);
 		//printf("IF t%d==0 goto L%d\n", t1-1, arr[last]);
-		printf("beqz\t(find address for 't%d' from symbol table)$sp,L%d\n",t1-1,arr[last]);
+		char str[3];
+		sprintf(str,"t%d",t1-1);
+
+		printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(str));
+		printf("beqz\t$t%d,L%d\n",used_t,arr[last]);
 		lineL++;
 		postOrder(node->right->left);
 		printf("b\tEnd%d\n", arr[last]);
@@ -338,9 +344,13 @@ int tac(AstNode* node)
 		}
 		else {
 			//printf("popoppppp");
-			insert_elem(100,node->left->node_value);
-			search_elem(node->left->node_value);
-			printf("%s=%s\n", node->left->node_value, node->right->node_value);
+			printf("li\t$t%d,%s\n",used_t,node->right->node_value);
+			printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+			insert_elem(sp_offset,node->left->node_value);
+			//printf("%s=%s\n", node->left->node_value, node->right->node_value);
+			//printf("The name is %s\n", node->left->node_value);
+			//printf("It is stored at an offset of %d\n\n", search_elem(node->left->node_value));
+			sp_offset +=4;
 		}
 	}
 	}
@@ -366,9 +376,27 @@ int tac(AstNode* node)
 			printf("t%d = %s %s t%d\n", varT, node->left->node_value, node->node_value, t2-1);
 		}
 		else {
-			insert_elem(varT,"t8");
-			search_elem("t8");
-			printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
+			//insert_elem(varT,"t8");
+			//search_elem("t8");
+			//printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
+			if(strcmp(node->node_value,"<=")==0)
+			{
+				char str[3];
+				sprintf(str,"t%d",varT);
+				insert_elem(sp_offset,str);
+				if(atoi(node->left->node_value) <= atoi(node->right->node_value))
+				{
+					printf("li\t$t%d,1\n",varT);
+				}
+				else
+				{
+					printf("li\t$t%d,0\n",varT);
+				}
+				printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+				//printf("The name is %s\n",str);
+				//printf("It is stored at an offset of %d\n\n", search_elem(str));
+				sp_offset += 4;
+			}
 		}
 
 		return ++varT;
@@ -531,7 +559,7 @@ void postOrder(AstNode* node)
 	//printf("%s %d\n", node->node_value, node->node_type);
 
 	if (!strcmp(node->node_value,"MAIN_AUX")){
-		printf("MAIN:");
+		printf("main:\n");
 	}
 	if (!strcmp(node->node_value,"PROC")){
 		//printf("proccc_%s",node->node_value);
