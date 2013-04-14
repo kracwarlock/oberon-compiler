@@ -304,6 +304,9 @@ int tac(AstNode* node)
 		if (node->left->type->type == SET_TYPE){
 			set_call(node);
 		}
+		else if (node->right->type->type == PROC_TYPE){
+			proc_call_def(node);
+		}
 		else{
 		if (node->right->node_type == 342 && node->left->node_type == 342) {
 			//printf("lplpl2222");
@@ -360,7 +363,6 @@ int tac(AstNode* node)
 			printf("t%d = %s %s t%d\n", varT, node->left->node_value, node->node_value, t2-1);
 		}
 		else {
-			printf("andar aao");
 			insert_elem(varT,"t8");
 			search_elem("t8");
 			printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
@@ -391,15 +393,24 @@ int isOper(AstNode* node)
 }
 
 void stack_main(AstNode *node,int p,char *tex){
-	printf("subu $sp, $sp, %d\n",p*4);
+	printf("addui $sp, $sp, -%d\n",p*4);
 	int i;
 	for (i=0;i<p-1;i++){
-		printf("lw $t%d, %d($sp)\n",varT,i*4);
-		varT++;
+		printf("sw $a%d, %d($sp)\n",i,i*4);
+		//varT++;
 	}
-	insert_elem2(retT,tex);
-	//print_elem2();
-	retT++;
+	printf("sw $ra, %d($sp)\n",i*4);
+	return ;
+}
+
+void stack_main_2(AstNode *node,int p,char *tex){
+	int i = p-1;
+	printf("lw $ra, %d($sp)\n",i*4);
+	for (i=p-2;i>=0;i--){
+		printf("lw $a%d, %d($sp)\n",i,i*4);
+		//varT++;
+	}
+	printf("addui $sp, $sp, %d\n",p*4);
 	return ;
 }
 
@@ -429,24 +440,51 @@ void proc_call(AstNode *node){
 			formal = count_formal(node->left->right->left);
 			//printf("total_args_%d",formal);
 			stack_main(node,formal+1,node->left->left->node_value);
-			print_elem2();
 			postOrder(node->left->right->right->right);
-			printf("jr $ra\n");
+			stack_main_2(node,formal+1,node->left->left->node_value);
 			postOrder(node->left->right->right->left);
 			node = node->right;
 		}
 	}
 }
 
+void proc_call_def(AstNode *node){
+	int formal = 0;
+	int t1;
+	//printf("0aaaaaa_%s ",node->left->node_value);
+	AstNode *temp = node->right->right;
+	while (!strcmp(temp->node_value,"EXPR")){
+		if (temp->left->node_type==340){
+			printf("move $a%d, %s \n",formal,temp->left->node_value);
+			temp = temp->right;
+		}
+		else{
+			t1 = tac(temp->left);
+			printf("move $a%d, t%d \n",formal,t1-1);
+			temp = temp->right;
+		}
+		formal++;
+	}
+	if (temp->node_type==340){
+		printf("move $a%d, %s \n",formal,temp->node_value);
+	}
+	else{
+		t1 = tac(temp);
+		printf("move $a%d, t%d \n",formal,t1-1);
+	}
+	printf("jalr %s\n",node->right->left->node_value);
+}
+
 void set_call(AstNode *node){
 	printf("sets_%s",node->left->node_value);
-	char str[10];
+	char str[3];
 	if (!strcmp(node->right->node_value,"+")){
 		printf("Union Happenning");
 		search_insert(node->right->left->node_value,node->left->node_value);
 		search_insert(node->right->right->node_value,node->left->node_value);
 	}
 	else if (!strcmp(node->right->node_value,"-")){
+		
 	}
 	else if (!strcmp(node->right->node_value,"*")){
 
@@ -454,8 +492,8 @@ void set_call(AstNode *node){
 	else if (!strcmp(node->right->node_value,"/")){
 
 	}
-	else if (node->right->node_type==342){
-
+	else if (node->right->node_type==340){
+		search_insert(node->right->node_value,node->left->node_value);
 	}
 	else{
 		AstNode *temp = node->right->right;
@@ -464,8 +502,10 @@ void set_call(AstNode *node){
 			if (isOper(temp->left)){
 				printf("SEEE%s",temp->left->node_value);
 				int t1 = tac(temp->left);
-				sprintf(str, "t%d", t1-1);
-				insert_new(str,node->left->node_value);
+				char *s = (char*)malloc(sizeof(char));
+				sprintf(s, "t%d", t1-1);
+				printf("mrea_%s",s);
+				insert_new(s,node->left->node_value);
 				// one problem with the char [] to char * conversion
 			}
 			else{

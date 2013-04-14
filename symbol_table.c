@@ -120,6 +120,27 @@ tableEntry* findEntry(SymbolTable* symbolTable, char* name, tableEntry *owner_fu
 	return ret;
 }
 
+tableEntry* findEntry_proc(SymbolTable* symbolTable, char* name, tableEntry *owner_func)
+{
+	printf("finding_procedure\n");
+	//printf("gtpt %s %s\n",owner_func->name,name);
+	tableEntry *ret = NULL;
+	while (owner_func != NULL){
+		tableEntry* te = symbolTable->first;
+		while (te != NULL)
+		{
+			if (te->mode == PROC_NAME && te->entry_owner == owner_func && !(strcmp(name,te->name))){
+				printf("mil_gaya_%s\n",te->name);
+					ret = te;
+			}
+			te = te->next;
+		}	
+		owner_func = owner_func->next_owner;
+	}
+	return ret;
+}
+
+
 void changeVariableType(SymbolTable* symbolTable, type_tableEntry *ty,int type)
 {
 	tableEntry* te = symbolTable->first;
@@ -163,6 +184,7 @@ type_tableEntry* create_typeEntry(int type, type_tableEntry* tp, tableEntry* for
 	if (tpp == NULL) return NULL;
 	
 	tpp->type = type;
+	tpp->ret_t = NULL;
 	tpp->tp = tp;
 	tpp->formal_params = formal;
 	if (tpp==NULL)

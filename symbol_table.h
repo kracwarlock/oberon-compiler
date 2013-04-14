@@ -60,6 +60,7 @@ typedef struct type_tableEntry {
 	symbolType type; //INTEGER, REAL, BOOLEAN, CHAR, NULL
 	int num_params;
 	struct tableEntry *formal_params;
+	struct type_tableEntry* ret_t;
 	struct type_tableEntry* tp;
 	struct type_tableEntry *next;
 } type_tableEntry;
