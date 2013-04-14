@@ -43,7 +43,7 @@ void inter_new(char *label1,char *label2,char *label3){
 			if (set_nota[j].fill == -1){
 				break;
 			}
-			printf("--%s %s ",set_nota[i].var,set_nota[j].var);
+			//printf("--%s %s ",set_nota[i].var,set_nota[j].var);
 			if (!strcmp(set_nota[i].label,label1) && !strcmp(set_nota[j].label,label2) && !strcmp(set_nota[i].var,set_nota[j].var)){
 				printf("ho gaya kya");
 				insert_new(set_nota[j].var,label3);
@@ -266,6 +266,7 @@ AstNode* makeNode( int NodeType, char *NodeValue, type_tableEntry *type, symbolP
 	node_pointer->passType = passType;
 	node_pointer->left = Left;
 	node_pointer->right = Right;
+	node_pointer->val = NULL;
 	return node_pointer;
 }
 
@@ -446,7 +447,33 @@ int tac(AstNode* node)
 		else {
 			insert_elem(varT,"t8");
 			search_elem("t8");
-			printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
+			int i;
+			if (!strcmp(node->node_value,"IN")){
+				int ind = 0;
+				int fal = 0;
+				//printf("INIT_%s_%s",node->left->node_value,node->right->node_value);
+				insert(lineL);
+				for (i=0;i<1000;i++){
+					if (set_nota[i].fill == -1){
+						break;
+					}
+					else{
+						if (!strcmp(set_nota[i].label,node->right->node_value)){
+							ind = i;
+							printf("IF %s == %s goto L%d\n",set_nota[i].var,node->left->node_value,arr[last]);
+						}
+						else
+							fal = i;
+					}
+				}
+				printf("t%d = %s %s %s\n", varT, set_nota[fal].var, "=" , node->left->node_value);
+				lineL++;
+				printf("L%d:\n", arr[last]);
+				printf("t%d = %s %s %s\n", varT, set_nota[ind].var, "=" , node->left->node_value);
+				pop();
+			}	
+			else
+				printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
 		}
 
 		return ++varT;

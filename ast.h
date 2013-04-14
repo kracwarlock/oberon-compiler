@@ -13,6 +13,7 @@ typedef struct AstNode {
 	//symbolType type; // Actual type of the value
 	symbolPassType passType; // Reference or value (values have literals and operations)
 	
+	struct AstNode* val;
 	struct AstNode* left;       // pointer to left child
 	struct AstNode* right;      // pointer to right child
 } AstNode;
