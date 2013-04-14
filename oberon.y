@@ -172,13 +172,16 @@ Statement    :
     $1->type=current_type;
   }
    ASSIGN Expr  {
+    
     printf("finally_tim_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
     //printf("it_is_here_%s_%s_%d_%d",$1->node_value,$3->node_value,current_type->type,current_type4->type);
     //printf("print_%s %d",$1->node_value,current_type->type);
-    if ($4->type->type==PROC_TYPE){
-    if (type_check($1->type,$4->type->ret_t)){
-      printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->ret_t->type,$1->node_value);
-      $$ = makeNode(OPR, ":=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
+    if ($4->node_type == 341){
+    if (type_check($1->type,$4->type)){
+      printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
+      $$ = makeNode(OPR, ":=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4);
+      $1->val = $4; 
+      printf("value_is_%s_%s_",$1->node_value,$1->val->node_value);
     }
     }
     else{

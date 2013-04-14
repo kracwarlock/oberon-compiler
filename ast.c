@@ -14,7 +14,7 @@ stack_elem elem_list2[1000];
 
 set_elem set_nota[1000];
 
-int sp = 0, sp_offset = 12, used_t=0;
+int sp = 0, sp_offset = 12, used_t = 0;
 
 void print_set(){
 	int i;
@@ -384,13 +384,15 @@ int tac(AstNode* node)
 				char str[3];
 				sprintf(str,"t%d",varT);
 				insert_elem(sp_offset,str);
-				if(atoi(node->left->node_value) <= atoi(node->right->node_value))
+				search_elem(str);
+				if(sytblValue(node->left->node_value) <= sytblValue(node->right->node_value)) //********mridul make sytblValue function
 				{
-					printf("li\t$t%d,1\n",varT);
+					//printf("left value is %s\n",node->left->node_value);
+					printf("li\t$t%d,1\n",used_t);
 				}
 				else
 				{
-					printf("li\t$t%d,0\n",varT);
+					printf("li\t$t%d,0\n",used_t);
 				}
 				printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
 				//printf("The name is %s\n",str);
