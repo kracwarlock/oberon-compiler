@@ -4,7 +4,7 @@
 #include "ast.h"
 #include "symbol_table.h"
 
-int varT = 0, lineL = 0 , retT = 0;
+int varT = 0, lineL = 0 , retT = 0, lineM = 0 , endL = 0 ;
 int arr[1000];
 int first = 1;
 int last = 0;
@@ -285,12 +285,13 @@ int tac(AstNode* node)
 		printf("beqz\t$t%d,L%d\n",used_t,arr[last]);
 		lineL++;
 		postOrder(node->right->left);
-		printf("b\tEnd%d\n", arr[last]);
+		int ww = endL++;
+		printf("b\tEnd%d\n", ww);
 		printf("\nL%d:\n", arr[last]);
 		lineL++;
 		pop();
 		postOrder(node->right->right);
-		printf("\nEnd%d:\n", arr[last]+1);	//**************check if arr[last]+1 is correct
+		printf("\nEnd%d:\n", ww);	//**************check if arr[last]+1 is correct
 	}
 	else if(!strcmp(node->node_value,"CASE")){
 		//printf("asas%s",node->left->node_value);
@@ -352,7 +353,8 @@ int tac(AstNode* node)
 	    printf("Next:\n");
 	 }
 	else if(!strcmp(node->node_value, "REPEAT")){
-		printf("L%d:\n", lineL);
+		long long int a = lineL++;
+		printf("\nL%d:\n", a);
 
 		
 		//printf("mayaya3 %s",node->left->node_value);
@@ -360,22 +362,19 @@ int tac(AstNode* node)
 		//int l2 = lineL++;
 		//printf("mayaya2");
 		int t2 = tac(node->right->right);
-		//printf("mayaya");
-		printf("IF t%d==1 goto L%d\n", t2-1, lineL);
-		lineL++;
+		printf("bgtz $t9 L%d\n", a);
+		//printf("IF t%d==1 goto L%d\n", t2-1, a);
+		//lineL++;
 		//printf("goto L%d\nL%d:\n", l1, l2);
 	}
 	else if (!strcmp(node->node_value, "WHILE")) {
-		//printf("itisrepeat2");
 		printf("\nL%d:\n", lineL);
 		int l1 = lineL++;
 		int t1 = tac(node->left);
 		//printf("IF t%d==0 goto L%d\n", t1-1, lineL);
 		char str[3];
 		sprintf(str,"t%d",t1-1);
-		//printf("lw\t$t9,%d($sp)\n",search_elem(str));
 		printf("beqz\t$t9,L%d\n",lineL);
-
 		int l2 = lineL++;
 		postOrder(node->right);
 		printf("b\tL%d\n\nL%d:\n", l1, l2);
@@ -518,14 +517,16 @@ int tac(AstNode* node)
 			{
 				printf("lw\t$t9,%d($sp)\n",search_elem(node->left->node_value));
 				insert(lineL);
-				printf("blt\t$t9,%d,L%d\n",atoi(node->right->node_value),lineL);
-				lineL++;
+				printf("blt\t$t9,%d,M%d\n",atoi(node->right->node_value),lineM);
+			//	lineL++;
 				printf("li\t$t9,0\n");
-				printf("b\tEnd%d\n",arr[last]);
-				printf("\nL%d:\n",arr[last]);
+				int ww = endL++;
+				printf("b\tEnd%d\n",ww);
+				printf("\nM%d:\n",lineM);
+				lineM++;
 				printf("li\t$t9,1\n");
-				printf("\nEnd%d:\n",arr[last]);
-				pop();
+				printf("\nEnd%d:\n",ww);
+			//	pop();
 			}
 			else if(strcmp(node->node_value,"+")==0)
 			{	//t1 = v1 + 1
@@ -588,7 +589,7 @@ int tac(AstNode* node)
 				else if(node->right->node_type==340 && node->left->node_type==340) //both var
 				{
 					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
-					printf("li\t$t%d,%d\n",used_t+1,search_elem(node->right->node_value));
+					printf("lw\t$t%d,%d\n",used_t+1,search_elem(node->right->node_value));
 					printf("subu\t$t%d,$t%d,%d\n",used_t+2,used_t+1,used_t);
 					printf("sw\t$t%d,%d($sp)\n",used_t+2,sp_offset);
 					sp_offset += 4;
@@ -601,6 +602,34 @@ int tac(AstNode* node)
 					printf("sw\t$t%d,%d($sp)\n",used_t+2,sp_offset);
 					sp_offset += 4;
 				}
+			}
+			else if(strcmp(node->node_value,"*")==0)
+			{	//t1 = v1 + 1
+				
+				if(node->right->node_type==341 && node->left->node_type==340) 
+				{
+					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
+					printf("li\t$t%d,%d\n",used_t+1,atoi(node->right->node_value));
+				}
+				else if(node->right->node_type==341 && node->left->node_type==341) //both numbers
+				{
+					printf("li\t$t%d,%d\n",used_t,atoi(node->left->node_value));
+					printf("li\t$t%d,%d\n",used_t+1,atoi(node->right->node_value));
+				}
+				else if(node->right->node_type==340 && node->left->node_type==340) //both var
+				{
+					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
+					printf("lw\t$t%d,%d\n",used_t+1,search_elem(node->right->node_value));
+				}
+				else
+				{
+					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->right->node_value));
+					printf("li\t$t%d,%d\n",used_t+1,atoi(node->left->node_value));
+				}
+				printf("mult\t$t%d,$t%d\n",used_t,used_t+1);				
+				printf("MFLO\t$t%d\n",used_t+2);
+				printf("sw\t$t%d,%d($sp)\n",used_t+2,sp_offset);
+				sp_offset += 4;
 			}
 		}
 
