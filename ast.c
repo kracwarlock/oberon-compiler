@@ -280,9 +280,9 @@ int tac(AstNode* node)
 		//printf("IF t%d==0 goto L%d\n", t1-1, arr[last]);
 		char str[3];
 		sprintf(str,"t%d",t1-1);
-
-		printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(str));
-		printf("beqz\t$t%d,L%d\n",used_t,arr[last]);
+		//printf("\n%s\n",str);
+		//printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(str));
+		printf("beqz\t$t9,L%d\n",arr[last]);
 		lineL++;
 		postOrder(node->right->left);
 		int ww = endL++;
@@ -498,9 +498,9 @@ int tac(AstNode* node)
 			insert_elem(sp_offset,str);
 			search_elem(str);
 
-			if(strcmp(node->node_value,"<=")==0)
+			if(strcmp(node->node_value,"<=")==0 && node->left->node_type==340 && node->right->node_type==340)
 			{
-				if(atoi(node->left->val->node_value) <= atoi(node->right->val->node_value))
+/*				if(atoi(node->left->val->node_value) <= atoi(node->right->val->node_value))
 				{
 					printf("li\t$t%d,1\n",used_t);
 				}
@@ -509,11 +509,58 @@ int tac(AstNode* node)
 					printf("li\t$t%d,0\n",used_t);
 				}
 				printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
-				sp_offset += 4;
-				//printf("The name is %s\n",str);
-				//printf("It is stored at an offset of %d\n\n", search_elem(str));
+				sp_offset += 4;*/
+				printf("lw\t$t7,%d($sp)\n",search_elem(node->left->node_value));
+				printf("lw\t$t8,%d($sp)\n",search_elem(node->right->node_value));
+				printf("ble\t$t7,$t8,M%d\n",lineM);
+				printf("li\t$t9,0\n");
+				int ww = endL++;
+				printf("b\tEnd%d\n",ww);
+				printf("\nM%d:\n",lineM);
+				lineM++;
+				printf("li\t$t9,1\n");
+				printf("\nEnd%d:\n",ww);
 			}
-			else if(strcmp(node->node_value,"<")==0 && node->right->node_type==341 && node->left->node_type==340)
+			else if(strcmp(node->node_value,"=")==0 && node->left->node_type==340 && node->right->node_type==340)
+			{
+				printf("lw\t$t7,%d($sp)\n",search_elem(node->left->node_value));
+				printf("lw\t$t8,%d($sp)\n",search_elem(node->right->node_value));
+				printf("beq\t$t7,$t8,M%d\n",lineM);
+				printf("li\t$t9,0\n");
+				int ww = endL++;
+				printf("b\tEnd%d\n",ww);Statement_Aux
+				printf("\nM%d:\n",lineM);
+				lineM++;
+				printf("li\t$t9,1\n");
+				printf("\nEnd%d:\n",ww);
+			}
+			else if(strcmp(node->node_value,"=")==0 && node->left->node_type==340 && node->right->node_type==341)
+			{
+				printf("lw\t$t7,%d($sp)\n",search_elem(node->left->node_value));
+				printf("li\t$t8,%d\n",atoi(node->right->node_value));
+				printf("beq\t$t7,$t8,M%d\n",lineM);
+				printf("li\t$t9,0\n");
+				int ww = endL++;
+				printf("b\tEnd%d\n",ww);Statement_Aux
+				printf("\nM%d:\n",lineM);
+				lineM++;
+				printf("li\t$t9,1\n");
+				printf("\nEnd%d:\n",ww);
+			}
+			else if(strcmp(node->node_value,"=")==0 && node->left->node_type==341 && node->right->node_type==341)
+			{
+				printf("lw\t$t7,%d\n",atoi(node->left->node_value));
+				printf("li\t$t8,%d\n",atoi(node->right->node_value));
+				printf("beq\t$t7,$t8,M%d\n",lineM);
+				printf("li\t$t9,0\n");
+				int ww = endL++;
+				printf("b\tEnd%d\n",ww);Statement_Aux
+				printf("\nM%d:\n",lineM);
+				lineM++;
+				printf("li\t$t9,1\n");
+				printf("\nEnd%d:\n",ww);
+			}
+			else if(strcmp(node->node_value,"<")==0 && node->left->node_type==340 && node->right->node_type==341)
 			{
 				printf("lw\t$t9,%d($sp)\n",search_elem(node->left->node_value));
 				insert(lineL);

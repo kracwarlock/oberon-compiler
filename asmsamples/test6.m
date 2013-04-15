@@ -13,7 +13,7 @@ BEGIN
   v3 := 0;
   REPEAT
         v1 := v1 + 2;
-        IF v1 < 9 THEN
+        IF v1 < 10 THEN
           v2 := 10;
         END;
   UNTIL v1 < 10;
