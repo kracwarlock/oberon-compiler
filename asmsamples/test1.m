@@ -8,8 +8,8 @@ VAR
   v1 : y;
 
 BEGIN
-  v1 := 0;
-  WHILE v1 < 100 DO
-        v1 := v1 + 1;
+  v1 := 7;
+  WHILE v1 < 10 DO
+        v1 := v1 + 2;
   END;
 END LTESQ.

@@ -373,8 +373,8 @@ int tac(AstNode* node)
 		//printf("IF t%d==0 goto L%d\n", t1-1, lineL);
 		char str[3];
 		sprintf(str,"t%d",t1-1);
-		printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(str));
-		printf("beqz\t$t%d,L%d\n",used_t,lineL);
+		//printf("lw\t$t9,%d($sp)\n",search_elem(str));
+		printf("beqz\t$t9,L%d\n",lineL);
 
 		int l2 = lineL++;
 		postOrder(node->right);
@@ -421,7 +421,15 @@ int tac(AstNode* node)
 			int t1 = tac(node->right);
 			insert_elem(t1-1,node->left->node_value);
 			search_elem(node->left->node_value);
-			printf("%s = t%d\n", node->left->node_value, t1-1 );
+			//printf("%s = t%d\n", node->left->node_value, t1-1 );
+			//lw t%d's val
+			//sw val %s's address
+			char str[3];
+			sprintf(str,"t%d",t1-1);
+			insert_elem(sp_offset,str);
+			//sp_offset += 4;
+			printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(str));
+			printf("sw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
 		}
 		else if (node->left->node_type == 342) {
 			//varT++;
@@ -501,16 +509,99 @@ int tac(AstNode* node)
 				{
 					printf("li\t$t%d,0\n",used_t);
 				}
+				printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+				sp_offset += 4;
 				//printf("The name is %s\n",str);
 				//printf("It is stored at an offset of %d\n\n", search_elem(str));
 			}
 			else if(strcmp(node->node_value,"<")==0 && node->right->node_type==341 && node->left->node_type==340)
 			{
-				if(atoi(node->left->val->node_value) < atoi(node->right->node_value)) printf("li\t$t%d,1\n",used_t);
-				else printf("li\t$t%d,0\n",used_t);
+				printf("lw\t$t9,%d($sp)\n",search_elem(node->left->node_value));
+				insert(lineL);
+				printf("blt\t$t9,%d,L%d\n",atoi(node->right->node_value),lineL);
+				lineL++;
+				printf("li\t$t9,0\n");
+				printf("b\tEnd%d\n",arr[last]);
+				printf("\nL%d:\n",arr[last]);
+				printf("li\t$t9,1\n");
+				printf("\nEnd%d:\n",arr[last]);
+				pop();
 			}
-			printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
-			sp_offset += 4;
+			else if(strcmp(node->node_value,"+")==0)
+			{	//t1 = v1 + 1
+				
+				if(node->right->node_type==341 && node->left->node_type==340)
+				{
+					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
+					printf("addiu\t$t%d,$t%d,%d\n",used_t+1,used_t,atoi(node->right->node_value));
+					used_t++;
+					printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+					used_t--;
+					sp_offset += 4;
+				}
+				else if(node->right->node_type==341 && node->left->node_type==341) //both numbers
+				{
+					printf("li\t$t%d,%d\n",used_t,atoi(node->left->node_value));
+					printf("addiu\t$t%d, $t%d, %d\n",used_t+1, used_t, atoi(node->right->node_value));
+					used_t++;
+					printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+					used_t--;
+					sp_offset += 4;
+				}
+				else if(node->right->node_type==340 && node->left->node_type==340) //both var
+				{
+					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
+					printf("lw\t$t%d,%d($sp)\n",used_t+1,search_elem(node->right->node_value));
+					printf("add\t$t%d,$t%d,$t%d\n",used_t+2,used_t+1,used_t);
+					printf("sw\t$t%d,%d($sp)\n",used_t+2,sp_offset);
+					sp_offset += 4;
+				}
+				else
+				{
+					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->right->node_value));
+					printf("addiu\t$t%d,$t%d,%d\n",used_t+1,used_t,atoi(node->left->node_value));
+					used_t++;
+					printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+					used_t--;
+					sp_offset += 4;
+				}
+			}
+			else if(strcmp(node->node_value,"-")==0)
+			{	//t1 = v1 + 1
+				
+				if(node->right->node_type==341 && node->left->node_type==340) 
+				{
+					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
+					printf("li\t$t%d,%d\n",used_t+1,atoi(node->right->node_value));
+					printf("subu\t$t%d,$t%d,%d\n",used_t+2,used_t+1,used_t);
+					printf("sw\t$t%d,%d($sp)\n",used_t+2,sp_offset);
+					sp_offset += 4;
+				}
+				else if(node->right->node_type==341 && node->left->node_type==341) //both numbers
+				{
+					printf("li\t$t%d,%d\n",used_t,atoi(node->left->node_value));
+					printf("li\t$t%d,%d\n",used_t+1,atoi(node->right->node_value));
+					printf("subu\t$t%d,$t%d,%d\n",used_t+2,used_t+1,used_t);
+					printf("sw\t$t%d,%d($sp)\n",used_t+2,sp_offset);
+					sp_offset += 4;
+				}
+				else if(node->right->node_type==340 && node->left->node_type==340) //both var
+				{
+					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
+					printf("li\t$t%d,%d\n",used_t+1,search_elem(node->right->node_value));
+					printf("subu\t$t%d,$t%d,%d\n",used_t+2,used_t+1,used_t);
+					printf("sw\t$t%d,%d($sp)\n",used_t+2,sp_offset);
+					sp_offset += 4;
+				}
+				else
+				{
+					printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->right->node_value));
+					printf("li\t$t%d,%d\n",used_t+1,atoi(node->left->node_value));
+					printf("subu\t$t%d,$t%d,%d\n",used_t+2,used_t+1,used_t);
+					printf("sw\t$t%d,%d($sp)\n",used_t+2,sp_offset);
+					sp_offset += 4;
+				}
+			}
 		}
 
 		return ++varT;
