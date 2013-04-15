@@ -440,14 +440,23 @@ int tac(AstNode* node)
 		}
 		else {
 			//printf("popoppppp");
-			printf("li\t$t%d,%s\n",used_t,node->right->node_value);
-			printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
-			insert_elem(sp_offset,node->left->node_value);
-			node->left->val = node->right;	//*******************************
-			//printf("%s=%s\n", node->left->node_value, node->right->node_value);
-			//printf("The name is %s\n", node->left->node_value);
-			//printf("It is stored at an offset of %d\n\n", search_elem(node->left->node_value));
-			sp_offset +=4;
+			if(node->right->node_type == 341)
+			{
+				printf("li\t$t%d,%s\n",used_t,node->right->node_value);
+				printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+				insert_elem(sp_offset,node->left->node_value);
+				node->left->val = node->right;	//*******************************
+				//printf("%s=%s\n", node->left->node_value, node->right->node_value);
+				//printf("The name is %s\n", node->left->node_value);
+				//printf("It is stored at an offset of %d\n\n", search_elem(node->left->node_value));
+				sp_offset +=4;
+			}
+			else if(node->right->node_type == 340)
+			{
+				printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->right->node_value));
+				printf("sw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
+				node->left->val = node->right->val;
+			}
 		}
 	}
 	}
@@ -528,7 +537,7 @@ int tac(AstNode* node)
 				printf("beq\t$t7,$t8,M%d\n",lineM);
 				printf("li\t$t9,0\n");
 				int ww = endL++;
-				printf("b\tEnd%d\n",ww);Statement_Aux
+				printf("b\tEnd%d\n",ww);
 				printf("\nM%d:\n",lineM);
 				lineM++;
 				printf("li\t$t9,1\n");
@@ -541,7 +550,7 @@ int tac(AstNode* node)
 				printf("beq\t$t7,$t8,M%d\n",lineM);
 				printf("li\t$t9,0\n");
 				int ww = endL++;
-				printf("b\tEnd%d\n",ww);Statement_Aux
+				printf("b\tEnd%d\n",ww);
 				printf("\nM%d:\n",lineM);
 				lineM++;
 				printf("li\t$t9,1\n");
@@ -554,7 +563,7 @@ int tac(AstNode* node)
 				printf("beq\t$t7,$t8,M%d\n",lineM);
 				printf("li\t$t9,0\n");
 				int ww = endL++;
-				printf("b\tEnd%d\n",ww);Statement_Aux
+				printf("b\tEnd%d\n",ww);
 				printf("\nM%d:\n",lineM);
 				lineM++;
 				printf("li\t$t9,1\n");
