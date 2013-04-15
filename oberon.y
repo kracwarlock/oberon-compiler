@@ -101,6 +101,7 @@ extern char * yytext;
 %type <node> Main_Block
 %type <node> Decl_Seq
 %type <node> Proc_Decl
+%type <node> string_op_aux
 
 %type <type_value> Type;
 %type <str_value> Const_Expr;
@@ -172,26 +173,46 @@ Statement    :
     $1->type=current_type;
   }
    ASSIGN Expr  {
-    printf("finally_tim_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
+    printf("finally_tim_2_%d_%d_%s",$1->type->type,$4->type->type,$4->node_value);
+    if ($4->left != NULL)
+        printf("fiiiii_%s_%s",$4->node_value,$4->left->node_value);
     //printf("it_is_here_%s_%s_%d_%d",$1->node_value,$3->node_value,current_type->type,current_type4->type);
     //printf("print_%s %d",$1->node_value,current_type->type);
-    if ($4->node_type == 341){
+    if ($4->node_type == 341 || $4->type->type == 16){
+      printf("string_is_oming_here_%s_",$4->node_value);
     if (type_check($1->type,$4->type)){
       printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
       $$ = makeNode(OPR, ":=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4);
       //$1->val = $4; 
       //printf("value_is_%s_%s_",$1->node_value,$1->val->node_value);
     }
+    else{
+          if ($4->type->type == 16 && $1->type->type == 5 && $1->type->tp->type == 3){
+              printf("string_pppppp_%s_%d_",$1->node_value,$1->type->type);
+              $$ = makeNode(OPR, ":=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4);
+          }
+          else{
+              printf("strg_pppppp");
+              printf("type_error in designation\n");
+          }
+        }
     }
     else if ($4->type->type==PROC_TYPE){
     if (type_check($1->type,$4->type->ret_t)){
       printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->ret_t->type,$1->node_value);
       $$ = makeNode(OPR, ":=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
     }
+    else{
+        printf("type_error in designation\n");
+    }
     }
     else{
       if (type_check($1->type,$4->type)){
-        printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
+        printf("ihhhh");
+        if ($4->left != NULL){
+          printf("ho_gaya_abhi_%s",$4->left->node_value);
+        }
+        printf("finally_time_2_%d_%s_%d_%s",$1->type->type,$1->node_value,$4->type->type,$4->node_value);
         $$ = makeNode(OPR, ":=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
       }
       else{
@@ -245,7 +266,7 @@ Statement    :
 Statement_Aux :
 ASSIGN Expr TO Expr BY Const_Expr DOCASE Statement_Sequence END  
 {
- $$ = makeNode(OPR, "ASSIGN_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "TO_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "BY_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $6, makeNode(OPR, "DO_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $8, NULL ) ) )); 
+ $$ = makeNode(OPR, "ASSIGN_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , makeNode(OPR, "TO_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "BY_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $6, $8 ) )); 
 } 
 | ASSIGN Expr TO Expr DOCASE Statement_Sequence END     
 {
@@ -255,7 +276,8 @@ $$ = makeNode(OPR, "ASSIGN_FOR", create_typeEntry(NOTSET,NULL,NULL), VAL, $2 , m
 
 Expr         : 
 /* Relations */
-  Expr EQ_COMP Expr       
+string_op_aux                { $$ = $1;printf("string_operatio_%s_",$1->left->node_value); }
+| Expr EQ_COMP Expr       
   { 
     // printf("new_mridul_type %d_%s\n",current_type->type,$3->node_value);
     // // if (current_type->type == BOOLEAN){
@@ -467,6 +489,40 @@ Expr         :
 | Factor                       { $$ = $1;printf("checkin_%s_%d_",$1->node_value,$1->type->type);}
 ;
 
+string_op_aux:
+|  STRCPY LEFTBRAC ident COMMA ident RIGHTBRAC
+{
+    if (($3->type->type==ARRAY_TYPE && $3->type->tp->type == CHAR) || ($5->type->type==ARRAY_TYPE && $5->type->tp->type == CHAR)){
+      $$ = makeNode(OPR, "STRCPY", create_typeEntry(STRING,NULL,NULL), VAL, $3, $5);
+    }
+}
+|  STRCMP LEFTBRAC ident COMMA ident RIGHTBRAC
+{
+  if (($3->type->type == ARRAY_TYPE && $3->type->tp->type == CHAR) || ($5->type->type == ARRAY_TYPE && $5->type->tp->type == CHAR)){
+      $$ = makeNode(OPR, "STRCMP", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $3, $5);
+  }
+}
+|  STRREV LEFTBRAC ident RIGHTBRAC
+{
+  if (($3->type->type==ARRAY_TYPE && $3->type->tp->type == CHAR)){
+      $$ = makeNode(OPR, "STRREV", create_typeEntry(STRING,NULL,NULL), VAL, $3, NULL );
+  }
+}
+|  STRCAT LEFTBRAC ident COMMA ident RIGHTBRAC
+{
+  if (($3->type->type==ARRAY_TYPE && $3->type->tp->type == CHAR) || ($5->type->type==ARRAY_TYPE && $5->type->tp->type == CHAR)){
+      $$ = makeNode(OPR, "STRCAT", create_typeEntry(STRING,NULL,NULL), VAL, $3, $5);
+  }
+}
+|  STRLEN LEFTBRAC ident RIGHTBRAC
+{
+  if (($3->type->type==ARRAY_TYPE && $3->type->tp->type == CHAR)){
+      $$ = makeNode(OPR, "STRLEN", create_typeEntry(INTEGER,NULL,NULL), VAL, $3, NULL);
+      printf("print_strlen_%s_",$$->left->node_value);
+  }
+}
+;
+
 Factor       : 
   Designator    
   { 
@@ -478,6 +534,7 @@ Factor       :
 | BOOLEAN_VAL   { $$ = makeNode(NUM, yytext, create_typeEntry(BOOLEAN,NULL,NULL), VAL, NULL, NULL); }
 | REAL_VAL      { $$ = makeNode(NUM, yytext, create_typeEntry(REAL,NULL,NULL), VAL, NULL, NULL); }
 | CHAR_VAL      { $$ = makeNode(NUM, yytext, create_typeEntry(CHAR,NULL,NULL), VAL, NULL, NULL); }
+| STRING_VAL    { $$ = makeNode(NUM, yytext, create_typeEntry(STRING,NULL,NULL), VAL, NULL, NULL); }
 | INTEGER_VAL   { $$ = makeNode(NUM, yytext, create_typeEntry(INTEGER,NULL,NULL), VAL, NULL, NULL); }
 | NIL           { $$ = makeNode(NUM, yytext, create_typeEntry(NO,NULL,NULL), VAL, NULL, NULL); }
 | Set           { $$ = makeNode(NUM, "SET", create_typeEntry(SET_TYPE,NULL,NULL), VAL, NULL, $1); }      
@@ -541,7 +598,7 @@ Designator   :
       printf("l_ho_gaya");
     printf("all_ident");
   } 
-  optSuffix     { $$ = make_new_node($1,$3);}
+  optSuffix     { $$ = make_new_node($1,$3); if ($3 != NULL)  printf("not_null%s",$3->left->node_value);}
 ;
 
 optSuffix :
@@ -583,6 +640,8 @@ optSuffix :
  optSuffix    
 { 
   $$ = makeNode(OPR, "^", create_typeEntry(NOTSET,NULL,NULL), VAL, NULL, $3);
+  if ($$->right == NULL)
+      printf("pointer_done");
 }
 |   
 { 

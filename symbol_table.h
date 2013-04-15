@@ -35,7 +35,8 @@ typedef enum symbolType
 	ERROR,	// 13
 	NOTSET,// 14
 	NO,
-	NUM_SYMBOL_TYPES// 15
+	NUM_SYMBOL_TYPES,// 15
+	STRING//16
 } symbolType;
 char* getSymbolType(symbolType type);
 
