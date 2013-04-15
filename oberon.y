@@ -963,7 +963,7 @@ Proc_Decl     :
       //scopeCount--;
       p->last->ret_t = ret_type;
       remove_last(p);
-      $$ = makeNode(OPR, "PROC_MAIN", create_typeEntry(NOTSET,NULL,NULL), VAL, $2, makeNode(OPR, "FORMAL", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "PROC_STAT", create_typeEntry(NOTSET,NULL,NULL), VAL, $6, $7)));
+      $$ = makeNode(OPR, "PROC_MAIN_2", create_typeEntry(NOTSET,NULL,NULL), VAL, $2, makeNode(OPR, "FORMAL", create_typeEntry(NOTSET,NULL,NULL), VAL, $4, makeNode(OPR, "PROC_STAT", create_typeEntry(NOTSET,NULL,NULL), VAL, $6, $7)));
       //printf("type_is_%d",$$->type->type);
       }
       else{
