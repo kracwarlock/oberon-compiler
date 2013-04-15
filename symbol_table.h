@@ -1,3 +1,5 @@
+# include "ast.h"
+
 #ifndef SYMBOLTABLE_H
 #define SYMBOLTABLE_H
 
@@ -68,6 +70,7 @@ typedef struct type_tableEntry {
 typedef struct tableEntry {
 	char* name ; //A string containing the characters for the identifier
 	struct type_tableEntry* type;
+	struct AstNode *ast;
 	symbolPassType passType; //if it is REFERENCE or VALUE for a proc formal parameter
 	symbolMode mode; //identifier, number, procedure_name, function_name
 	type_ident t;

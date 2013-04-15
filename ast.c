@@ -27,42 +27,127 @@ void print_set(){
 		}
 		else{
 			printf("-- %s ",set_nota[i].var);
-			set_label *lo = set_nota[i].lab;
-			while (lo!=NULL){
-				printf(" %s ",lo->label);
-				lo=lo->next;
-			}
+			printf(" %s \n",set_nota[i].label);
 		}
-		printf("\n");
 	}
 }
 
-void search_insert(char *laba,char *new){
+void inter_new(char *label1,char *label2,char *label3){
 	int i;
+	int j;
 	int check=0;
-	printf("newww%s",new);
 	set_label* lp;
 	for (i=0;i<1000;i++){
-		check=0;
-		if (set_nota[i].fill==-1){
+		if (set_nota[i].fill == -1){
 			break;
 		}
-		else{
-			set_label *lo = set_nota[i].lab;
-			set_label *prev = lo;
-			while (lo!=NULL){
-				//printf("inside_%s_%s",laba,new);
-				if (!strcmp(lo->label,laba)){
-						lp= (set_label*)malloc(sizeof(set_label));
-						lp->label = new;
-						lp->next = NULL;
-						check=1;
-				}
-				prev = lo;
-				lo=lo->next;
+		for (j=0;j<1000;j++){
+			if (set_nota[j].fill == -1){
+				break;
 			}
-			if (check==1)
-				prev->next = lp;
+			//printf("--%s %s ",set_nota[i].var,set_nota[j].var);
+			if (!strcmp(set_nota[i].label,label1) && !strcmp(set_nota[j].label,label2) && !strcmp(set_nota[i].var,set_nota[j].var)){
+				printf("ho gaya kya");
+				insert_new(set_nota[j].var,label3);
+			}
+		}
+	}
+}
+
+void as_new(char *label1,char *label3){
+	int i;
+	int j;
+	int check=0;
+	set_label* lp;
+	for (i=0;i<1000;i++){
+		if (set_nota[i].fill == -1){
+			break;
+		}
+		if (!strcmp(set_nota[i].label,label1)){
+			insert_new(set_nota[i].var,label3);
+		}
+	}
+}
+
+void diff_new(char *label1,char *label2,char *label3){
+	int i;
+	int j;
+	int check=0;
+	set_label* lp;
+	for (i=0;i<20;i++){
+		check = 0;
+		if (set_nota[i].fill == -1){
+			break;
+		}
+		for (j=0;j<1000;j++){
+			if (set_nota[j].fill == -1){
+				break;
+			}
+			else if (!strcmp(set_nota[i].label,label1) && !strcmp(set_nota[j].label,label2)){
+				if (!strcmp(set_nota[i].var,set_nota[j].var))
+					check =1;
+			}
+		}
+		if (check == 0 && !strcmp(set_nota[i].label,label1)){
+			insert_new(set_nota[i].var,label3);
+		}
+	}
+}
+
+void sym_new(char *label1,char *label2,char *label3){
+	int i;
+	int j;
+	int check=0;
+	set_label* lp;
+	for (i=0;i<20;i++){
+		check = 0;
+		if (set_nota[i].fill == -1){
+			break;
+		}
+		for (j=0;j<1000;j++){
+			if (set_nota[j].fill == -1){
+				break;
+			}
+			else if (!strcmp(set_nota[i].label,label1) && !strcmp(set_nota[j].label,label2)){
+				if (!strcmp(set_nota[i].var,set_nota[j].var))
+					check =1;
+			}
+		}
+		if (check == 0 && !strcmp(set_nota[i].label,label1)){
+			insert_new(set_nota[i].var,label3);
+		}
+	}
+}
+
+void union_new(char *label1,char *label2,char *label3){
+	int i;
+	int j;
+	int k;
+	int check=0;
+	set_label* lp;
+	for (i=0;i<1000;i++){
+		if (set_nota[i].fill == -1){
+			break;
+		}
+		if (!strcmp(set_nota[i].label,label1))
+			insert_new(set_nota[i].var,label3);
+	}
+	for (j=0;j<1000;j++){
+		check = 0;
+		if (set_nota[j].fill == -1){
+				break;
+		}
+		if (!strcmp(set_nota[j].label,label2)){
+			for (k=0;k<1000;k++){
+				if (set_nota[k].fill == -1){
+					break;
+				}
+				if (!strcmp(set_nota[k].label,label3) && !strcmp(set_nota[j].var,set_nota[k].var)){
+					check=1;
+				}
+			}
+			if (check!=1)
+				insert_new(set_nota[j].var,label3);
 		}
 	}
 }
@@ -73,10 +158,7 @@ void insert_new(char *value,char *labels){
 		if (set_nota[i].fill==-1){
 			set_nota[i].fill =1;
 			set_nota[i].var = value;
-			set_label *l = (set_label*)(malloc(sizeof(set_label)));
-			l->label = labels;
-			l->next=NULL;
-			set_nota[i].lab = l;
+			set_nota[i].label = labels;
 			break;
 		}
 	}
@@ -154,7 +236,6 @@ void init(){
 		elem_list[i].off=-1;
 		elem_list2[i].off=-1;
 		set_nota[i].fill = -1;
-		set_nota[i].lab = NULL;
 	}
 }
 
@@ -174,7 +255,7 @@ AstNode* makeNode( int NodeType, char *NodeValue, type_tableEntry *type, symbolP
 
 	node_pointer = (AstNode*)malloc( sizeof(AstNode) );
 	node_pointer->node_type = NodeType;
-	
+
 	if( NodeValue != NULL )
 	{
 		node_pointer->node_value = strdup(NodeValue);
@@ -187,6 +268,7 @@ AstNode* makeNode( int NodeType, char *NodeValue, type_tableEntry *type, symbolP
 	node_pointer->passType = passType;
 	node_pointer->left = Left;
 	node_pointer->right = Right;
+	node_pointer->val = NULL;
 	return node_pointer;
 }
 
@@ -271,6 +353,8 @@ int tac(AstNode* node)
 	 }
 	else if(!strcmp(node->node_value, "REPEAT")){
 		printf("L%d:\n", lineL);
+
+		
 		//printf("mayaya3 %s",node->left->node_value);
 		postOrder(node->left);
 		//int l2 = lineL++;
@@ -283,13 +367,18 @@ int tac(AstNode* node)
 	}
 	else if (!strcmp(node->node_value, "WHILE")) {
 		//printf("itisrepeat2");
-		printf("L%d:\n", lineL);
+		printf("\nL%d:\n", lineL);
 		int l1 = lineL++;
 		int t1 = tac(node->left);
-		printf("IF t%d==0 goto L%d\n", t1-1, lineL);
+		//printf("IF t%d==0 goto L%d\n", t1-1, lineL);
+		char str[3];
+		sprintf(str,"t%d",t1-1);
+		printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(str));
+		printf("beqz\t$t%d,L%d\n",used_t,lineL);
+
 		int l2 = lineL++;
 		postOrder(node->right);
-		printf("goto L%d\nL%d:\n", l1, l2);
+		printf("b\tL%d\n\nL%d:\n", l1, l2);
 	}
 	else if (!strcmp(node->node_value, "[]"))
 	{
@@ -340,13 +429,14 @@ int tac(AstNode* node)
 			insert_elem(t1-1,node->right->node_value);
 			search_elem(node->right->node_value);
 			//if (!strcmp(node->left->node_value,"[]")) printf("*");
-			printf("t%d = %s\n", t1-1, node->right->node_value);
+			printf("t%d = %s\n", t1-1, node->right->node_value); 
 		}
 		else {
 			//printf("popoppppp");
 			printf("li\t$t%d,%s\n",used_t,node->right->node_value);
 			printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
 			insert_elem(sp_offset,node->left->node_value);
+			node->left->val = node->right;	//*******************************
 			//printf("%s=%s\n", node->left->node_value, node->right->node_value);
 			//printf("The name is %s\n", node->left->node_value);
 			//printf("It is stored at an offset of %d\n\n", search_elem(node->left->node_value));
@@ -374,20 +464,14 @@ int tac(AstNode* node)
 			insert_elem(t2-1,"t7");
 			search_elem("t7");
 			printf("t%d = %s %s t%d\n", varT, node->left->node_value, node->node_value, t2-1);
-		}
-		else {
-			//insert_elem(varT,"t8");
-			//search_elem("t8");
-			//printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
-			if(strcmp(node->node_value,"<=")==0)
+			/*if(strcmp(node->node_value,"<")==0)
 			{
 				char str[3];
 				sprintf(str,"t%d",varT);
 				insert_elem(sp_offset,str);
 				search_elem(str);
-				if(sytblValue(node->left->node_value) <= sytblValue(node->right->node_value)) //********mridul make sytblValue function
+				if(atoi(node->left->val->node_value) < atoi(node->right->val->node_value))
 				{
-					//printf("left value is %s\n",node->left->node_value);
 					printf("li\t$t%d,1\n",used_t);
 				}
 				else
@@ -395,10 +479,38 @@ int tac(AstNode* node)
 					printf("li\t$t%d,0\n",used_t);
 				}
 				printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+				sp_offset += 4;
+			}*/
+		}
+		else {
+			//insert_elem(varT,"t8");
+			//search_elem("t8");
+			//printf("t%d = %s %s %s\n", varT, node->left->node_value, node->node_value, node->right->node_value);
+			char str[3];
+			sprintf(str,"t%d",varT);
+			insert_elem(sp_offset,str);
+			search_elem(str);
+
+			if(strcmp(node->node_value,"<=")==0)
+			{
+				if(atoi(node->left->val->node_value) <= atoi(node->right->val->node_value))
+				{
+					printf("li\t$t%d,1\n",used_t);
+				}
+				else
+				{
+					printf("li\t$t%d,0\n",used_t);
+				}
 				//printf("The name is %s\n",str);
 				//printf("It is stored at an offset of %d\n\n", search_elem(str));
-				sp_offset += 4;
 			}
+			else if(strcmp(node->node_value,"<")==0 && node->right->node_type==341 && node->left->node_type==340)
+			{
+				if(atoi(node->left->val->node_value) < atoi(node->right->node_value)) printf("li\t$t%d,1\n",used_t);
+				else printf("li\t$t%d,0\n",used_t);
+			}
+			printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+			sp_offset += 4;
 		}
 
 		return ++varT;
@@ -513,20 +625,22 @@ void set_call(AstNode *node){
 	char str[3];
 	if (!strcmp(node->right->node_value,"+")){
 		printf("Union Happenning");
-		search_insert(node->right->left->node_value,node->left->node_value);
-		search_insert(node->right->right->node_value,node->left->node_value);
+		union_new(node->right->left->node_value,node->right->right->node_value,node->left->node_value);
+		//search_insert(node->right->left->node_value,node->left->node_value);
+		//search_insert(node->right->right->node_value,node->left->node_value);
 	}
 	else if (!strcmp(node->right->node_value,"-")){
-		
+		diff_new(node->right->left->node_value,node->right->right->node_value,node->left->node_value);	
 	}
 	else if (!strcmp(node->right->node_value,"*")){
-
+		inter_new(node->right->left->node_value,node->right->right->node_value,node->left->node_value);
 	}
 	else if (!strcmp(node->right->node_value,"/")){
-
+		diff_new(node->right->left->node_value,node->right->right->node_value,node->left->node_value);
+		diff_new(node->right->right->node_value,node->right->left->node_value,node->left->node_value);
 	}
 	else if (node->right->node_type==340){
-		search_insert(node->right->node_value,node->left->node_value);
+		as_new(node->right->node_value,node->left->node_value);
 	}
 	else{
 		AstNode *temp = node->right->right;
@@ -547,7 +661,14 @@ void set_call(AstNode *node){
 			temp2 = temp;
 			temp = temp->right;
 		}
-		insert_new(temp2->right->node_value,node->left->node_value);
+		if (isOper(temp2->right)){
+			int t1 = tac(temp2->right);
+			char *s = (char*)malloc(sizeof(char));
+			sprintf(s, "t%d", t1-1);
+			insert_new(s,node->left->node_value);
+		}
+		else
+			insert_new(temp2->right->node_value,node->left->node_value);
 	}
 	print_set();
 	return ;

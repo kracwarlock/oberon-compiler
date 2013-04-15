@@ -172,7 +172,6 @@ Statement    :
     $1->type=current_type;
   }
    ASSIGN Expr  {
-    
     printf("finally_tim_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
     //printf("it_is_here_%s_%s_%d_%d",$1->node_value,$3->node_value,current_type->type,current_type4->type);
     //printf("print_%s %d",$1->node_value,current_type->type);
@@ -180,8 +179,14 @@ Statement    :
     if (type_check($1->type,$4->type)){
       printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->type,$1->node_value);
       $$ = makeNode(OPR, ":=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4);
-      $1->val = $4; 
-      printf("value_is_%s_%s_",$1->node_value,$1->val->node_value);
+      //$1->val = $4; 
+      //printf("value_is_%s_%s_",$1->node_value,$1->val->node_value);
+    }
+    }
+    else if ($4->type->type==PROC_TYPE){
+    if (type_check($1->type,$4->type->ret_t)){
+      printf("finally_time_2_%d_%d_%s",$1->type->type,$4->type->ret_t->type,$1->node_value);
+      $$ = makeNode(OPR, ":=", create_typeEntry(NOTSET,NULL,NULL), VAL, $1, $4); 
     }
     }
     else{
@@ -335,7 +340,8 @@ Expr         :
 }
 | Expr IN Expr            
 {
-  if (($1->type->type==INTEGER || $1->type->type==SET)){
+  if (($1->type->type==INTEGER || $1->type->type==SET_TYPE)){
+        printf("in_is_here_%s_%s",$1->node_value,$3->node_value);
         $$ = makeNode(OPR, "IN", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
   }
   else{
@@ -350,12 +356,14 @@ Expr         :
   if (($1->type==lk)){
         printf("andar_hain");
         // value is TRUE
-        $$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
+        //$$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
+        $$ = makeNode(NUM,"TRUE", create_typeEntry(BOOLEAN,NULL,NULL), VAL, NULL, NULL);
   }
   else{
       // value is FALSE
-      $$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
-      printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
+      //$$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
+      $$ = makeNode(NUM, "FALSE", create_typeEntry(BOOLEAN,NULL,NULL), VAL, NULL, NULL);
+      //printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
   }
 }
 // | PLUS_SYM Expr %prec UPLUS             // have to take a look at this...
@@ -977,8 +985,24 @@ ident:
   IDENT
   {
     printf("0000");
-    $$ = makeNode(IDENT,yytext, create_typeEntry(NOTSET,NULL,NULL), VAL, NULL,NULL);
-    printf("again");
+    tableEntry *m = findEntry(&symbolTable, yytext ,own->first);
+    AstNode *asy = makeNode(IDENT,yytext, create_typeEntry(NOTSET,NULL,NULL), VAL, NULL,NULL);
+    if (m != NULL){
+      if (m->ast == NULL){
+        printf("_ek_baar_%s",yytext);
+        m->ast = asy;
+        $$ = m->ast;
+      }
+      else{
+          if (m->ast->val != NULL)
+            printf("_fir_baar_%s_%s_",yytext,m->ast->val->node_value);
+          printf("_fir_baar_%s_",yytext);
+          $$ = m->ast;
+      }
+    }
+    else{
+      $$ = asy;
+    }
   }
 ;
 

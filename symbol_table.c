@@ -12,7 +12,7 @@ void createSymbolTable(SymbolTable* symbolTable)
 	int scope = 0;
 	tableEntry* owner;
 	tableEntry* param;
-	
+
 	// This is a special case, since it's the first entry.
 	symbolTable->first = createTableEntry("ORD",NULL,VAL,FUNC_NAME,0,NULL,NULL,++scope,0,NULL);
 	symbolTable->last = symbolTable->first;	
@@ -20,12 +20,12 @@ void createSymbolTable(SymbolTable* symbolTable)
 	// // This is how it should normally be, with the optional addition of formal parameters.
 	// addSymbolTableEntry(symbolTable, createTableEntry("CHR",NULL,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL));	
 	// addFormalParameter(symbolTable, createTableEntry("_CHR",NULL,VAL,IDENTIFIER,0,NULL,NULL,NULL,NULL,0,NULL));
-	
+
 	// addSymbolTableEntry(symbolTable, createTableEntry("TOINT",NULL,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL));
 	// addFormalParameter(symbolTable, createTableEntry("_TOINT",NULL,VAL,IDENTIFIER,0,NULL,NULL,NULL,NULL,0,NULL));
-	
+
 	// addSymbolTableEntry(symbolTable, createTableEntry("TRUE",BOOLEAN,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL));
-	
+
 	// addSymbolTableEntry(symbolTable, createTableEntry("FALSE",BOOLEAN,VAL,FUNC_NAME,0,NULL,0,++scope,NULL,0,NULL));	
 }
 
@@ -33,7 +33,7 @@ void destroySymbolTable(SymbolTable* symbolTable)
 {
 	tableEntry* te = symbolTable->first;
 	tableEntry* last = te;
-	
+
 	while (te != NULL)
 	{
 		last = te;
@@ -144,7 +144,7 @@ tableEntry* findEntry_proc(SymbolTable* symbolTable, char* name, tableEntry *own
 void changeVariableType(SymbolTable* symbolTable, type_tableEntry *ty,int type)
 {
 	tableEntry* te = symbolTable->first;
-	
+
 	while (te != NULL)
 	{
 		if (te->type == NULL && ty != NULL)
@@ -162,7 +162,7 @@ tableEntry* createTableEntry(char* name, type_tableEntry *type_st, int passType,
 {
 	tableEntry* te = (tableEntry*)malloc(sizeof(tableEntry));
 	if (te == NULL) return NULL;
-	
+
 	te->name = name;
 	te->type = type_st;
 	te->passType = passType;
@@ -172,9 +172,10 @@ tableEntry* createTableEntry(char* name, type_tableEntry *type_st, int passType,
 	te->scope = scope;
 	te->procScope = procScope;
 	te->next = NULL;
+	te->ast = NULL;
 	te->next_owner = NULL;
 	te->entry_owner = owner_func;
-	
+
 	return te;
 }
 
@@ -182,7 +183,7 @@ type_tableEntry* create_typeEntry(int type, type_tableEntry* tp, tableEntry* for
 {
 	type_tableEntry* tpp = (type_tableEntry*)malloc(sizeof(type_tableEntry));
 	if (tpp == NULL) return NULL;
-	
+
 	tpp->type = type;
 	tpp->ret_t = NULL;
 	tpp->tp = tp;
@@ -196,27 +197,27 @@ type_tableEntry* create_typeEntry(int type, type_tableEntry* tp, tableEntry* for
 tableEntry* getOwner(tableEntry* entry)
 {
 	if (entry == NULL) return NULL;
-	
+
 	while(entry->owner != NULL)
 	{
 		entry = entry->owner;
 	}
-	
+
 	return entry;
 }
 
 tableEntry* getScopeOwner(SymbolTable* symbolTable, int scope)
 {
 	if (scope == 0) return NULL;
-	
+
 	tableEntry* te = symbolTable->first;
 	while (te != NULL)
 	{
 		if (te->procScope == scope) return te;
-		
+
 		te = te->next;
 	}
-	
+
 	return NULL;
 }
 
