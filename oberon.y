@@ -375,16 +375,16 @@ string_op_aux                { $$ = $1;printf("string_operatio_%s_",$1->left->no
   printf("lopo%s",$3->node_value);
   type_tableEntry *lk = type_lookup(&symbolTable,$3->node_value,currentScope);
   //printf("lopo%d",lk->type);
-  if (($1->type==lk)){
+  if (($1->type==$3->type)){
         printf("andar_hain");
         // value is TRUE
         //$$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
-        $$ = makeNode(NUM,"TRUE", create_typeEntry(BOOLEAN,NULL,NULL), VAL, NULL, NULL);
+        $$ = makeNode(OPR,"ISTRUE", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
   }
   else{
       // value is FALSE
       //$$ = makeNode(OPR, "IS", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3); 
-      $$ = makeNode(NUM, "FALSE", create_typeEntry(BOOLEAN,NULL,NULL), VAL, NULL, NULL);
+      $$ = makeNode(OPR, "ISFALSE", create_typeEntry(BOOLEAN,NULL,NULL), VAL, $1, $3);
       //printf("Error in type checking : Incompatible type%s,%s",$1->node_value,$3->node_value);
   }
 }
@@ -1074,7 +1074,7 @@ void yyerror(const char *s){
 int main()
 {
   own = (owner_list*)malloc(sizeof(owner_list));
-  own->first = createTableEntry("mera__hain_main", VOID ,NULL, NULL , 0, NULL, 0, 0, NULL, NULL);
+  own->first = createTableEntry("table_entry", VOID ,NULL, NULL , 0, NULL, 0, 0, NULL, NULL);
   own->last = own->first;
   createSymbolTable(&symbolTable);
   addSymbolTableEntry(&symbolTable,own->first);
@@ -1082,7 +1082,7 @@ int main()
   p_check = createtypeEntry();
   int res = yyparse();
   if (res==0)
-    printf("Successful parse\n\n\n\n");
+    printf("\n\nSuccessful parse\n\n\n\n");
   //type_printf(&symbolTable);
 
   if (ast_head==NULL)

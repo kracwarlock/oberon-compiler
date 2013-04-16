@@ -1,0 +1,14 @@
+ test1.m - While Loop
+ test2.m - While If Nesting
+ test3.m - If
+ test4.m - Nested If
+ test5.m - Case Statement
+ test6.m - Repeat-Until
+ test7.m - For Loop
+ test8.m - Nested While
+ test9.m - Fibonacci Program (returns nth Fibonacci number)
+test10.m - Procedure Call (Main22 returns 15)
+test11.m - Procedure Call (SumFn sums numbers from 0 to 100; returns 5050)
+test12.m - Nested Procedures (Sums numbers from 0 to 10 and doubles it; returns 110) (Oberon Specific feature)
+test13.m - IS (Oberon Specific feature)
+test14.m - IN (Oberon Specific feature)

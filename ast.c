@@ -341,7 +341,7 @@ void inter_new(char *label1,char *label2,char *label3){
 			}
 			//printf("--%s %s ",set_nota[i].var,set_nota[j].var);
 			if (!strcmp(set_nota[i].label,label1) && !strcmp(set_nota[j].label,label2) && !strcmp(set_nota[i].var,set_nota[j].var)){
-				printf("ho gaya kya");
+				//printf("ho gaya kya");
 				insert_new(set_nota[j].var,label3);
 			}
 		}
@@ -631,10 +631,20 @@ int tac(AstNode* node)
 	       			printf("IF %s != t%d goto L%d\n", node->left->node_value,t2-1, arr[last]);
 	       		}
 	       		else{
-	       			printf("IF %s != %s goto L%d\n", node->left->node_value,cases->right->left->node_value, arr[last]);	
+	       			//printf("IF %s != %s goto L%d\n", node->left->node_value,cases->right->left->node_value, arr[last]);
+	       			printf("lw\t$t5,%d($sp)\n",search_elem(node->left->node_value));
+	       			if(cases->right->left->node_type==341)
+	       			{
+	       				printf("li\t$t6,%s\n",cases->right->left->node_value);
+	       			}
+	       			else if(cases->right->left->node_type==340)
+	       			{
+	       				printf("lw\t$t6,%d($sp)\n",search_elem(cases->right->left->node_value));
+	       			}
+	       			printf("bne\t$t5,$t6,L%d\n",arr[last]);
 	       		}
 	       		postOrder(cases->right->right);
-	       		printf("goto Next\n");
+	       		printf("b\tNext\n");
 	       		printf("L%d:\n", arr[last]);
 	       		lineL++;
 	       		pop();
@@ -653,10 +663,21 @@ int tac(AstNode* node)
 	       	 		printf("IF %s != t%d goto L%d\n", node->left->node_value,t2-1, arr[last]);
 	       	 	}
 	       	 	else{
-	       	 		printf("IF %s != %s goto L%d\n", node->left->node_value,cases->left->left->node_value, arr[last]);	
+	       	 		//printf("IF %s != %s goto L%d\n", node->left->node_value,cases->left->left->node_value, arr[last]);
+	       	 		printf("lw\t$t5,%d($sp)\n",search_elem(node->left->node_value));
+	       			if(cases->left->left->node_type==341)
+	       			{
+	       				printf("li\t$t6,%s\n",cases->left->left->node_value);
+	       			}
+	       			else if(cases->left->left->node_type==340)
+	       			{
+	       				printf("lw\t$t6,%d($sp)\n",search_elem(cases->left->left->node_value));
+	       			}
+	       			printf("bne\t$t5,$t6,L%d\n",arr[last]);
 	       	 	}
 	       		postOrder(cases->left->right);
-	       		printf("goto Next\n");
+	       		//printf("goto Next\n");
+	       		printf("b\tNext\n");
 	       		printf("L%d:\n", arr[last]);
 	       		lineL++;
 	       		pop();
@@ -686,16 +707,58 @@ int tac(AstNode* node)
 		// printf("nahi be");
 		int pp = lineL++;
 		int pp1 = lineL++;
-		printf("%s = %s\n",node->left->node_value,node->right->left->node_value);
+		//printf("%s = %s\n",node->left->node_value,node->right->left->node_value);
+		if(node->right->left->node_type==340)
+		{
+			printf("lw\t$t6,%d($sp)\n",search_elem(node->right->left->node_value));
+		}
+		else if(node->right->left->node_type==341)
+		{
+			printf("li\t$t6,%s\n",node->right->left->node_value);
+		}
 		printf("L%d:\n", pp);
-		printf("t%d = %s <= %s\n",varT,node->left->node_value,node->right->right->left->node_value);
-		printf("IF t%d==0 goto L%d\n", varT, pp1);
+		//printf("t%d = %s <= %s\n",varT,node->left->node_value,node->right->right->left->node_value);
+		if(node->right->right->left->node_type==340)
+		{
+			printf("lw\t$t7,%d($sp)\n",search_elem(node->left->node_value));
+			printf("lw\t$t8,%d($sp)\n",search_elem(node->right->right->left->node_value));
+			printf("ble\t$t7,$t8,M%d\n",lineM);
+			printf("li\t$t9,0\n");
+			int ww = endL++;
+			printf("b\tEnd%d\n",ww);
+			printf("\nM%d:\n",lineM);
+			lineM++;
+			printf("li\t$t9,1\n");
+			printf("\nEnd%d:\n",ww);
+		}
+		else if(node->right->right->left->node_type==341)
+		{
+			printf("lw\t$t7,%d($sp)\n",search_elem(node->left->node_value));
+			printf("li\t$t8,%s\n",node->right->right->left->node_value);
+			printf("ble\t$t7,$t8,M%d\n",lineM);
+			printf("li\t$t9,0\n");
+			int ww = endL++;
+			printf("b\tEnd%d\n",ww);
+			printf("\nM%d:\n",lineM);
+			lineM++;
+			printf("li\t$t9,1\n");
+			printf("\nEnd%d:\n",ww);	
+		}
+		//printf("IF t%d==0 goto L%d\n", varT, pp1);
+		printf("beqz\t$t9,L%d\n",pp1);
 		varT++;
 		postOrder(node->right->right->right->right);
 		//printf("print.. %s",node->right->right->right->right->node_value);
-		printf("t%d = %s + %s\n",varT,node->left->node_value,node->right->right->right->left->node_value);
-		printf("%s = t%d\n",node->left->node_value,varT);
-		printf("goto L%d\nL%d:\n", pp, pp1);
+		//printf("t%d = %s + %s\n",varT,node->left->node_value,node->right->right->right->left->node_value);
+		if(node->right->right->right->left->node_type==341 && node->left->node_type==340)
+		{
+			printf("lw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
+			printf("addiu\t$t%d,$t%d,%d\n",used_t,used_t,atoi(node->right->right->right->left->node_value));
+		}
+		//printf("%s = t%d\n",node->left->node_value,varT);
+		printf("sw\t$t%d,%d($sp)\n",used_t,search_elem(node->left->node_value));
+		//printf("goto L%d\nL%d:\n", pp, pp1);
+		printf("b\tL%d\nL%d:\n", pp, pp1);
 	}
 	else if (!strcmp(node->node_value, "WHILE")) {
 		printf("\nL%d:\n", lineL);
@@ -859,25 +922,53 @@ int tac(AstNode* node)
 				//printf("INIT_%s_%s",node->left->node_value,node->right->node_value);
 				//insert(lineL);
 				int ww1 = lineL++;
-				for (i=0;i<1000;i++){
-					if (set_nota[i].fill == -1){
+				for (i=0;i<1000;i++)
+				{
+					if (set_nota[i].fill == -1)
+					{
 						break;
 					}
-					else{
-						if (!strcmp(set_nota[i].label,node->right->node_value)){
+					else
+					{
+						if (!strcmp(set_nota[i].label,node->right->node_value))
+						{
 							ind = i;
-							printf("IF %s == %s goto L%d\n",set_nota[i].var,node->left->node_value, ww1);
+							/*printf("set1 IF %s == %s goto L%d\n",set_nota[i].var,node->left->node_value, ww1);*/
+							printf("li\t$t2,%s\n",set_nota[i].var);
+							if (node->left->node_type == 341)
+							{
+								printf("li\t$t3,%s\n",node->left->node_value);
+							}
+							else if (node->left->node_type == 340)
+							{
+								printf("lw\t$t3,%d($sp)\n",search_elem(node->left->node_value));
+							}
+							printf("beq\t$t2,$t3,L%d\n",ww1);
 						}
 						else
 							fal = i;
 					}
 				}
-				printf("t%d = %s %s %s\n", varT, set_nota[fal].var, "=" , node->left->node_value);
 				int ww2 = lineL++;
-				printf("goto L%d\n",ww2);
-				printf("L%d:\n", ww1);
-				printf("t%d = %s %s %s\n", varT, set_nota[ind].var, "=" , node->left->node_value);
-				printf("L%d:\n", ww2);
+				printf("li\t$t%d,0\n",used_t);
+				printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+				printf("lw\t$t9,%d($sp)\n",sp_offset);
+				sp_offset += 4;
+				printf("b\tL%d\n\n",ww2);
+
+				printf("L%d:\n",ww1);
+				printf("li\t$t%d,1\n",used_t);
+				printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+				printf("lw\t$t9,%d($sp)\n\n",sp_offset);
+				sp_offset += 4;
+
+				printf("L%d:\n\n",ww2);
+				/*printf("\nset2 t%d = 0\n", varT);
+				//int ww2 = lineL++;
+				printf("set3 goto L%d\n",ww2);
+				printf("set4 L%d:\n", ww1);
+				printf("set5 t%d = 1\n", varT);
+				printf("set6 L%d:\n", ww2);*/
 			}
 			else{
 
@@ -953,6 +1044,16 @@ int tac(AstNode* node)
 				else if(strcmp(node->node_value,"<")==0 && node->left->node_type==340 && node->right->node_type==341)
 				{
 					printf("lw\t$t9,%d($sp)\n",search_elem(node->left->node_value));
+	/*				if(atoi(node->left->val->node_value) <= atoi(node->right->val->node_value))
+					{
+						printf("li\t$t%d,1\n",used_t);
+					}
+					else
+					{
+						printf("li\t$t%d,0\n",used_t);
+					}
+					printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+					sp_offset += 4;*/
 					insert(lineL);
 					printf("blt\t$t9,%d,M%d\n",atoi(node->right->node_value),lineM);
 				//	lineL++;
@@ -964,6 +1065,21 @@ int tac(AstNode* node)
 					printf("li\t$t9,1\n");
 					printf("\nEnd%d:\n",ww);
 				//	pop();
+				}
+				else if (strcmp(node->node_value,"ISTRUE")==0)
+				{
+					//t1=1;
+					printf("li\t$t%d,1\n",used_t);
+					printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+					printf("lw\t$t9,%d($sp)\n",sp_offset);
+					sp_offset += 4;
+				}
+				else if (strcmp(node->node_value,"ISFALSE")==0)
+				{
+					printf("li\t$t%d,0\n",used_t);
+					printf("sw\t$t%d,%d($sp)\n",used_t,sp_offset);
+					printf("lw\t$t9,%d($sp)\n",sp_offset);
+					sp_offset += 4;
 				}
 				else if(strcmp(node->node_value,"+")==0)
 				{	//t1 = v1 + 1
@@ -1091,7 +1207,7 @@ int isOper(AstNode* node)
 	char *s = strdup(node->node_value);
 	if (!(strcmp(s, ":=") && strcmp(s, "*") && strcmp(s, "+") && strcmp(s, "-") && strcmp(s, "/") && strcmp(s, "[]")
 		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, "CASE") && strcmp(s, "FOR")
-		&& strcmp(s, ".")))
+		&& strcmp(s, ".") && strcmp(s, "ISFALSE") && strcmp(s, "ISTRUE")))
 		return 1;
 	return 0;
 }
@@ -1237,7 +1353,7 @@ void proc_call_def(AstNode *node){
 }
 
 void set_call(AstNode *node){
-	printf("sets_%s",node->left->node_value);
+	//printf("sets_%s",node->left->node_value);
 	//char str[3];
 	if (!strcmp(node->right->node_value,"+")){
 		printf("Union Happenning");

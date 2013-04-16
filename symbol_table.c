@@ -84,10 +84,10 @@ tableEntry* findEntry(SymbolTable* symbolTable, char* name, tableEntry *owner_fu
 		while (te != NULL)
 		{
 			if (te->entry_owner != NULL)
-				printf("aa_ate_asasasasasasmm_%s_%s_%d_%s\n",te->name,name,te->mode,te->entry_owner->name);
+				printf("%s_%s_%d_%s\n",te->name,name,te->mode,te->entry_owner->name);
 			else
-				printf("asasasasasas %s %d\n",te->name,te->mode);
-			printf("dddddddddd");
+				printf("%s %d\n",te->name,te->mode);
+			//printf("dddddddddd");
 
 			if (te->mode == PROC_NAME && te == owner_func){
 				printf("maa me_%s_%s\n",owner_func->name,name);
@@ -105,18 +105,18 @@ tableEntry* findEntry(SymbolTable* symbolTable, char* name, tableEntry *owner_fu
 			}
 			else if (strcmp(te->name,name) == 0 && te->entry_owner == owner_func)
 			{
-				printf("andarhain");
+				//printf("andarhain");
 				int arm = te->t;
-					printf("rerererere_%s_%d\n",name,arm);
+					printf("%s_%d\n",name,arm);
 					ret = te; 
 			}		
 			te = te->next;
-			printf("next");
+			//printf("next");
 		}	
-		printf("pppppppppp0000");
+		//printf("pppppppppp0000");
 		owner_func = owner_func->next_owner;
 	}
-	printf("ppppp");
+	//printf("ppppp");
 	return ret;
 }
 
@@ -240,9 +240,9 @@ void change_type_FormalParamType (type_EntryTable *p , type_tableEntry *t){
 	type_tableEntry *k = p->last;
 	tableEntry  *u = k->formal_params;
 	while (u != NULL){
-		printf("dddddddmmm %s\n",u->name);
+		printf("%s\n",u->name);
 		if (u->type == NULL){
-			printf("mummy %s %d\n",u->name,t->type);
+			printf("%s %d\n",u->name,t->type);
 			u->type = t;
 		}
 		u=u->next;
