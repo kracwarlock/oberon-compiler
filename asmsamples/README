@@ -12,3 +12,11 @@ test11.m - Procedure Call (SumFn sums numbers from 0 to 100; returns 5050)
 test12.m - Nested Procedures (Sums numbers from 0 to 10 and doubles it; returns 110) (Oberon Specific feature)
 test13.m - IS (Oberon Specific feature)
 test14.m - IN (Oberon Specific feature)
+test15.m - Arrays
+test16.m - Type Error
+test17.m - Bubble Sort (using Arrays)
+
+DEMO ORDER
+
+ test9.m - Fibonacci Program (returns nth Fibonacci number)
+test11.m - Procedure Call (SumFn sums numbers from 0 to 100; returns 5050)

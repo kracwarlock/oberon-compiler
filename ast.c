@@ -801,6 +801,9 @@ int tac(AstNode* node)
 		else if (node->left->type->type == ARRAY_TYPE && node->left->type->tp->type == CHAR){
 			string_call(node);
 		}
+		else if (!strcmp(node->left->node_value,"[]") || !strcmp(node->right->node_value,"[]")){
+			array_call(node);
+		}
 		else{
 		if (node->right->node_type == 342 && node->left->node_type == 342) {
 			//printf("lplpl2222");
@@ -1205,8 +1208,7 @@ int isOper(AstNode* node)
 {
 	if (node->node_type != 342) return 0;
 	char *s = strdup(node->node_value);
-	if (!(strcmp(s, ":=") && strcmp(s, "*") && strcmp(s, "+") && strcmp(s, "-") && strcmp(s, "/") && strcmp(s, "[]")
-		&& strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, "CASE") && strcmp(s, "FOR")
+	if (!(strcmp(s, ":=") && strcmp(s, "*") && strcmp(s, "+") && strcmp(s, "-") && strcmp(s, "/") && strcmp(s, "WHILE") && strcmp(s, "IF") && strcmp(s, "REPEAT") && strcmp(s, "CASE") && strcmp(s, "FOR")
 		&& strcmp(s, ".") && strcmp(s, "ISFALSE") && strcmp(s, "ISTRUE")))
 		return 1;
 	return 0;
@@ -1308,6 +1310,126 @@ void string_call(AstNode *node){
 			memcpy(subbuff,(b+1),strlen(node->right->node_value)-2);
 			subbuff[strlen(node->right->node_value)-2] = '\0';
 			insert_strings(subbuff,node->left->node_value);
+	}
+}
+
+void array_call(AstNode *node){
+	if (!strcmp(node->left->node_value, "[]"))
+	{
+		if (search_elem(node->left->left->node_value) == -1) {
+			insert_elem(sp_offset, node->left->left->node_value);
+			sp_offset += 100;
+		}
+		int t1 = search_elem(node->left->left->node_value);
+		if (node->right->node_type == 342) {
+			int t2 = tac(node->right);
+			//insert_elem(varT,"t1");
+			//search_elem("t1");
+			//printf("t%d = t%d + t%d\n", varT, t1-1, t2-1);
+			char *s = (char*)malloc(sizeof(char)*3);
+			sprintf(s, "t%d\0", t2-1);
+			printf("\nlw\t$t%d, %d($sp)\n", used_t, search_elem(s));
+			if(node->left->right->node_type == 341)
+				printf("sw\t$t%d, %d($sp)\n", used_t+1, t1+atoi(node->left->right->node_value)*4);
+			else {
+				int t3= search_elem(node->left->right->node_value);
+				printf("li\t$t%d, %d\n", used_t+1, t1);
+				printf("lw\t$t%d, %d($sp)\n", used_t+2, t3);
+				printf("li\t$t%d, %d\n", used_t+3, 4);
+				printf("mult\t$t%d, $t%d\n", used_t+2, used_t+3);
+				printf("mflo\t$t%d\n", used_t+4);
+				printf("addu\t$t%d, $t%d,$t%d\n",used_t+1,used_t+1,used_t+4 );
+				printf("addu\t$sp,$sp,$t%d\n",used_t+1 );
+				printf("sw\t$t%d, 0($sp)\n", used_t);
+				printf("subu\t$sp,$sp,$t%d\n",used_t+1 );
+				
+			}
+		}
+		else if(node->right->node_type == 341){
+			//insert_elem(varT,"t2");
+			//search_elem("t2");
+			//printf("t%d = t%d + %s\n", varT, varT-1, node->right->node_value);
+			printf("li\t$t%d, %s\n", used_t, node->right->node_value);
+			printf("sw\t$t%d,%d($sp)\n", used_t, t1+atoi(node->left->right->node_value)*4);
+			if(node->left->right->node_type == 341)
+				printf("sw\t$t%d, %d($sp)\n", used_t+1, t1+atoi(node->left->right->node_value)*4);
+			else {
+				int t3 = search_elem(node->left->right->node_value);
+				printf("li\t$t%d, %d\n", used_t+1, t1);
+				printf("lw\t$t%d, %d($sp)\n", used_t+2, t3);
+				printf("li\t$t%d, %d\n", used_t+3, 4);
+				printf("mult\t$t%d, $t%d\n", used_t+2, used_t+3);
+				printf("mflo\t$t%d\n", used_t+4);
+				printf("addu\t$t%d, $t%d,$t%d\n",used_t+1,used_t+1,used_t+4 );
+				printf("addu\t$sp,$sp,$t%d\n",used_t+1 );
+				printf("sw\t$t%d, 0($sp)\n", used_t);
+				printf("subu\t$sp,$sp,$t%d\n",used_t+1 );
+				
+			}
+		}
+		else {
+			int ta = search_elem(node->right->node_value);
+			printf("lw\t$t%d, %d($sp)\n", used_t, ta);
+			printf("sw\t$t%d,%d($sp)\n", used_t, t1+atoi(node->left->right->node_value)*4);
+			if(node->left->right->node_type == 341)
+				printf("sw\t$t%d, %d($sp)\n", used_t+1, t1+atoi(node->left->right->node_value)*4);
+			else {
+				int t3 = search_elem(node->left->right->node_value);
+				printf("li\t$t%d, %d\n", used_t+1, t1);
+				printf("lw\t$t%d, %d($sp)\n", used_t+2, t3);
+				printf("li\t$t%d, %d\n", used_t+3, 4);
+				printf("mult\t$t%d, $t%d\n", used_t+2, used_t+3);
+				printf("mflo\t$t%d\n", used_t+4);
+				printf("addu\t$t%d, $t%d,$t%d\n",used_t+1,used_t+1,used_t+4 );
+				printf("addu\t$sp,$sp,$t%d\n",used_t+1 );
+				printf("sw\t$t%d, 0($sp)\n", used_t);
+				printf("subu\t$sp,$sp,$t%d\n",used_t+1 );
+				
+			}
+		}
+	}
+	else
+	{
+		if (search_elem(node->right->left->node_value) == -1) {
+			insert_elem(sp_offset, node->right->left->node_value);
+			sp_offset += 100;
+		}
+		if (search_elem(node->left->node_value) == -1) {
+			insert_elem(sp_offset, node->left->node_value);
+			sp_offset += 4;
+		}
+		int t1 = search_elem(node->right->left->node_value);
+		int t2 = search_elem(node->left->node_value);
+
+		if(node->right->right->node_type == 341) {
+				printf("lw\t$t%d, %d($sp)\n",used_t, t1+atoi(node->right->right->node_value)*4);
+				printf("sw\t$t%d, %d($sp)\n", used_t, t2 );
+			}
+			else {
+				int t3= search_elem(node->right->right->node_value);
+				printf("lw\t$t%d, %d($sp)\n", used_t+2, t3);
+				printf("li\t$t%d, %d\n", used_t+3, 4);
+				printf("mult\t$t%d, $t%d\n", used_t+2, used_t+3);
+				printf("mflo\t$t%d\n", used_t+4);
+				printf("li\t$t%d, %d\n",used_t+1, t1);
+				printf("addu\t$t%d, $t%d,$t%d\n",used_t+1,used_t+1,used_t+4 );
+				printf("addu\t$sp,$sp,$t%d\n",used_t+1 );
+				printf("lw\t$t%d, 0($sp)\n",used_t+5);
+				printf("subu\t$sp,$sp,$t%d\n",used_t+1 );
+				printf("sw\t$t%d, %d($sp)\n", used_t+5, t2 );
+			}
+		// int t1 = search_elem(node->right->left->node_value);
+		// printf("\nli\t$t%d, %d\n", used_t+1, t1);
+		// printf("lw\t$t%d, %d($sp)\n", used_t+2, t3);
+		// printf("li\t$t%d, %d\n", used_t+3, 4);
+		// printf("mult\t$t%d, $t%d\n", used_t+2, used_t+3);
+		// printf("mflo\t$t%d\n", used_t+4);
+		// printf("addu\t$t%d, $t%d,$t%d\n",used_t+1,used_t+1,used_t+4 );
+		// printf("addu\t$sp,$sp,$t%d\n",used_t+1 );
+		// printf("sw\t$t%d, 0($sp)\n", used_t);
+		// printf("subu\t$sp,$sp,$t%d\n",used_t+1 );
+		//printf("\nlw\t$t%d, %d($sp)\n", used_t, t1+atoi(node->right->right->node_value)*4);
+		//printf("sw\t$t%d, %d($sp)\n", used_t,search_elem(node->left->node_value));
 	}
 }
 
